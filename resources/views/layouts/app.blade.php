@@ -53,9 +53,15 @@
 
                 <x-app.header :variant="$attributes['headerVariant']" />
 
-                <main class="grow">
-                    {{ $slot }}
-                </main>
+                <div class="mx-[1rem] md:mx-[8rem]">
+
+                    <main class="grow">
+                        {{ $slot }}
+                    </main>
+                
+                </div>
+
+                <x-app.footer></x-app.footer>
 
             </div>
 

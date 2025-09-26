@@ -1,0 +1,14 @@
+-- Database Backup Script
+-- Run this before applying authentication restructure migrations
+-- 
+-- For MySQL/MariaDB:
+-- mysqldump -u [username] -p [database_name] > backup-$(date +%Y%m%d_%H%M%S).sql
+--
+-- For PostgreSQL:
+-- pg_dump -U [username] -h [host] [database_name] > backup-$(date +%Y%m%d_%H%M%S).sql
+--
+-- For SQLite:
+-- sqlite3 database.db ".backup backup-$(date +%Y%m%d_%H%M%S).db"
+
+-- This file serves as a reminder to backup the database before proceeding
+-- Adjust the command above based on your database type and configuration

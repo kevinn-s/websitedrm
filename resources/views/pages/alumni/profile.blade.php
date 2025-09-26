@@ -1,0 +1,1 @@
+<livewire:alumni.profile></livewire:alumni.profile>
