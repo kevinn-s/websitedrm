@@ -1,1 +1,2 @@
-<livewire:alumni.profile></livewire:alumni.profile>
+
+<livewire:alumni.profile :id="$alumni"></livewire:alumni.profile>

@@ -47,7 +47,7 @@
                             <div 
                                 class="w-10 h-10 " 
                                 style="
-                                background-image: url('{{ url('/images/kontak_kami_icons.webp') }}');
+                                background-image: url('{{ url('/images/kontak_kami.webp') }}');
                                 background-size: cover;
                                 background-position: 0px 0px;
                                 background-repeat: no-repeat;
@@ -67,7 +67,7 @@
                             {{-- Phone Icon --}}
                             <div class="w-10 h-10 " 
                             style="
-                                background-image: url('{{ url('/images/kontak_kami_icons.webp') }}');
+                                background-image: url('{{ url('/images/kontak_kami.webp') }}');
                                 background-size: cover;
                                 background-position: -80px 0px;
                                 background-repeat: no-repeat;
@@ -85,7 +85,7 @@
                         {{-- Icon --}}
                         <div class="w-10 h-10" 
                             style="
-                                background-image: url('{{ url('/images/kontak_kami_icons.webp') }}');
+                                background-image: url('{{ url('/images/kontak_kami.webp') }}');
                                 background-size: cover;
                                 background-position: -40px 0px;
                                 background-repeat: no-repeat;

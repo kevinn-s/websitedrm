@@ -2,7 +2,7 @@
     'items' => [], // array: ['label' => '', 'url' => '']
 ])
 
-<nav class="py-8 font-sans text-[16px] font-extrabold">
+<nav class="hidden md:block py-8 font-sans text-[16px] font-extrabold">
     <ol class="flex items-center flex-wrap">
         @foreach ($items as $index => $item)
             <li class="flex items-center">

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="mx-[1rem] mt-[4rem] pb-16 mb-[8rem] md:mx-[8rem] md:mt-[4rem] md:mb-[12rem] pt-10 md:pt-20">
+    <div class="">
         <x-breadcrumb :items="[
             ['label' => 'Beranda', 'url' => route('homepage')],
             ['label' => 'Kegiatan', 'url' => route('kegiatan')],
@@ -8,7 +8,7 @@
             <div class="flex flex-col mb-4">
                 <!-- Icon -->
                 <div class="w-10 h-10 mb-2" style="
-                background-image: url('{{ url('/images/icon_page.webp') }}');
+                background-image: url('{{ url('/images/page_icon.webp') }}');
                 background-size: cover;
                 background-position: -120px 0px;
                 background-repeat: no-repeat;

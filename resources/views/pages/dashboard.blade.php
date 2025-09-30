@@ -4,12 +4,12 @@
         bg-home-banner
         h-96  
     ">
-        <div class="w-9/12 px-32 py-8 text-white">
+        <div class="my-[-40px] md:my-0 md:w-7/12 px-32 py-8 text-white">
             <!-- <div class="w-24 h-24 mb-4 bg-black">
                     <img src="" alt="">
                 </div> -->
             <div>
-                <h1 class="text-[26px] md:text-4xl font-bold font-libre leading-[1.2]">
+                <h1 class="text-4xl font-bold font-libre leading-[1.2]">
                     Asosiasi Alumni
                     <br>
                     DRM Binus University
@@ -17,22 +17,28 @@
             </div>
 
             <div class="md:text-lg my-3 font-semibold">
-                <p>Wadah kolaborasi dan kebersamaan alumni DRM Binus University.</p>
+
+                <p>Tempat berbagi pengalaman, memperluas jaringan, dan menjaga ikatan kebersamaan alumni DRM Binus
+                    University</p>
             </div>
 
             <div class="my-[24px] md:my-[24px] flex flex-row gap-4">
                 @if(auth('sanctum')->check() && auth('sanctum')->user()->status === 'approved')
                     {{-- Alumni login & approved --}}
                     <button type="button" class="py-1.5 w-[8rem] md:w-auto md:px-8 md:py-2 leading-[-1px] text-sm md:text-base 
-                                   font-semibold text-white focus:outline-none 
-                                   bg-primary-green hover:bg-primary-green-dark"
+                                       font-semibold text-white focus:outline-none 
+                                       bg-primary-green hover:bg-primary-green-dark"
                         onclick="window.location.href='{{ route('register') }}'">
                         Lihat Alumni
                     </button>
                 @else
-                    <button type="button" class="py-1.5 w-[8rem] md:w-auto md:px-8 md:py-2 leading-[-1px] text-sm md:text-base 
-                                   font-semibold text-white focus:outline-none 
-                                   bg-primary-green hover:bg-primary-green-dark"
+                   <button type="button" class="py-3 px-10 md:w-[8rem] md:w-auto md:px-8 md:py-2 leading-[-1px] text-base
+                                       font-semibold text-white focus:outline-none
+                                       bg-primary-green hover:bg-primary-green-dark
+                                       transition-all duration-300 ease-in-out
+                                       hover:scale-105 hover:border-2 hover:border-white
+                                       active:scale-95 active:border-2 active:border-white
+                                       border-2 border-transparent"
                         onclick="window.location.href='{{ route('register') }}'">
                         Bergabung
                     </button>
@@ -78,7 +84,7 @@
             <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 <div class="flex items-start gap-4 ">
                     <div class="w-12 h-12 mt-2" style="
-                        background-image: url('{{ url('/images/missions_icon.webp') }}');
+                        background-image: url('{{ url('/images/missions.webp') }}');
                         background-size: cover;
                         background-position: -120px 0px;
                         background-repeat: no-repeat;
@@ -92,7 +98,7 @@
 
                 <div class="flex items-start gap-4">
                     <div class="w-12 h-12 mt-2" style="
-                    background-image: url('{{ url('/images/missions_icon.webp') }}');
+                    background-image: url('{{ url('/images/missions.webp') }}');
                     background-size: cover;
                     background-position: -48px 0px;
                     background-repeat: no-repeat;
@@ -106,7 +112,7 @@
 
                 <div class="flex items-start gap-4">
                     <div class="w-12 h-12 mt-2" style="
-                    background-image: url('{{ url('/images/missions_icon.webp') }}');
+                    background-image: url('{{ url('/images/missions.webp') }}');
                     background-size: cover;
                     background-position: -96px 0px;
                     background-repeat: no-repeat;
@@ -120,7 +126,7 @@
 
                 <div class="flex items-start gap-4">
                     <div class="w-12 h-12 mt-2" style="
-                    background-image: url('{{ url('/images/missions_icon.webp') }}');
+                    background-image: url('{{ url('/images/missions.webp') }}');
                     background-size: cover;
                     background-position: -0px 0px;
                     background-repeat: no-repeat;
@@ -134,11 +140,11 @@
             </div>
         </div>
         <div>
-            <div class="md:w-[48%] w-full">
+            <div class="md:w-[52%] w-full">
                 <div class="text-sm font-[700] text-gray-700">
                     MEMBER BENEFITS
                 </div>
-                <h1 class="text-5xl tracking-[-3px] font-bold font-sans my-4">
+                <h1 class="text-5xl tracking-[-3px] leading-13 font-bold font-sans my-4">
                     <span class="text-primary-green">Keuntungan Bergabung</span>
                     <br>
                     <span class="text-primary-gold">Di Asosiasi Alumni DRM</span>
@@ -154,7 +160,7 @@
                     <div class="w-20 h-20 m-auto">
                         <div class="w-full h-full
              bg-no-repeat 
-             bg-[url('../../public/images/BENEFITS.webp')] 
+             bg-[url('../../public/images/benefit.webp')] 
              bg-[length:80px_auto]
              bg-[position:0px_-178px]">
                         </div>
@@ -172,7 +178,7 @@
                     <div class="w-20 h-20 m-auto">
                         <div class="w-full h-full
              bg-no-repeat 
-             bg-[url('../../public/images/BENEFITS.webp')] 
+             bg-[url('../../public/images/benefit.webp')] 
              bg-[length:80px_auto]
              bg-[position:0px_-0px]">
                         </div>
@@ -190,7 +196,7 @@
                     <div class="w-20 h-20 m-auto">
                         <div class="w-full h-full
              bg-no-repeat 
-             bg-[url('../../public/images/BENEFITS.webp')] 
+             bg-[url('../../public/images/benefit.webp')] 
              bg-[length:80px_auto]
              bg-[position:0px_-88px]">
                         </div>
@@ -206,7 +212,7 @@
                     <div class="w-20 h-20 m-auto">
                         <div class="w-full h-full
                                     bg-no-repeat 
-                                    bg-[url('../../public/images/BENEFITS.webp')] 
+                                    bg-[url('../../public/images/benefit.webp')] 
                                     bg-[length:80px_auto]
                                     bg-[position:0px_-266px]">
                         </div>

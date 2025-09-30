@@ -5,7 +5,7 @@
             <!-- Logo and Title Section -->
             <div class="flex flex-col items-center md:items-start">
                 <div class="flex flex-col md:flex-row   items-center gap-4 mb-6">
-                    <img src="{{ url('/images/Logo_DRM.jpg') }}" alt="DRM Logo" class="w-20 h-16 md:w-20 md:h-16 object-contain">
+                    <img src="{{ url('/images/drm.webp') }}" alt="DRM Logo" class="w-20 h-16 md:w-20 md:h-16 object-contain">
                     <div class="flex flex-col">
                         <div class="font-['Spline_Sans',sans-serif] text-[16px] md:text-[18px] font-bold leading-5 text-center md:text-left text-gray-800">ASOSIASI ALUMNI</div>
                         <div class="font-['Spline_Sans',sans-serif] text-[16px] md:text-[18px] font-bold leading-5 text-center md:text-left text-gray-800">DOCTOR OF RESEARCH IN MANAGEMENT</div>

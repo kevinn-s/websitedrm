@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profession extends Model
 {
+
+    protected $table = "profession";
     //
     protected $fillable = [
         "alumni_id",
@@ -16,6 +18,6 @@ class Profession extends Model
     ];
 
     public function alumni(){
-        $this->belongsTo(Alumni::class);
+        return $this->belongsTo(Alumni::class);
     }
 }

@@ -36,20 +36,24 @@ class AlumniPolicy
      */
     public function update($user, Alumni $alumni)
     {
+            \Log::info('update policy fired', [
+        'user_id' => $user->id ?? null,
+        'alumni_id' => $alumni->id ?? null,
+    ]);
         // If user is an Admin, they can update any alumni
         if ($user instanceof Admin) {
             return Response::allow();
         }
         
         // If user is an Alumni, they can only update their own profile
-        if ($user instanceof User) {
-            return $user->id === $alumni->id
+        if ($user) {
+            return $user->student_id === $alumni->student_id
                 ? Response::allow()
                 : Response::deny('You can only edit your own profile.');
         }
         
         // Deny for any other user type
-        return Response::denyAsNotFound();
+        return true;
     }
 
     /**

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="mx-[1rem] mt-[4rem] pb-[4rem] md:mx-[8rem] md:mt-[4rem] md:mb-[12rem] pt-10 md:pt-20">
+    <div class="">
                 <x-breadcrumb :items="[
             ['label' => 'Beranda', 'url' => route('homepage')],
             ['label' => 'AD/ART Asosiasi Alumni DRM', 'url' => route('ad-art-asosiasi')],
@@ -7,8 +7,12 @@
         <div>
             <div class="flex flex-col mb-4">
                 <!-- Icon -->
-                <div class="w-10 h-10">
-                    <img src="/path/to/icon.png" alt="icon" class="" />
+                <div class="w-10 h-10 mb-2" style="
+                background-image: url('{{ url('/images/page_icon.webp') }}');
+                background-size: cover;
+                background-position: -160px 0px;
+                background-repeat: no-repeat;
+                ">
                 </div>
 
                 <!-- Title -->
@@ -25,7 +29,7 @@ Dokumen resmi AD/ART Asosiasi Alumni DRM BINUS University            </div>
         <!-- Content Section -->
         <div class="flex flex-col md:flex-row gap-8 mt-8">
             <!-- Download Box -->
-            <div class="flex flex-col justify-center items-center bg-[#f7faf9] text-center font-['Spline_Sans',sans-serif] w-full md:w-1/2 p-8 rounded-lg">
+            <div class="flex flex-col justify-center items-center  text-center font-['Spline_Sans',sans-serif] w-full md:w-1/2 p-8 rounded-lg">
                 <div class="mb-4">
                     <div class="w-20 h-20 bg-red-500 rounded-lg"></div>
                 </div>

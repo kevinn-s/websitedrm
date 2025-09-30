@@ -104,24 +104,33 @@ class User extends Authenticatable
         if($this->onOfficialAlumniData())
         {
             $this->status = Status::VERIFIED;
-            if(!$this->education){
-                $officialAlumni = OfficialAlumni::where("student_id_1", "LIKE", $this->student_id)->get();
-                $this->alumni()->create(
-                    [
-                        "name" => $this->name,
-                        "student_id" => $this->student_id,
-                        "email" => $this->email,
-                    ]
-                )->education()->create([
-                    "graduation_batch" => $officialAlumni->graduation_batch,
-                    "legitimation_date" => $officialAlumni->legitimation_date
+            
+            // Check if alumni record exists for this user
+            $alumniRecord = $this->alumni;
+            if (!$alumniRecord) {
+                // Create alumni record if it doesn't exist
+                $alumniRecord = $this->alumni()->create([
+                    "name" => $this->name,
+                    "student_id" => $this->student_id,
+                    "email" => $this->email,
                 ]);
             }
+            
+            // Check if education record exists for the alumni
+            if (!$alumniRecord->education) {
+                $officialAlumni = OfficialAlumni::where("student_id_1", "LIKE", $this->student_id)->first();
+                if ($officialAlumni) {
+                    $alumniRecord->education()->create([
+                        "graduation_batch" => $officialAlumni->graduation_batch,
+                        "legitimation_date" => $officialAlumni->legitimation_date
+                    ]);
+                }
+            }
+            
             return $this->save();
         } else {
             return false;
         }
-
     }
     public function reject()
     {
@@ -132,7 +141,7 @@ class User extends Authenticatable
     public function onOfficialAlumniData(){
         if(
             OfficialAlumni::where("student_id_1", "LIKE", $this->student_id)->exists() &&
-            OfficialAlumni::where("name", $this->name)->exists()
+            OfficialAlumni::where("student_name", $this->name)->exists()
         ){
             return true;
         }

@@ -1,0 +1,1 @@
+<livewire:alumni.edit :alumni="$alumni"></livewire:alumni.edit>

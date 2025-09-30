@@ -1,17 +1,28 @@
 <x-authentication-layout>
-    <h1 class="text-3xl text-gray-800 dark:text-gray-100 font-bold mb-6">{{ __('Create your Account') }}</h1>
+             <div class="text-xl font-semibold text-gray-800 mb-4 ">
+            Daftar Menjadi Anggota Asosiasi Alumni DRM Binus University
+        </div>
+
+        <div class="text-sm text-gray-600 mb-6">
+            Lengkapi data Anda. Akun yang baru terdaftar akan diverifikasi terlebih dahulu oleh admin sebelum dapat digunakan.
+        </div>
     <!-- Form -->
     <form method="POST" action="{{ route('register') }}">
         @csrf
         <div class="space-y-4">
             <div>
-                <x-label for="name">{{ __('Full Name') }} <span class="text-red-500">*</span></x-label>
+                <x-label for="name">{{ __('Nama Lengkap') }} <span class="text-red-500">*</span></x-label>
                 <x-input id="name" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             </div>
 
             <div>
-                <x-label for="email">{{ __('Email Address') }} <span class="text-red-500">*</span></x-label>
+                <x-label for="email">{{ __('Email') }} <span class="text-red-500">*</span></x-label>
                 <x-input id="email" type="email" name="email" :value="old('email')" required />
+            </div>
+
+            <div>
+                <x-label for="name">{{ __('NIM') }} <span class="text-red-500">*</span></x-label>
+                <x-input id="nim" type="text" name="nim" :value="old('nim')" required autofocus autocomplete="nim" />
             </div>
 
             <div>
@@ -26,16 +37,13 @@
         </div>
         <div class="flex items-center justify-between mt-6">
             <div class="mr-1">
-                <label class="flex items-center" name="newsletter" id="newsletter">
-                    <input type="checkbox" class="form-checkbox" />
-                    <span class="text-sm ml-2">Email me about product news.</span>
-                </label>
+              
             </div>
-            <x-button>
-                {{ __('Sign Up') }}
+            <x-button class="bg-primary-green rounded-none w-full">
+                {{ __('Daftar') }}
             </x-button>                
         </div>
-            @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
+            <!-- @if (Laravel\Jetstream\Jetstream::hasTermsAndPrivacyPolicyFeature())
                 <div class="mt-6">
                     <label class="flex items-start">
                         <input type="checkbox" class="form-checkbox mt-1" name="terms" id="terms" />
@@ -47,13 +55,13 @@
                         </span>
                     </label>
                 </div>
-            @endif        
+            @endif         -->
     </form>
     <x-validation-errors class="mt-4" />  
     <!-- Footer -->
     <div class="pt-5 mt-6 border-t border-gray-100 dark:border-gray-700/60">
         <div class="text-sm">
-            {{ __('Have an account?') }} <a class="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="{{ route('login') }}">{{ __('Sign In') }}</a>
+            {{ __('Sudah memiliki akun?') }} <a class="font-medium text-violet-500 hover:text-violet-600 dark:hover:text-violet-400" href="{{ route('login') }}">{{ __('Masuk') }}</a>
         </div>
     </div>
 </x-authentication-layout>

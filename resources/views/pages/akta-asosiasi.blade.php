@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="mx-[1rem] mt-[4rem] pb-[4rem] md:mx-[8rem] md:mt-[4rem] md:mb-[12rem] pt-10 md:pt-20">
+    <div class="">
         <x-breadcrumb :items="[
             ['label' => 'Beranda', 'url' => route('homepage')],
             ['label' => 'Kegiatan', 'url' => route('kegiatan')],
@@ -8,7 +8,7 @@
             <div class="flex flex-col mb-4">
                 <!-- Icon -->
                                 <div class="w-10 h-10 mb-2" style="
-                background-image: url('{{ url('/images/icon_page.webp') }}');
+                background-image: url('{{ url('/images/page_icon.webp') }}');
                 background-size: cover;
                 background-position: -160px 0px;
                 background-repeat: no-repeat;
@@ -30,8 +30,8 @@ Dokumen resmi pembentukan Asosiasi Alumni DRM BINUS University                </
         <!-- Content Section -->
         <div class="flex flex-col md:flex-row justify-between mt-8">
             <div>
-                <div  class="flex md:flex-none flex-col items-center w-full">
-                    <img class="w-40 h-auto mb-6" src="images/Logo_DRM.jpg" alt="Logo Asosiasi Alumni">
+                <div  class="flex md:flex-none flex-col items-center md:items-start w-full md:gap-4">
+                    <img class="w-40 h-auto mb-6" src="images/drm.webp" alt="Logo Asosiasi Alumni">
 
                     <div class= mb-6">
                         <div class="font-['Spline_Sans',sans-serif] text-[18px] font-bold leading-5 text-center md:text-left">ASOSIASI ALUMNI</div>
@@ -81,7 +81,7 @@ Dokumen resmi pembentukan Asosiasi Alumni DRM BINUS University                </
             </div>
 
             <!-- Download Box -->
-            <div class="flex flex-col justify-center items-center bg-[#f7faf9] text-center font-['Spline_Sans',sans-serif] w-full md:w-1/2 p-8 rounded-lg">
+            <div class="flex flex-col justify-center items-center text-center font-['Spline_Sans',sans-serif] w-full md:w-1/2 p-8 rounded-lg">
                 <div class="mb-4">
                     <div class="w-20 h-20 bg-red-500 rounded-lg"></div>
                 </div>

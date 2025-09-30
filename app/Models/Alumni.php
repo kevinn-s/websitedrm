@@ -119,4 +119,14 @@ public function scopeSearchAlumniName($query, $name)
     {
         return $this->belongsTo(User::class, 'student_id', 'student_id');
     }
+
+    public function onOfficialAlumniData(){
+        if(
+            OfficialAlumni::where("student_id_1", "LIKE", $this->student_id)->exists() &&
+            OfficialAlumni::where("student_name", $this->name)->exists()
+        ){
+            return true;
+        }
+        return false;
+    }
 }
