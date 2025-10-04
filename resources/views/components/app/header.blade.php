@@ -63,7 +63,7 @@
             </div>
         </div>
         <div class=" bg-white absolute w-full h-30 ml-14 pt-3 pb-2 [clip-path:inset(0_7.0rem_0_0)] flex"
-            x-transition.opacity x-show="tentangHover" @mouseleave="tentangHover = false">
+            x-transition.opacity x-show="tentangHover" @mouseleave="tentangHover = false" x-cloak>
             <div class="w-[25%] text-sm pl-4 pb-4 border-r-[1px] border-t-slate-600 border-solid">
                 <div class="text-base font-semibold text-green-900 mb-2">Tentang Kami</div>
                 <div class="flex flex-col gap-2 pl-[0.8rem]">
@@ -134,7 +134,7 @@
                             
                             <div x-show="aboutUsOpen" x-transition class="absolute left-4 right-4 top-full z-20 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
                                 <!-- Tentang Kami Section -->
-                                <div class="border-b border-gray-200">
+                                <div class="border-b -gray-200">
                                     <a href="{{ url('/visi-misi') }}" class="block px-4 py-3 text-base text-gray-700 hover:bg-gray-50 hover:text-[#03563D] transition-all duration-200">
                                         Visi Misi
                                     </a>

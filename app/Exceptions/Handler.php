@@ -25,6 +25,13 @@ class Handler extends ExceptionHandler
     {
         $this->reportable(function (Throwable $e) {
             //
+            
         });
+
+           $this->renderable(function (Throwable $e) {
+                if ($e instanceof TokenMismatchException) {
+                    return redirect()->route('login'); // Replace 'login' with your actual login route name
+                }
+            });
     }
 }

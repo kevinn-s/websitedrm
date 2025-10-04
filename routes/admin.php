@@ -6,7 +6,6 @@ use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 Route::middleware(['admin-web'])->prefix('admin')->name('admin.')->group(function () {
     Route::middleware('guest:admin')->group(function () {
-        Route::redirect('/', '/admin/login');
         Route::view('/login', "auth.admin.login")->name('login.form');
         Route::post('/login', [AdminAuthenticationController::class, 'login'])->name('login');
     });

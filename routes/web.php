@@ -35,8 +35,11 @@ Route::view('/struktur-asosiasi-alumni', 'pages.tentang.struktur-asosiasi')->nam
 Route::view('/kegiatan', 'pages.kegiatan')->name('kegiatan');
 Route::view('/kontak-kami', 'pages.kontak-kami')->name('kontak');
 Route::view('/tujuan', 'pages.tujuan')->name('tujuan');
+    Route::view("/rekening", 'pages.rekening.rekening-asosiasi')->name("rekening");
 
 // Route::view('/tentang-kami', 'pages.tentang-kami')->name('tentang-kami');
+Route::view("/test", "livewire.kegiatan.details");
+Route::view("/dd", "pages.dd");
 
 Route::middleware(['web', 'auth:sanctum', 'verified'])->group(function () {
     // Fix: Use prefix() and name() separately, then define routes inside
@@ -50,7 +53,6 @@ Route::middleware(['web', 'auth:sanctum', 'verified'])->group(function () {
         });
     });
     
-    Route::view("/rekening", 'pages.rekening.rekening-asosiasi')->name("rekening");
     
      Route::prefix("download")->name("download.")->group(function () {
         Route::get('/akta', function () {

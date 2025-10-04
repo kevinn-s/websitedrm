@@ -56,6 +56,7 @@ class AlumniTable extends Component
         
     }
 
+
     public function callClearQuery() {
         $this->search = '';
         $this->status = null;

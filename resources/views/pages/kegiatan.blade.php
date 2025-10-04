@@ -1,174 +1,140 @@
 <x-app-layout>
-    <div class="flex flex-col">
-        <x-breadcrumb :items="[
-            ['label' => 'Beranda', 'url' => route('homepage')],
-            ['label' => 'Kegiatan', 'url' => route('kegiatan')],
-        ]" />
-          <div>
-            <div class="flex flex-col mb-4">
-        
-                <div class="w-10 h-10 mb-2" style="
-                background-image: url('{{ url('/images/page_icon.webp') }}');
-                background-size: cover;
-                background-position: left;
-                background-repeat: no-repeat;
-                ">
-                </div>
-
-                <h2 class="mb-4 tracking-[-1px] font-bold flex gap-3 font-['Open_Sans'] text-[36px] text-[#03563D]">
-                    Kegiatan
-                </h2>
-        
-                <p class="w-[100%] md:w-[720px] pb-8 text-[18px] md:text-[20px] md:leading-[30px] font-medium border-b">
-                    Rangkaian aktivitas dan program yang memperkuat jaringan alumni
-                </p>
+    <x-page-title :breadcrumbs="[
+        ['label' => 'Beranda', 'url' => route('homepage')],
+        ['label' => 'Kegiatan', 'url' => route('kegiatan')],
+    ]" title="Kegiatan" background="bg-black"></x-page-title>
+    <div class="px-36 pb-32 bg-white">
+        <div class="">
+            <div class="py-10 text-lg space-y-8 w-[70%]">
+                <div>Events are an avenue for you to connect with your global alumni community and follow your ongoing
+                    passion for learning <br>
+                    See what's on in person or online.</div>
             </div>
-
-        </div>
-
-        <div class="flex flex-col gap-[4rem]">
-            <div>
-                <div>
-                    <div class="text-2xl tracking-[-1px] font-bold pl-2 border-l-[0.15rem] border-black">
-                        Kegiatan Mendatang
+            <div class="space-y-12 flex justify-between">
+                <div class=" w-[65%]">
+                    <div class="">
+                        <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
+                            Kegiatan Mendatang
+                        </div>
+                        <div class="my-4 space-y-8">
+                            <x-list-kegiatan></x-list-kegiatan>
+                            <x-list-kegiatan></x-list-kegiatan>
+                        </div>
                     </div>
-                    <div class="text-gray-700 md:w-[60%] leading-[1.3rem] mb-5 mt-4 font-[600]">
-                        Daftar agenda dan acara yang akan diselenggarakan oleh asosiasi alumni dalam waktu dekat.
+                    <div>
+                        <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
+                            Kegiatan Tahunan
+                        </div>
+                        <div class="my-4 space-y-8">
+                            <x-list-kegiatan></x-list-kegiatan>
+                            <x-list-kegiatan></x-list-kegiatan>
+                        </div>
                     </div>
                 </div>
-             
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    @php
-                        $kegiatanMendatang = [
-                            [
-                                'month' => 'September',
-                                'year' => '2024',
-                                'title' => 'DRM Berbagi',
-                                'time' => '17:00 - 18:00',
-                                'location' => 'Hotel Ciputra',
-                                'color' => '#544BAB',
-                                'image' => url('/images/kegiatan1.jpg')
-                            ],
-                            [
-                                'month' => 'October',
-                                'year' => '2024',
-                                'title' => 'Workshop Pengembangan Karir Alumni',
-                                'time' => '09:00 - 15:00',
-                                'location' => 'Auditorium Kampus',
-                                'color' => '#02743D',
-                                'image' => url('/images/kegiatan2.jpg')
-                            ],
-                            [
-                                'month' => 'November',
-                                'year' => '2024',
-                                'title' => 'Seminar Entrepreneurship & Innovation',
-                                'time' => '13:00 - 17:00',
-                                'location' => 'Jakarta Convention Center',
-                                'color' => '#C09831',
-                                'image' => url('/images/kegiatan3.jpg')
-                            ]
-                        ];
-                    @endphp
 
-                    @foreach($kegiatanMendatang as $kegiatan)
-                        <div class="h-[380px] md:h-[420px] text-white font-['Open_Sans'] py-8 flex flex-col justify-between relative"
-                             style="background-image: url('{{ $kegiatan['image'] }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-                            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                            
-                            <div class="relative z-10 flex justify-end px-8">
-                                <div class="w-24 flex flex-col font-bold">
-                                    <div class="text-[18px] text-center">{{ $kegiatan['month'] }}</div>
-                                    <div class="text-[30px] leading-8 text-center">{{ $kegiatan['year'] }}</div>
-                                </div>
-                            </div>
+                <div class="font-bold py-8 w-[30%]" 
+                     x-data="{ 
+                         searchQuery: '',
+                         dropdownOpen: false, 
+                         selectedFilter: 'Tipe Kegiatan',
+                         selectedValue: '',
+                         placeholder: 'Tipe Kegiatan',
+                         options: [
+                             { label: 'Kegiatan mendatang', value: 'upcoming' },
+                             { label: 'Kegiatan tahunan', value: 'annual' }
+                         ],
+                         selectOption(option) {
+                             this.selectedFilter = option.label;
+                             this.selectedValue = option.value;
+                             this.dropdownOpen = false;
+                             console.log('Selected:', option);
+                         },
+                         resetFilters() {
+                             this.searchQuery = '';
+                             this.selectedFilter = this.placeholder;
+                             this.selectedValue = '';
+                             this.dropdownOpen = false;
+                             console.log('Filters reset');
+                         }
+                     }">
+                    <div class="text-xl">Filter by</div>
+                    <div class="space-y-4 my-6">
+                        <x-input x-model="searchQuery" placeholder="Search" class="text-[15px] font-semibold px-4 py-2 border-gray-300 "></x-input>
 
-                            <div class="relative z-10 flex flex-col justify-end">
-                     
-                                <div class="px-8 py-6 font-bold text-[18px] tracking-[-0.5px] leading-7">
-                                    {{ $kegiatan['title'] }}
-                                </div>
+                        <!-- Alpine.js Dropdown -->
+                        <div class="relative inline-block w-full" 
+                             @click.outside="dropdownOpen = false">
+                             
+                            <!-- Dropdown Button -->
+                            <button @click="dropdownOpen = !dropdownOpen"
+                                class="w-full text-[15px] font-semibold flex items-center justify-between bg-white border border-gray-300 px-4 py-2 text-left outline-0 focus:outline-none"
+                                :class="{ 'text-gray-500': selectedValue === '', 'text-gray-900': selectedValue !== '' }">
+                                <span x-text="selectedFilter"></span>
+                                <svg class="inline ml-2 w-4 h-4 transition-transform duration-200" 
+                                     :class="{ 'rotate-180': dropdownOpen }"
+                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
 
-                                <div class="px-8 text-[14px] font-semibold tracking-[0.5px]">
-                                    <div class="leading-4">{{ $kegiatan['time'] }}</div>
-                                    <div>{{ $kegiatan['location'] }}</div>
-                                </div>
+                            <!-- Dropdown Menu -->
+                            <div x-show="dropdownOpen" 
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="z-30 text-[15px] font-normal absolute top-full left-0 w-full bg-white border border-gray-300 shadow-lg">
+                                
+                                <template x-for="(option, index) in options" :key="index">
+                                    <div @click="selectOption(option)"
+                                         class="px-4 py-2 cursor-pointer transition-colors duration-150"
+                                         :class="{ 
+                                             'bg-gray-100 border-l-4 border-primary-gold': selectedValue === option.value,
+                                             'hover:bg-gray-50': selectedValue !== option.value 
+                                         }"
+                                         x-text="option.label">
+                                    </div>
+                                </template>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <div>
-                <div>
-                    <div class="text-2xl tracking-[-1px] font-bold pl-2 border-l-[0.15rem] border-black">
-                        Kegiatan tahunan
+                        
+                        <x-button @click="resetFilters()" class="relative z-20 mt-4 px-6" variant="primary-reverse">Reset Filter</x-button>
                     </div>
-                    <div class="text-gray-700 md:w-[60%] leading-[1.3rem] mb-5 mt-4 font-[600]">
-                        Kegiatan tahunan yang rutin diselenggarakan sebagai ajang temu alumni asosiasi.
-                    </div>
-                </div>
-  
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    @php
-                        $kegiatanTahunan = [
-                            [
-                                'month' => 'December',
-                                'year' => '2024',
-                                'title' => 'Reuni Akbar Alumni DRM 2024',
-                                'time' => '18:00 - 22:00',
-                                'location' => 'Grand Ballroom Hotel Shangri-La',
-                                'color' => '#8B4513',
-                                'image' => url('/images/kegiatan4.jpg')
-                            ],
-                            [
-                                'month' => 'January',
-                                'year' => '2025',
-                                'title' => 'Alumni Awards & Gala Dinner',
-                                'time' => '19:00 - 23:00',
-                                'location' => 'Ritz Carlton Jakarta',
-                                'color' => '#4A5568',
-                                'image' => url('/images/kegiatan5.jpg')
-                            ],
-                            [
-                                'month' => 'March',
-                                'year' => '2025',
-                                'title' => 'Seminar Nasional & Temu Alumni',
-                                'time' => '08:00 - 17:00',
-                                'location' => 'Balai Kartini Jakarta',
-                                'color' => '#E53E3E',
-                                'image' => url('/images/kegiatan6.jpg')
-                            ]
-                        ];
-                    @endphp
-
-                    @foreach($kegiatanTahunan as $kegiatan)
-            
-                        <div class="h-[380px] md:h-[420px] text-white font-['Open_Sans'] py-8 flex flex-col justify-between relative"
-                             style="background-image: url('{{ $kegiatan['image'] }}'); background-size: cover; background-position: center; background-repeat: no-repeat;">
-                            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-                            
-                            <div class="relative z-10 flex justify-end px-8">
-                                <div class="w-24 flex flex-col font-bold">
-                                    <div class="text-[18px] text-center">{{ $kegiatan['month'] }}</div>
-                                    <div class="text-[30px] leading-8 text-center">{{ $kegiatan['year'] }}</div>
-                                </div>
-                            </div>
-
-                            <div class="relative z-10 flex flex-col justify-end">
-                            
-                                <div class="px-8 py-6 font-bold text-[18px] tracking-[-0.5px] leading-7">
-                                    {{ $kegiatan['title'] }}
-                                </div>
-
-                                <div class="px-8 text-[14px] font-semibold tracking-[0.5px]">
-                                    <div class="leading-4">{{ $kegiatan['time'] }}</div>
-                                    <div>{{ $kegiatan['location'] }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 </x-app-layout>
+<!-- 
+                <div>
+                    <div class="text-2xl font-bold w-8/12 pb-2">
+                        Featured Events
+                    </div>
+                    <div class="my-4 flex gap-16">
+                        <div class="w-[30%] h-80">
+                            <img class="h-8/12 w-fullobject-fill" src="https://arb.umn.edu/sites/arb.umn.edu/files/styles/folwell_full/public/2024-07/scarecrows_770x450.jpg?itok=x0zFPMim" alt="">
+                            <div class="font-bold text-lg my-3">
+                                Cultural Commons
+                            </div>
+                            <div class="text-sm">
+                                This year marks a major milestone: the 500th graduate of the Master
+                            </div>
+                        </div>
+
+                         <div class="w-[30%] h-80">
+                            <img class=" h-8/12 w-full object-fill" src="https://arb.umn.edu/sites/arb.umn.edu/files/styles/folwell_full/public/2024-07/scarecrows_770x450.jpg?itok=x0zFPMim" alt="">
+                            <div class="font-bold text-lg my-3">
+                                Cultural Commons
+                            </div>
+                            <div class="text-sm">
+                                This year marks a major milestone: the 500th graduate of the Master
+                            </div>
+                        </div>
+
+                      
+             
+                    </div>
+                </div> -->

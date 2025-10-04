@@ -1,3 +1,6 @@
-@props(['disabled' => false])
+@props(
+    ['disabled' => false,
+     'placeholder' => ''
+    ])
 
-<input {{ $disabled ? 'disabled' : '' }} {!! $attributes->merge(['class' => 'form-input w-full']) !!}>
+<input placeholder='{{ $placeholder }}' {{ $disabled ? 'disabled' : '' }} {!! $attributes->merge(['class' => 'w-full rounded-none']) !!}>

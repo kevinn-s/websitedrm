@@ -90,7 +90,8 @@
   --font-spline: "Spline Sans", sans-serif;
   --font-dm: "DM Sans", sans-serif;
   --font-playfair: "Playfair Display", serif;
-
+  --font-source: "Source Sans 3", sans-serif;
+  
   --text-xs: 0.75rem;
   --text-xs--line-height: 1.5;
   --text-sm: 0.875rem;
@@ -147,11 +148,20 @@
 }
 
 @layer utilities {
+  .text-primary-black {
+    color: #0b0c0c;
+  }
   .text-primary-gold {
     color: rgb(192,152,49);
   }
   .text-primary-green {
     color: #02743D;
+  }
+  .border-primary-green {
+    border-color: #02743D;
+  }
+  .border-primary-gold {
+    border-color: rgb(192,152,49);
   }
   .bg-primary-green {
     background-color: #02743D;
@@ -162,7 +172,7 @@
   .bg-home-banner {
     background-image: url('https://www.umnalumni.org/s/1867/images/gid2/editor/1600x500_billboard/02816-federal-updates-rotator_v01_c03.jpg');
     background-blend-mode: multiply;
-    background-color: rgba(0,0,0,0.3);  
+    background-color: rgba(0,0,0,0.5);  
   }
   @media (max-width: 480px) {
     .bg-home-banner {
@@ -178,3 +188,7 @@
     background-repeat: no-repeat;
   }
 }
+
+    [x-cloak] { 
+        display: none !important; 
+    }

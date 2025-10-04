@@ -29,7 +29,7 @@
                     </a>
                 </div>
             @endif             -->
-            <x-button class="ml-3">
+            <x-button class="ml-3" type="submit">
                 {{ __('Sign in') }}
             </x-button>            
         </div>

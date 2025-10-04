@@ -19,7 +19,7 @@
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -38,7 +38,7 @@
         </script>
     </head>
     <body
-        class="font-inter antialiased bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400"
+        class="font-inter antialiased bg-gray-100 dark:bg-gray-900 text-primary-black dark:text-gray-400"
         :class="{ 'sidebar-expanded': sidebarExpanded }"
         x-data="{ sidebarOpen: false, sidebarExpanded: localStorage.getItem('sidebar-expanded') == 'true' }"
         x-init="$watch('sidebarExpanded', value => localStorage.setItem('sidebar-expanded', value))"    
@@ -55,21 +55,15 @@
         <!-- Page wrapper -->
         <div class="flex h-[100dvh] overflow-hidden">
 
-            <x-app.sidebar :variant="$attributes['sidebarVariant']" />
-
             <!-- Content area -->
             <div class="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden @if($attributes['background']){{ $attributes['background'] }}@endif" x-ref="contentarea">
 
                 <x-app.header :variant="$attributes['headerVariant']" />
 
-                <div class="mx-[1rem] md:mx-[8rem] md:pb-16">
-
-                    <main class="grow my-10 md:my-0">
+                    <main class="grow px-12">
                         {{ $slot }}
                     </main>
                 
-                </div>
-
                 <x-app.footer></x-app.footer>
 
             </div>
