@@ -1,0 +1,155 @@
+   <div class="border-gray-300 border-t-[0.5px] py-2 my-4">
+                Published on: {{ \Carbon\Carbon::parse($publishedDate)->format('d M Y') }}
+            </div>
+
+            <div class="flex items-start">
+                <div class="w-1/3 aspect-[225/297] bg-slate-600 overflow-hidden mr-8">
+                    <img src="{{ asset('storage/' . $image) }}" alt="Event Image" class="w-full h-full object-cover">
+                </div>
+                <div class="w-4/6 h-full">
+
+                    <div class="py-4">
+                        <div class="py-2 space-x-2 flex">
+                            <div class="inline-block px-2.5 text-sm py-0.5 font-semibold text-white bg-primary-green">
+                                @if($type === EventType::Annual)
+                                    Tahunan
+                                @else
+                                    Mendatang
+                                @endif
+                            </div>
+
+                            <div class="inline-block px-2.5 text-sm py-0.5 font-semibold text-white bg-primary-green">
+                                @if($access->type === EventAccessType::HYBRID)
+                                    Hybrid
+                                @elseif($access->type === EventAccessType::PHYSICAL)
+                                    Onsite
+
+                                @else($access->type === EventAccessType::VIRTUAL)
+                                    Online
+                                @endif
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="space-y-4 text-lg font-semibold">
+                        @php
+                            $labelWidth = $type === EventType::Annual->value ? 'w-[50%]' : 'w-[40%]';
+                            $contentWidth = $type === EventType::Annual->value ? 'w-[50%]' : 'w-[60%]';
+                        @endphp
+
+                        <!-- Date Row -->
+                        <div class="flex items-center justify-center w-full">
+                            <div class="{{ $labelWidth }} flex items-center">
+                                <span class="mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
+                                        <g fill="none">
+                                            <path fill="#304850"
+                                                d="M2 9c0-1.886 0-2.828.586-3.414C3.172 5 4.114 5 6 5h12c1.886 0 2.828 0 3.414.586C22 6.172 22 7.114 22 9c0 .471 0 .707-.146.854C21.707 10 21.47 10 21 10H3c-.471 0-.707 0-.854-.146C2 9.707 2 9.47 2 9m0 9c0 1.886 0 2.828.586 3.414C3.172 22 4.114 22 6 22h12c1.886 0 2.828 0 3.414-.586C22 20.828 22 19.886 22 18v-5c0-.471 0-.707-.146-.854C21.707 12 21.47 12 21 12H3c-.471 0-.707 0-.854.146C2 12.293 2 12.53 2 13z" />
+                                            <path stroke="#304850" stroke-linecap="round" stroke-width="2"
+                                                d="M7 3v3m10-3v3" />
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span>
+                                    @if($type === EventType::Annual->value)
+                                        Pelaksanaan Berikutnya:
+                                    @else
+                                        Date:
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="{{ $contentWidth }} font-normal">
+                                <span>
+                                    @if($type === EventType::Annual->value)
+                                        {{ $date ?? '' }}
+                                    @else
+                                        {{ $date ? $date->format('l j F Y') : '' }}
+                                    @endif
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Time Row (Only for Scheduled Events) -->
+                        @if($type === EventType::Scheduled)
+                            <div class="flex items-center w-full">
+                                <div class="{{ $labelWidth }} flex items-center">
+                                    <span class="mr-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
+                                            viewBox="0 0 717 717">
+                                            <path fill="#304850"
+                                                d="M358 717C160 717 0 557 0 359S160 0 358 0s359 161 359 359s-161 358-359 358zm0-628C210 89 90 211 90 359s120 268 268 268s270-120 270-268S506 89 358 89zm97 407l-127-93c-9-7-18-22-18-34V166c0-11 10-20 22-20h42c11 0 20 9 20 20v160c0 12 9 27 18 34l93 67c9 7 11 21 4 30l-25 34c-7 9-20 11-29 5z" />
+                                        </svg>
+                                    </span>
+                                    <span>Time:</span>
+                                </div>
+                                <div class="{{ $contentWidth }} font-normal">
+                                    <span>{{ $time ?? '' }}</span>
+                                </div>
+                            </div>
+                        @endif
+
+
+
+                        <!-- Location Row -->
+                        <div class="flex  w-full">
+                            <div class="{{ $labelWidth }} flex">
+                                <span class="mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 20 20">
+                                        <path fill="#304850"
+                                            d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4a2 2 0 0 0 0 4z" />
+                                    </svg>
+                                </span>
+                                <span>
+                                    @if($type === EventType::Annual)
+                                        Tempat Pelaksanaan:
+                                    @else
+                                        Location:
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="{{ $contentWidth }} font-normal">
+                                @if($access->location)
+                                    <a href="{{ $access->map_url ?? '' }}">{{ $access->location }}
+                                    </a>
+                                @elseif($access->meeting_url)
+                                    <a href="{{ $access->meeting_url ?? '' }}">
+                                        Online Meeting
+                                        @if($access->meeting_passcode)
+                                            | PASSCODE : {{ $access->meeting_passcode }}
+                                        @endif
+                                    </a>
+                                @else
+                                    <p class="font-bold">-</p>
+                                @endif
+                            </div>
+
+                        </div>
+
+                         
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="w-11/12 space-y-4 mt-10 font-source font-semibold text-gray-900 text-lg leading-7">
+                <div class="text-lg font-bold text-black">
+                    PIONEERING THE NEXT ERA OF BEAUTY: WHERE INNOVATION AND TRANSFORMATION CONVERGE
+                </div>
+                <div>
+                    Cosmobeauté Indonesia elevates its legacy by expanding its platform to celebrate innovation and
+                    transformation in the beauty industry. This highly anticipated trade exhibition will be held on 9 –
+                    11
+                    October 2025 at Hall 5,6,7,8 - Indonesia Convention Exhibition (ICE), BSD City, Indonesia.
+                    Cosmobeauté
+                    Indonesia showcases groundbreaking advancements, providing exhibitors and attendees with an
+                    unparalleled
+                    opportunity to engage with the next wave of industry-defining products and services. Designed as
+                    both a
+                    business hub and a collaborative space, the exhibition invites key players and professionals to
+                    experience the convergence of creativity, technology, and transformation, shaping the future of
+                    beauty
+                    in a rapidly evolving global landscape.
+                </div>
+            </div>
