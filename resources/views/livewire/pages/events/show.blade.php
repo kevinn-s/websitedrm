@@ -50,11 +50,18 @@ new #[Layout('layouts.app')] class extends Component {
         $this->access = $event->accesses;
     }
 }; ?>
-<div class="px-24 py-10 bg-white font-source">
-    <div class="w-9/12 flex items-start gap-8">
 
-        <div class="w-1/2 aspect-[225/350] bg-slate-600 overflow-hidden gap-8">
-            <img src="{{ asset('storage/' . $image) }}" alt="Event Image" class="w-full h-full object-cover">
+
+<div class="px-24 w-9/12  py-10 bg-white font-inter">
+    <div class="flex items-start gap-8">
+
+        <div class="w-1/2 overflow-hidden gap-8">
+            <div class="aspect-[225/350] bg-slate-600 ">
+                <img src="{{ asset('storage/' . $image) }}" alt="Event Image" class="w-full h-full object-cover">
+            </div>
+            <div class="my-8 py-8 w-full border-t-gray-300 border-t-2">
+               <div class="text-2xl font-semibold">Share</div>
+            </div>
         </div>
 
         <div class="w-full">
@@ -100,8 +107,6 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
                 @if($type === EventType::Scheduled)
                     <div class="flex">
-
-
                         <div class="{{ $labelWidth }} flex">
                             <span class="mr-3">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 717 717">
@@ -132,22 +137,65 @@ new #[Layout('layouts.app')] class extends Component {
 
                     <div class="{{ $contentWidth }}">
                         {{ match ($access->type) {
-    EventAccessType::PHYSICAL => 'Onsite',
-    EventAccessType::VIRTUAL => 'Virtual',
-    EventAccessType::HYBRID => 'Hybrid',
-    default => 'Unknown',
-} }}
+                            EventAccessType::PHYSICAL => 'Onsite',
+                            EventAccessType::VIRTUAL => 'Virtual',
+                            EventAccessType::HYBRID => 'Hybrid',
+                            default => 'Unknown',
+                        } }}
+                    </div>
+                </div>
+
+                <div class="flex">
+                    <div class="{{ $labelWidth }} flex">
+                        <span class="mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 20 20">
+                                <path fill="#304850"
+                                    d="M10 20S3 10.87 3 7a7 7 0 1 1 14 0c0 3.87-7 13-7 13zm0-11a2 2 0 1 0 0-4a2 2 0 0 0 0 4z" />
+                            </svg>
+                        </span>
+                        <span>
+                            Alamat:
+                        </span>
                     </div>
 
+                    <div class="{{ $contentWidth }}">
+                        {!! match ($access->type) {
+                        EventAccessType::PHYSICAL => e($access->address),
+                        EventAccessType::VIRTUAL => '<a href="' . e($access->meeting_url) . '">Klik untuk join virtual meeting</a>',
+                        EventAccessType::HYBRID => '<strong>Lokasi:</strong> ' . e($access->address) . '<br><strong>Virtual:</strong> <a href="' . e($access->meeting_url) . '">Klik untuk join virtual meeting</a>',
+                        default => 'Unknown',
+                    } !!}
+                    </div>
                 </div>
 
             </div>
-                <div class="mt-8">
-                    <button
-                        class="border border-gray-400 border-b-4 border-b-gray-600 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 hover:border-gray-500 transition-colors">
-                        Report a problem with this page
-                    </button>
+            <div class="my-7">
+                <button
+                    class="border border-gray-400 font-semibold border-b-4 border-b-primary-green bg-white px-4 py-1 text-primary-green hover:bg-gray-100 hover:border-gray-500 transition-colors">
+                    Bergabung dalam kegiatan
+                </button>
+            </div>
+            <div class="prose max-w-none">
+                 <!-- {!! $description !!} -->
+                <div class=" font-bold pb-2 text-black">
+                    PIONEERING THE NEXT ERA OF BEAUTY: WHERE INNOVATION AND TRANSFORMATION CONVERGE
                 </div>
+                <div class="text-[15px] font-semibold text-gray-900">
+                    Cosmobeauté Indonesia elevates its legacy by expanding its platform to celebrate innovation and
+                    transformation in the beauty industry. This highly anticipated trade exhibition will be held on 9 –
+                    11
+                    October 2025 at Hall 5,6,7,8 - Indonesia Convention Exhibition (ICE), BSD City, Indonesia.
+                    Cosmobeauté
+                    Indonesia showcases groundbreaking advancements, providing exhibitors and attendees with an
+                    unparalleled
+                    opportunity to engage with the next wave of industry-defining products and services. Designed as
+                    both a
+                    business hub and a collaborative space, the exhibition invites key players and professionals to
+                    experience the convergence of creativity, technology, and transformation, shaping the future of
+                    beauty
+                    in a rapidly evolving global landscape.
+                </div>
+            </div>
         </div>
 
 

@@ -153,3 +153,6 @@
                     in a rapidly evolving global landscape.
                 </div>
             </div>
+
+
+            {{ dd(Carbon::parse($date)->format('M Y')) }}

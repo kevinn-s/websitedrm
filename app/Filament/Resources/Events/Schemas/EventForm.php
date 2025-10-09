@@ -6,6 +6,7 @@ use App\Enums\EventType;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -40,7 +41,7 @@ class EventForm
                                 TextInput::make('time'),
                                 TextInput::make('annual_date'),
                                 TextInput::make('speaker_name'),
-                                Textarea::make('description')
+                                RichEditor::make('description')
                                     ->columnSpanFull()
                             ])
                     ])->columnSpanFull(),

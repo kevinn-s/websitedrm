@@ -1,13 +1,30 @@
+@php
+use App\Enums\EventAccessType;
+@endphp
 <div class="flex gap-8">
+
     <div
         class="text-xl font-extrabold tracking-wide leading-7 text-white text-center w-20 h-20 px-4 py-3  bg-primary-green">
-        11 <br>
-        SEP
+        {{ Carbon\Carbon::parse($date)->format('d') }}<br>
+        {{ Carbon\Carbon::parse($date)->format('M') }}
     </div>
-    <div class="py-4">
-        <div class="mb-2 font-bold text-[15px]">ONLINE</div>
-        <div class="text-2xl font-bold h-20">
-            Monthly gym climbing night, jointly with the Dartmouth Club of Utah
+    <div class="py-2 select-none cursor-pointer" @click="window.location.href='{{ route('kegiatan.show', Str::slug($title)) }}'">
+        <div class="mb-2 font-bold text-[15px] uppercase"> 
+             {{ match ($access->type) {
+                            EventAccessType::PHYSICAL => 
+                               'Onsite'
+                            ,
+                            EventAccessType::VIRTUAL => '
+                                Online
+                            ',
+                            EventAccessType::HYBRID => 
+                                'Hybrid'
+                            ,
+                            default => 'Unknown',
+                        } }}
+        </div>
+        <div class="text-2xl font-bold pb-4">
+          {{$title}}
         </div>
         <div class="border-b-[0.3px] py-2 border-t-[0.3px] space-y-4 text-gray-800 border-b-gray-200 border-t-gray-200">
             <div class="flex items-center w-full">
@@ -22,7 +39,7 @@
                         </svg>
                     </span>
                 </div>
-                <span class="text-sm leading-4">Wednesday 1 October 2025</span>
+                <span class="text-sm leading-4">{{ Carbon\Carbon::parse($date)->format('l, d F Y  ') }}</span>
             </div>
             <div class="flex items-center w-full">
                 <div class="flex items-center">
@@ -33,12 +50,24 @@
                         </svg>
                     </span>
                 </div>
-                <span class="text-sm leading-4">Momentum Millcreek; possibly other gyms going forwardCity: Salt Lake
-                    City</span>
+                <span class="text-sm leading-4">
+                     {{ match ($access->type) {
+                            EventAccessType::PHYSICAL => 
+                                $access->address ?? 'Lokasi belum ditentukan'
+                            ,
+                            EventAccessType::VIRTUAL => '
+                                Online Meeting
+                            ',
+                            EventAccessType::HYBRID => 
+                                 $access->address . ' | Online Meeting Available'
+                            ,
+                            default => 'Unknown',
+                        } }}
+                </span>
             </div>
         </div>
-        <div class="my-4 text-lg">
-            This year marks a major milestone: the 500th graduate of the Master of Psychology (Educational and ...
+        <div class="my-4">
+            {!! \Illuminate\Support\Str::words(strip_tags($description), 18, '...') !!}
         </div>
     </div>
 </div>

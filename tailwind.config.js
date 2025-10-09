@@ -1,5 +1,6 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
+import typography from '@tailwindcss/typography';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -17,10 +18,12 @@ export default {
                 // add this line (use any hex you prefer)
             },
             fontFamily: {
-                source: ['Source Sans 3', 'sans-serif']
+                source: ['Source Sans 3', 'sans-serif'],
+                inter: ['Inter', 'sans-serif'],
+                sans: ['Open Sans', 'sans-serif']
             },
         },
     },
 
-    plugins: [forms],
+    plugins: [forms, typography],
 };

@@ -2,16 +2,81 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Computed;
+use App\Models\Event;
 
 new #[Layout('layouts.app')] class extends Component
 {
     public string $search = '';
-    public ?string $type = null; // Use string to match frontend values
+    public ?string $type = null;
 
     public function resetFilters(): void
     {
         $this->search = '';
         $this->type = null;
+    }
+
+    #[Computed]
+    public function scheduledEvents()
+    {
+        return Event::query()
+            ->where('type', 'scheduled')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('title', 'like', '%' . $this->search . '%')
+                      ->orWhere('description', 'like', '%' . $this->search . '%')
+                      ->orWhere('location', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->type === 'scheduled', fn($query) => $query)
+            ->when($this->type === null || $this->type === '', fn($query) => $query)
+            ->orderBy('date', 'asc')
+            ->get();
+    }
+
+    #[Computed]
+    public function annualEvents()
+    {
+        return Event::query()
+            ->where('type', 'annual')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('title', 'like', '%' . $this->search . '%')
+                      ->orWhere('description', 'like', '%' . $this->search . '%')
+                      ->orWhere('location', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->type === 'annual', fn($query) => $query)
+            ->when($this->type === null || $this->type === '', fn($query) => $query)
+            ->orderBy('date', 'asc')
+            ->get();
+    }
+
+    #[Computed]
+    public function filteredEvents()
+    {
+        $query = Event::query()
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('title', 'like', '%' . $this->search . '%')
+                      ->orWhere('description', 'like', '%' . $this->search . '%')
+                      ->orWhere('location', 'like', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->type, function ($query) {
+                $query->where('type', $this->type);
+            })
+            ->orderBy('date', 'asc');
+
+        return $query->get();
+    }
+
+    public function with(): array
+    {
+        return [
+            'scheduledEvents' => $this->scheduledEvents,
+            'annualEvents' => $this->annualEvents,
+        ];
     }
 }
 ?>
@@ -28,7 +93,6 @@ new #[Layout('layouts.app')] class extends Component
         this.selectedValue = value;
         this.selectedFilter = label;
         this.dropdownOpen = false;
-        // Dispatch to Livewire
         $wire.set('type', value);
     },
     resetFilters() {
@@ -36,7 +100,7 @@ new #[Layout('layouts.app')] class extends Component
         this.selectedFilter = 'All Events';
         $wire.resetFilters();
     }
-}">
+}" class="font-inter">
     <x-page-title 
         title="Kegiatan" 
         :breadcrumbs="[
@@ -55,34 +119,78 @@ new #[Layout('layouts.app')] class extends Component
             </div>
 
             <div class="space-y-12 flex justify-between">
-                <div class="w-[65%]">
-                    <div>
-                        <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
-                            Kegiatan Mendatang
+                <div class="w-[65%] space-y-12">
+                    @if($type === null || $type === '' || $type === 'scheduled')
+                        <div>
+                            <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
+                                Kegiatan Mendatang
+                            </div>
+                            <div class="my-4 space-y-8">
+                                @forelse($this->scheduledEvents as $event)
+                        
+                                    <x-events.card 
+                                        :event="$event"
+                                        :title="$event->title"
+                                        :description="$event->description"
+                                        :date="$event->date"
+                                        :location="$event->location"
+                                        :image="$event->image"
+                                        :access="$event->accesses"
+                                    />
+                                @empty
+                                    <div class="text-center py-8 text-gray-500">
+                                        Tidak ada kegiatan mendatang yang ditemukan.
+                                    </div>
+                                @endforelse
+                            </div>
                         </div>
-                        <div class="my-4 space-y-8">
-                            <x-events.card />
-                            <x-events.card />
+                    @endif
+
+                    @if($type === null || $type === '' || $type === 'annual')
+                        <div >
+                            <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
+                                Kegiatan Tahunan
+                            </div>
+                            <div class="my-4 space-y-8">
+                                @forelse($this->annualEvents as $event)
+                                    <x-events.card 
+                                        :event="$event"
+                                        :title="$event->title"
+                                        :description="$event->description"
+                                        :date="$event->date"
+                                        :location="$event->location"
+                                        :image="$event->image"
+                                        :access="$event->accesses"
+                                    />
+                                @empty
+                                    <div class="text-center py-8 text-gray-500">
+                                        Tidak ada kegiatan tahunan yang ditemukan.
+                                    </div>
+                                @endforelse
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
-                            Kegiatan Tahunan
+                    @endif
+
+                    @if(($type === 'scheduled' && $this->scheduledEvents->isEmpty()) || 
+                        ($type === 'annual' && $this->annualEvents->isEmpty()) ||
+                        (($type === null || $type === '') && $this->scheduledEvents->isEmpty() && $this->annualEvents->isEmpty()))
+                        <div class="text-center py-12">
+                            <div class="text-gray-400 text-lg">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <p class="mt-4">Tidak ada kegiatan yang sesuai dengan filter Anda.</p>
+                            </div>
                         </div>
-                        <div class="my-4 space-y-8">
-                            <x-events.card />
-                            <x-events.card />
-                        </div>
-                    </div>
+                    @endif
                 </div>
 
-                <div class="font-bold py-8 w-[30%]">
+                <div class="font-bold py-8 w-[30%] hidden md:block">
                     <div class="text-xl">Filter by</div>
                     <div class="space-y-4 my-6">
                         <!-- Search Input -->
                         <x-input 
-                            x-model="searchQuery" 
-                            @input="$wire.set('search', $event.target.value)"
+                            wire:model.live.debounce.300ms="search"
                             placeholder="Search" 
                             class="text-[15px] w-full font-semibold px-4 py-2 border-gray-300"
                         />
@@ -146,4 +254,3 @@ new #[Layout('layouts.app')] class extends Component
         </div>
     </div>
 </div>
-

@@ -1,7 +1,7 @@
 @props([
     'items' => [], // array: ['label' => '', 'url' => '']
 ])
-<nav class="hidden md:block text-[18px] font-inter font-extrabold">
+<nav class="md:text-[18px] font-inter font-extrabold">
     <ol class="flex items-center flex-wrap">
         @foreach ($items as $index => $item)
             <li class="flex items-center">

@@ -18,6 +18,15 @@ Route::view('dashboard', 'dashboard')
 Volt::route('/kegiatan', 'pages.events.index')
     ->name('kegiatan');
 
+Volt::route('/visi-misi', 'pages.about.vision-mission')
+    ->name('visi-misi');
+
+Volt::route('/tujuan', 'pages.about.purpose')
+    ->name('tujuan');
+
+Volt::route('/struktur-organisasi', 'pages.about.boardmembers')
+    ->name('struktur-organisasi');
+
 Route::prefix('/kegiatan')
     ->name('kegiatan.')
     ->group(function(){
