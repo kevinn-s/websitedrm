@@ -12,7 +12,7 @@ new #[Layout('layouts.app')] class extends Component {
         ['label' => 'Beranda', 'url' => ''],
         ['label' => 'Visi dan Misi', 'url' => ''],
     ]" title="Visi dan Misi" background="bg-amber-950"></x-page-title>
-        <div class="px-6 md:px-36 md:pb-32 bg-white">
+        <div class="px-6 md:px-36 pb-32 bg-white">
         <div class="">
             <div class="py-10 text-lg space-y-8 md:w-[70%]">
                 <div>The Alumni Association strives to connect alumni, students <br> and friends of the University to

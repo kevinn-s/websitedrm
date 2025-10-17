@@ -12,11 +12,11 @@ new #[Layout('layouts.app')] class extends Component {
         ['label' => 'Beranda', 'url' => ''],
         ['label' => 'Visi dan Misi', 'url' => ''],
     ]"   title="Tujuan" background="bg-amber-950"></x-page-title>
-    <div class="px-6 md:px-36 md:pb-32 bg-white">
+    <div class="px-6 md:px-36 pb-32 bg-white">
         <div class="">
-            <div class="pt-10 pb-12 text-lg space-y-8 md:w-[70%]">
-                <div >The Alumni Association strives to connect alumni, students <br class="hidden md:block"> and friends of the University to
-                    each other.</div>
+            <div class="pb-12 text-lg space-y-8 md:w-[70%]">
+                <!-- <div >The Alumni Association strives to connect alumni, students <br class="hidden md:block"> and friends of the University to
+                    each other.</div> -->
             </div>
             <div class="space-y-12 flex justify-between">
                 <div class="md:w-[60%] space-y-12">
@@ -58,6 +58,50 @@ new #[Layout('layouts.app')] class extends Component {
                             </div>
                              <div class="text-sm md:text-base">
                                Mendorong pengembangan riset di bidang manajemen dan ilmu terkait melalui seminar diskusi dan publikasi ilmiah.
+                            </div>
+                        </div>
+                    </div>
+
+
+                                        <div class="flex gap-4">
+                        <div class="w-10 h-10 mt-1.5 md:mt-0 flex items-center justify-center  bg-primary-green">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff"><g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="currentColor"><path d="M5.143 14A7.8 7.8 0 0 1 4 9.919C4 5.545 7.582 2 12 2s8 3.545 8 7.919A7.8 7.8 0 0 1 18.857 14M7.383 17.098c-.092-.276-.138-.415-.133-.527a.6.6 0 0 1 .382-.53c.104-.041.25-.041.54-.041h7.656c.291 0 .436 0 .54.04a.6.6 0 0 1 .382.531c.005.112-.041.25-.133.527c-.17.511-.255.767-.386.974a2 2 0 0 1-1.2.869c-.238.059-.506.059-1.043.059h-3.976c-.537 0-.806 0-1.043-.06a2 2 0 0 1-1.2-.868c-.131-.207-.216-.463-.386-.974M15 19l-.13.647c-.14.707-.211 1.06-.37 1.34a2 2 0 0 1-1.113.912C13.082 22 12.72 22 12 22s-1.082 0-1.387-.1a2 2 0 0 1-1.113-.913c-.159-.28-.23-.633-.37-1.34L9 19"/><path d="M8.25 9.75L10.5 12v4m-2.25-5.5a.75.75 0 1 0 0-1.5a.75.75 0 0 0 0 1.5m7.5-.75L13.5 12v4m2.25-5.5a.75.75 0 1 1 0-1.5a.75.75 0 0 1 0 1.5"/></g></svg>    
+                    </div>
+                        <div class="w-[90%] space-y-1 md:space-y-0">
+                            <div class="text-lg font-semibold">
+                                Mengembangkan Inovasi
+                            </div>
+                             <div class="text-sm md:text-base">
+                               Membentuk komunikasi yang dapat mendorong inovasi dalam manajemen dan riset melalui kolaborasi antara akademisi, praktisi, dan industri.
+                            </div>
+                        </div>
+                    </div>
+
+
+                                        <div class="flex gap-4">
+                        <div class="w-10 h-10 mt-1.5 md:mt-0 flex items-center justify-center  bg-primary-green">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path fill="#ffffff" d="M3.33 8L10 12l10-6l-10-6L0 6h10v2H3.33zM0 8v8l2-2.22V9.2L0 8zm10 12l-5-3l-2-1.2v-6l7 4.2l7-4.2v6L10 20z"/></svg>    
+                    </div>
+                        <div class="w-[90%] space-y-1 md:space-y-0">
+                            <div class="text-lg font-semibold">
+                                Kontribusi Terhadap Pendidikan
+                            </div>
+                             <div class="text-sm md:text-base">
+                                Menyediakan dukungan kepada mahasiswa aktif dan lulusan baru dalam bentuk bimbingan, beasiswa, atau program magang.
+                            </div>
+                        </div>
+                    </div>
+
+                                        <div class="flex gap-4">
+                        <div class="w-10 h-10 mt-1.5 md:mt-0 flex items-center justify-center  bg-primary-green">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32"><path fill="#ffffff" d="M21.066 20.667c1.227-.682 1.068-3.31-.354-5.874c-.61-1.104-1.36-1.998-2.11-2.623a5.229 5.229 0 0 1-3.1 1.03a5.23 5.23 0 0 1-3.105-1.03c-.75.625-1.498 1.52-2.11 2.623c-1.423 2.563-1.58 5.192-.35 5.874c.548.312 1.126.078 1.722-.496a10.51 10.51 0 0 0-.167 1.874c0 2.938 1.14 5.312 2.543 5.312c.846 0 1.265-.865 1.466-2.188c.2 1.314.62 2.188 1.46 2.188c1.397 0 2.546-2.375 2.546-5.312c0-.66-.062-1.29-.168-1.873c.6.575 1.176.813 1.726.497zM15.5 12.2a4.279 4.279 0 1 0-.003-8.557A4.279 4.279 0 0 0 15.5 12.2zm8.594 2.714a3.514 3.514 0 0 0 0-7.025a3.513 3.513 0 1 0 .001 7.027zm4.28 2.13c-.502-.908-1.116-1.642-1.732-2.155a4.3 4.3 0 0 1-2.546.845c-.756 0-1.46-.207-2.076-.55c.496 1.093.803 2.2.86 3.19c.094 1.516-.38 2.64-1.328 3.165a2.017 2.017 0 0 1-.653.224c-.057.392-.096.8-.096 1.23c0 2.413.935 4.362 2.088 4.362c.694 0 1.04-.71 1.204-1.796c.163 1.08.508 1.796 1.2 1.796c1.145 0 2.09-1.95 2.09-4.36c0-.543-.053-1.06-.14-1.54c.492.473.966.668 1.418.408c1.007-.56.877-2.718-.29-4.82zm-21.468-2.13a3.512 3.512 0 1 0-3.514-3.512a3.515 3.515 0 0 0 3.514 3.514zm2.535 6.622c-1.592-.885-1.738-3.524-.456-6.354a4.242 4.242 0 0 1-2.078.553c-.956 0-1.832-.32-2.55-.846c-.615.512-1.228 1.246-1.732 2.153c-1.167 2.104-1.295 4.262-.287 4.82c.45.258.925.065 1.414-.406a8.83 8.83 0 0 0-.135 1.538c0 2.412.935 4.36 2.088 4.36c.694 0 1.04-.71 1.204-1.795c.165 1.08.51 1.796 1.2 1.796c1.147 0 2.09-1.95 2.09-4.36c0-.433-.04-.842-.097-1.234a2.02 2.02 0 0 1-.66-.226z"/></svg>    
+                    </div>
+                        <div class="w-[90%] space-y-1 md:space-y-0">
+                            <div class="text-lg font-semibold">
+                                Pengabdian Masyarakat
+                            </div>
+                             <div class="text-sm md:text-base">
+                               Melaksanakan kegiatan sosial yang relevan dengan keahlian para alumni. Untuk memberikan kontribusi positif kepada masyarakat.
                             </div>
                         </div>
                     </div>

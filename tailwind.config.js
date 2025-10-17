@@ -20,7 +20,9 @@ export default {
             fontFamily: {
                 source: ['Source Sans 3', 'sans-serif'],
                 inter: ['Inter', 'sans-serif'],
-                sans: ['Open Sans', 'sans-serif']
+                sans: ['Open Sans', 'sans-serif'],
+                playfair: ['Playfair Display', 'serif'],
+                moda: ['Bodoni Moda', 'serif']
             },
         },
     },

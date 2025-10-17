@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
@@ -12,6 +13,7 @@ new #[Layout('layouts.guest')] class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public string $nim = '';
     public string $password = '';
     public string $password_confirmation = '';
 
@@ -22,17 +24,32 @@ new #[Layout('layouts.guest')] class extends Component
     {
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            'nim' => ['required', 'string', 'max:255', 'unique:alumni,student_id'],
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+        $user = DB::transaction(function () use ($validated) {
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+            ]);
 
-        event(new Registered($user = User::create($validated)));
+            event(new Registered($user));
 
-        Auth::login($user);
+            $user->alumni()->create([
+                'student_id' => $validated['nim'],
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+            ]);
 
-        $this->redirect(route('dashboard', absolute: false), navigate: true);
+            return $user;
+        });
+
+        // Auth::login($user);
+
+        // $this->redirect(route('dashboard', absolute: false), navigate: true);
     }
 }; ?>
 
@@ -50,6 +67,12 @@ new #[Layout('layouts.guest')] class extends Component
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="nim" :value="__('NIM')" />
+            <x-text-input wire:model="nim" id="nim" class="block mt-1 w-full" type="text" name="nim" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('nim')" class="mt-2" />
         </div>
 
         <!-- Password -->

@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
             'status' => Status::Pending->value
         ]);
 
-                Alumni::create([
+        Alumni::create([
             'user_id' => $user2->id,
             'student_id' => '2602145681',
             'name' => $user2->name,

@@ -100,17 +100,17 @@ class Alumni extends Model
     }
     
 
-    // public function education(){
-    //     return $this->hasOne(Education::class, "alumni_id");
-    // }
+    public function education(){
+        return $this->hasOne(Education::class);
+    }
 
-    // public function research(){
-    //     return $this->hasMany(Research::class, "alumni_id");
-    // }
+    public function research(){
+        return $this->hasMany(Research::class);
+    }
 
-    // public function profession(){
-    //     return $this->hasOne(Profession::class, "alumni_id");
-    // }
+    public function profession(){
+        return $this->hasOne(Profession::class);
+    }
 
     /**
      * Get the user associated with this alumni record.

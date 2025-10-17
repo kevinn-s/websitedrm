@@ -22,11 +22,7 @@ new #[Layout('layouts.app')] class extends Component
         return Event::query()
             ->where('type', 'scheduled')
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhere('location', 'like', '%' . $this->search . '%');
-                });
+                $query->where('title', 'like', '%' . $this->search . '%');
             })
             ->when($this->type === 'scheduled', fn($query) => $query)
             ->when($this->type === null || $this->type === '', fn($query) => $query)
@@ -40,11 +36,7 @@ new #[Layout('layouts.app')] class extends Component
         return Event::query()
             ->where('type', 'annual')
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhere('location', 'like', '%' . $this->search . '%');
-                });
+                $query->where('title', 'like', '%' . $this->search . '%');
             })
             ->when($this->type === 'annual', fn($query) => $query)
             ->when($this->type === null || $this->type === '', fn($query) => $query)
@@ -57,11 +49,7 @@ new #[Layout('layouts.app')] class extends Component
     {
         $query = Event::query()
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
-                    $q->where('title', 'like', '%' . $this->search . '%')
-                      ->orWhere('description', 'like', '%' . $this->search . '%')
-                      ->orWhere('location', 'like', '%' . $this->search . '%');
-                });
+                $query->where('title', 'like', '%' . $this->search . '%');
             })
             ->when($this->type, function ($query) {
                 $query->where('type', $this->type);
@@ -83,7 +71,7 @@ new #[Layout('layouts.app')] class extends Component
 
 <div x-data="{
     dropdownOpen: false,
-    selectedFilter: 'All Events',
+    selectedFilter: 'Semua Kegiatan',
     selectedValue: '',
     options: [
         { label: 'Kegiatan Tahunan', value: 'annual' },
@@ -110,22 +98,88 @@ new #[Layout('layouts.app')] class extends Component
         background="bg-black"
     />
 
-    <div class="px-36 pb-32 bg-white">
+    <div class="px-6 lg:px-36 pb-32 bg-white">
         <div class="">
-            <div class="py-10 text-lg space-y-8 w-[70%]">
-                <div>Events are an avenue for you to connect with your global alumni community and follow your ongoing
-                    passion for learning <br>
-                    See what's on in person or online.</div>
+            <div class="py-6  text-base sm:text-lg space-y-8 w-full lg:w-[70%]">
+                <div>Kegiatan merupakan sarana bagi anda untuk tetap terhubung dengan sesama anggota asosiasi alumni. <br>
+                    Lihat berbagai kegiatan yang tersedia, baik secara langsung maupun daring.</div>
             </div>
 
-            <div class="space-y-12 flex justify-between">
-                <div class="w-[65%] space-y-12">
+            <!-- Filter Section (Top) -->
+            <div class="md:hidden block font-bold py-6 sm:py-8 space-y-4 w-full lg:w-[70%] mb-8 sm:mb-12">
+                <div class="text-lg sm:text-xl">Filter by</div>
+                
+                <!-- Search Input -->
+                <x-input 
+                    wire:model.live.debounce.300ms="search"
+                    placeholder="Cari nama kegiatan" 
+                    class="text-sm sm:text-[15px] w-full font-semibold px-4 py-2 border-gray-300"
+                />
+
+                <!-- Dropdown -->
+                <div class="relative inline-block w-full" @click.outside="dropdownOpen = false">
+                    <button 
+                        @click="dropdownOpen = !dropdownOpen"
+                        class="w-full text-sm sm:text-[15px] font-semibold flex items-center justify-between bg-white border border-gray-300 px-4 py-2 text-left outline-0 focus:outline-none"
+                        :class="{ 'text-gray-500': selectedValue === '', 'text-gray-900': selectedValue !== '' }"
+                    >
+                        <span x-text="selectedFilter"></span>
+                        <svg 
+                            class="inline ml-2 w-4 h-4 transition-transform duration-200" 
+                            :class="{ 'rotate-180': dropdownOpen }"
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div 
+                        x-show="dropdownOpen" 
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95"
+                        class="z-30 text-sm sm:text-[15px] font-normal absolute top-full left-0 w-full bg-white border border-gray-300 shadow-lg"
+                    >
+                        <div 
+                            @click="selectOption('', 'Semua Kegiatan')"
+                            class="px-4 py-2 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
+                            :class="{ 'bg-gray-100 border-l-4 border-primary-gold': selectedValue === '' }"
+                        >
+                            Semua
+                        </div>
+                        <template x-for="option in options" :key="option.value">
+                            <div 
+                                @click="selectOption(option.value, option.label)"
+                                class="px-4 py-2 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
+                                :class="{ 'bg-gray-100 border-l-4 border-primary-gold': selectedValue === option.value }"
+                                x-text="option.label"
+                            ></div>
+                        </template>
+                    </div>
+                </div>
+
+                <x-primary-button 
+                    @click="resetFilters()" 
+                    class="relative z-20 w-full text-sm sm:text-base px-6 bg-primary-green text-white border-2 border-primary-green hover:bg-white hover:text-[#02743D] hover:border-primary-green"
+                >
+                    Reset Filter
+                </x-primary-button>
+            </div>
+
+            <!-- Events List Section -->
+            <div class="space-y-8 sm:space-y-12 flex flex-col lg:flex-row lg:justify-between gap-8 lg:gap-0">
+                <div class="w-full lg:w-[65%] space-y-8 sm:space-y-12">
                     @if($type === null || $type === '' || $type === 'scheduled')
                         <div>
-                            <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
+                            <div class="text-lg sm:text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
                                 Kegiatan Mendatang
                             </div>
-                            <div class="my-4 space-y-8">
+                            <div class="my-4 space-y-6 sm:space-y-8">
                                 @forelse($this->scheduledEvents as $event)
                         
                                     <x-events.card 
@@ -138,7 +192,7 @@ new #[Layout('layouts.app')] class extends Component
                                         :access="$event->accesses"
                                     />
                                 @empty
-                                    <div class="text-center py-8 text-gray-500">
+                                    <div class="text-center py-8 text-gray-500 text-sm sm:text-base">
                                         Tidak ada kegiatan mendatang yang ditemukan.
                                     </div>
                                 @endforelse
@@ -147,11 +201,11 @@ new #[Layout('layouts.app')] class extends Component
                     @endif
 
                     @if($type === null || $type === '' || $type === 'annual')
-                        <div >
-                            <div class="text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
+                        <div>
+                            <div class="text-lg sm:text-xl font-bold pb-2 border-b-[0.5px] border-b-gray-300">
                                 Kegiatan Tahunan
                             </div>
-                            <div class="my-4 space-y-8">
+                            <div class="my-4 space-y-6 sm:space-y-8">
                                 @forelse($this->annualEvents as $event)
                                     <x-events.card 
                                         :event="$event"
@@ -163,7 +217,7 @@ new #[Layout('layouts.app')] class extends Component
                                         :access="$event->accesses"
                                     />
                                 @empty
-                                    <div class="text-center py-8 text-gray-500">
+                                    <div class="text-center py-8 text-gray-500 text-sm sm:text-base">
                                         Tidak ada kegiatan tahunan yang ditemukan.
                                     </div>
                                 @endforelse
@@ -175,7 +229,7 @@ new #[Layout('layouts.app')] class extends Component
                         ($type === 'annual' && $this->annualEvents->isEmpty()) ||
                         (($type === null || $type === '') && $this->scheduledEvents->isEmpty() && $this->annualEvents->isEmpty()))
                         <div class="text-center py-12">
-                            <div class="text-gray-400 text-lg">
+                            <div class="text-gray-400 text-base sm:text-lg">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
@@ -185,21 +239,22 @@ new #[Layout('layouts.app')] class extends Component
                     @endif
                 </div>
 
-                <div class="font-bold py-8 w-[30%] hidden md:block">
-                    <div class="text-xl">Filter by</div>
+                <!-- Desktop Filter Section (Sidebar) -->
+                <div class="font-bold py-8 w-full lg:w-[30%] hidden lg:block">
+                    <div class="text-lg sm:text-xl">Filter by</div>
                     <div class="space-y-4 my-6">
                         <!-- Search Input -->
                         <x-input 
                             wire:model.live.debounce.300ms="search"
-                            placeholder="Search" 
-                            class="text-[15px] w-full font-semibold px-4 py-2 border-gray-300"
+                            placeholder="Cari nama kegiatan" 
+                            class="text-sm sm:text-[15px] w-full font-semibold px-4 py-2 border-gray-300"
                         />
 
                         <!-- Dropdown -->
                         <div class="relative inline-block w-full" @click.outside="dropdownOpen = false">
                             <button 
                                 @click="dropdownOpen = !dropdownOpen"
-                                class="w-full text-[15px] font-semibold flex items-center justify-between bg-white border border-gray-300 px-4 py-2 text-left outline-0 focus:outline-none"
+                                class="w-full text-sm sm:text-[15px] font-semibold flex items-center justify-between bg-white border border-gray-300 px-4 py-2 text-left outline-0 focus:outline-none"
                                 :class="{ 'text-gray-500': selectedValue === '', 'text-gray-900': selectedValue !== '' }"
                             >
                                 <span x-text="selectedFilter"></span>
@@ -222,7 +277,7 @@ new #[Layout('layouts.app')] class extends Component
                                 x-transition:leave="transition ease-in duration-75"
                                 x-transition:leave-start="transform opacity-100 scale-100"
                                 x-transition:leave-end="transform opacity-0 scale-95"
-                                class="z-30 text-[15px] font-normal absolute top-full left-0 w-full bg-white border border-gray-300 shadow-lg"
+                                class="z-30 text-sm sm:text-[15px] font-normal absolute top-full left-0 w-full bg-white border border-gray-300 shadow-lg"
                             >
                                 <div 
                                     @click="selectOption('', 'Semua Kegiatan')"

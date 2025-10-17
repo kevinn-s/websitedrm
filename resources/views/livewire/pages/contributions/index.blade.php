@@ -15,13 +15,12 @@ new #[Layout('layouts.app')] class extends Component {
             ['label' => 'Kegiatan', 'url' => ''],
         ]"
     />
-    <div class="px-6 md:px-36 md:pb-32 bg-white">
+    <div class="px-6 md:px-36 pb-32 bg-white">
         <div class="md:w-8/12">
             <div class="py-10 text-lg md:text-xl">
-                Lorem ipsum dolor sit amet consectetur. Aliquam diam aliquam morbi morbi diam odio. Praesent nec commodo
-                sit lacus mattis.
+                Asosiasi Alumni Doktor Riset Manajemen BINUS University berkomitmen untuk terus mengembangkan program-program berkualitas dan membangun jaringan alumni yang kuat. Kontribusi Anda membantu kami mencapai visi tersebut.
             </div>
-            <div class="md:pt-10 text-lg md:text-xl">
+            <div class=" text-lg md:text-xl">
                 Dukungan dapat diberikan baik melalui transfer langsung maupun dengan berkomitmen pada iuran berkala
                 yang telah ditetapkan.
             </div>
@@ -63,17 +62,17 @@ new #[Layout('layouts.app')] class extends Component {
                         <ul class="space-y-2 list-none md:w-[90%]">
                             <x-list title="Iuran Bulanan"
                             class="text-normal"
-                                content="Lorem ipsum dolor sit amet consectetur. Aliquam diam aliquam morbi morbi diam odio. Praesent nec commodo sit lacus mattis." />
+                                content="Kelanjutan komitmen Anda dengan pembayaran bulanan membantu kami memastikan keberlanjutan program dan kegiatan asosiasi. Anda dapat memilih nominal sesuai kemampuan Anda." />
                         </ul>
                         <ul class="space-y-2 list-none  md:w-[90%]">
                             <x-list title="Iuran Tahunan"
-                                content="Lorem ipsum dolor sit amet consectetur. Aliquam diam aliquam morbi morbi diam odio. Praesent nec commodo sit lacus mattis." />
+                                content="Alternatif pembayaran tahunan memberikan fleksibilitas lebih dengan sistem pembayaran yang dapat disesuaikan dengan periode keuangan atau keinginan pribadi Anda." />
                         </ul>
                         <div class="md:w-8/12 text-lg space-y-4">
-                            <div class="font-bold">Lorem ipsum dolor sit amet consectetur.</div>
+                            <div class="font-bold">Mulai berkontribusi untuk asosiasi alumni kami hari ini</div>
                             <div>Anda dapat melanjutkan pembayaran iuran alumni dengan menekan tombol di bawah ini:
                             </div>
-                            <x-primary-button class="relative z-20 mt-4">Bayar Iuran Alumni</x-primary-button>
+                            <x-button class="relative z-20 mt-4">Bayar Iuran Alumni</x-button>
                         </div>
                     </div>
                 </template>
@@ -163,3 +162,5 @@ new #[Layout('layouts.app')] class extends Component {
         </div>
     </div>
 </div>
+
+

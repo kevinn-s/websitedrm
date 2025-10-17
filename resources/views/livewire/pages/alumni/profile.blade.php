@@ -1,11 +1,193 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\Layout;
 
-new class extends Component {
-    //
+use Illuminate\Support\Facades\Storage as StorageFacade;
+use App\Models\Alumni;
+
+new #[Layout('layouts.app')] class extends Component {
+    public Alumni $alumni;
+
+    public $avatar;
+
+    public function mount()
+    {
+        $this->avatar = $this->avatar();
+    }
+      public function avatar()
+    {
+        if (! $this->alumni || ! $this->alumni->profile_photo_path) {
+            return asset('images/placeholder.png');
+        }
+
+        $image = $this->alumni->profile_photo_path;
+
+        if (filter_var($image, FILTER_VALIDATE_URL)) {
+            return $image;
+        }
+
+        if (StorageFacade::disk('public')->exists($image)) {
+            return StorageFacade::url($image);
+        }
+
+        return asset('storage/' . ltrim($image, '/'));
+    }
 }; ?>
 
-<div>
-    //
+<div class="-mx-2 px-3 md:px-48 py-12 bg-white">
+        <div class="pb-4 border-b border-gray-200 w-full">
+            <div class="flex flex-col items-center text-primary-grey">
+            
+            
+                <img class="rounded-full w-28 h-28 mb-4" 
+                     src="{{ $avatar ?? asset('images/placeholder.png') }}"
+                   >
+                </img>
+                <div class="font-bold text-xl text-black">{{ $alumni->name ?? '-' }}</div>
+                <div>
+                    @if ($alumni->education?->legitimation_date)
+                        Lulusan {{ \Carbon\Carbon::parse($alumni->education?->legitimation_date)->format('Y') }}
+                    @else
+                        -
+                    @endif
+                </div>
+            </div>
+            <div class="grid grid-rows-2 justify-center gap-4 md:gap-0 md:grid-cols-3 items-center">
+                <div class="hidden md:block"></div>
+                <div class="md:text-center">
+                    @if ($alumni->education?->graduation_batch)
+                        W{{ $alumni->education?->graduation_batch }}
+                    @else
+                        <span class="hidden md:inline text-gray-800">Angkatan belum diketahui</span>
+                        <span class="md:hidden text-gray-800">-</span>
+                    @endif
+                </div>
+            </div>
+            <div class="flex w-full justify-center">
+                @can('update', $alumni)
+                            <button
+                                class="inline-flex items-center px-4 py-2 bg-[#03563D] text-white text-sm font-medium hover:bg-[#024a33] transition-colors duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                    </path>
+                                </svg>
+                                <a href="">Edit Profile</a>
+                            </button>
+                @endcan
+            </div>
+        </div>
+
+       <div class="my-8 flex flex-col gap-4">
+    <div class="text-lg font-bold">Tentang</div>
+    <div class="grid grid-cols-1 text-primary-grey text-sm md:text-[14.5px]">
+        <div class="py-4 px-4 md:px-8 flex border border-gray-300">
+            <div class="w-[40%] font-semibold">Email</div>
+            <div class="{{ empty($alumni->email) ? 'italic text-gray-500' : 'w-[60%]' }}">
+                @if(!empty($alumni->email))
+                    {{ $alumni->email }}
+                @else
+                    <span class="md:inline hidden">Belum mencantumkan email</span>
+                    <span class="md:hidden inline">-</span>
+                @endif
+            </div>
+        </div>
+        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
+            <div class="w-[40%] font-semibold">Nomor Telepon</div>
+            <div class="{{ empty($alumni->phone_number) ? 'italic text-gray-500' : 'w-[60%]' }}">
+                @if(!empty($alumni->phone_number))
+                    {{ $alumni->phone_number }}
+                @else
+                    <span class="md:inline hidden">Belum mencantumkan nomor telepon</span>
+                    <span class="md:hidden inline">-</span>
+                @endif
+            </div>
+        </div>
+        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
+            <div class="w-[40%] font-semibold">Pekerjaan</div>
+            <div class="{{ empty($alumni->profession?->profession) ? 'italic text-gray-500' : 'w-[60%]' }}">
+                @if(!empty($alumni->profession?->profession))
+                    {{ $alumni->profession->profession }}
+                @else
+                    <span class="md:inline hidden">Belum mencantumkan pekerjaan</span>
+                    <span class="md:hidden inline">-</span>
+                @endif
+            </div>
+        </div>
+        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
+            <div class="w-[40%] font-semibold">Nama Perusahaan</div>
+            <div class="{{ empty($alumni->profession?->company) ? 'italic text-gray-500' : 'w-[60%]' }}">
+                @if(!empty($alumni->profession?->company))
+                    {{ $alumni->profession->company }}
+                @else
+                    <span class="md:inline hidden">Belum mencantumkan nama perusahaan</span>
+                    <span class="md:hidden inline">-</span>
+                @endif
+            </div>
+        </div>
+        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
+            <div class="w-[40%] font-semibold">Domisili Kerja</div>
+            <div class="{{ empty($alumni->profession?->province) ? 'italic text-gray-500' : 'w-[60%]' }}">
+                @if(!empty($alumni->profession?->province))
+                    {{ $alumni->profession->province . ', Indonesia' }}
+                @else
+                    <span class="md:inline hidden">Belum mencantumkan domisili kerja</span>
+                    <span class="md:hidden inline">-</span>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
+
+        {{-- Karya Ilmiah --}}
+        <div class="my-8 flex flex-col gap-4">
+            <div class="text-lg font-bold">Karya Ilmiah</div>
+            <div class="grid grid-cols-1 gap-4 text-primary-grey text-xs md:text-[14.5px]">
+                @forelse ($alumni->research ?? [] as $research)
+                    <div class="py-3 md:py-4 px-8 border border-gray-200">
+                        <div class="font-semibold text-sm md:text-base mb-2 md:mb-0">
+                            {{ $research->title ?? 'Judul tidak tersedia' }}
+                        </div>
+                        <div>
+                            {{ $research->type ? $research->type . ' - ' : '' }}
+                            Dipublikasikan di {{ $research->publisher ?? 'Penerbit tidak diketahui' }},
+                            {{ $research->publication_year ?? 'Tahun tidak diketahui' }}
+                        </div>
+                        @if($research->publication_link)
+                            <div class="mt-2">
+                                <a href="{{ $research->publication_link }}" target="_blank" 
+                                   class="text-blue-600 hover:text-blue-800 underline">
+                                    Lihat Publikasi
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                @empty
+                    <div class="italic text-gray-500 text-base">
+                        Belum mencantumkan karya ilmiah
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Kompetensi --}}
+        <div class="my-8 flex flex-col gap-4">
+            <div class="text-lg font-bold">Kompetensi</div>
+            <div class="flex flex-wrap gap-2">
+                @if(!empty($alumni->competency) && count($alumni->competency) > 0)
+                    @foreach ($alumni->competency as $competency)
+                        <span
+                            class="inline-flex items-center px-2 md:px-3 py-1 md:py-1.5 rounded-full text-xs md:text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition-colors duration-200">
+                            {{ $competency }}
+                        </span>
+                    @endforeach
+                @else
+                    <div class="italic text-gray-500">
+                        Belum mencantumkan kompetensi
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
