@@ -1,0 +1,134 @@
+<?php
+
+namespace App\Filament\Resources\Events\Schemas;
+
+use Closure;
+use App\Enums\EventType;
+use App\Enums\EventAccessType;
+use Coolsam\Flatpickr\Forms\Components\Flatpickr;
+use Coolsam\Flatpickr\Enums\FlatpickrMode;
+
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TimePicker;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
+use Filament\Schemas\Components\Section;
+class EventForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Event Details')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('title')
+                                    ->required()->columnSpanFull(),
+                                Grid::make(2)
+                                    ->schema([
+                                        Select::make('type')
+                                            ->options(EventType::class)
+                                            ->default('SCHEDULED')
+                                            ->required()
+                                            ->reactive(),
+                                        Flatpickr::make('date')
+                                            ->enableTime(false)
+                                            ->dateFormat('d M Y')
+                                            ->altFormat('d/m/Y')
+                                            ->hiddenJs(<<<'JS'
+                                                $get('type') !== 'SCHEDULED'
+                                                JS)
+                                            ->label('Date')
+                                            ->required(),
+                                        Flatpickr::make('date')
+                                            ->monthPicker()
+                                            ->enableTime(false)
+                                            ->dateFormat('M Y')
+                                            ->altFormat('m/Y')
+                                            ->hiddenJs(<<<'JS'
+                                        $get('type') !== 'ANNUAL'
+                                        JS)
+
+                                            ->label('Date')
+                                    ])->columnSpanFull(),
+                                Grid::make(2)
+                                    ->schema([
+                                        Flatpickr::make('start_time')
+                                            ->timePicker()
+                                            ->hiddenJs(<<<'JS'
+                                        $get('type') === 'ANNUAL'
+                                        JS),
+                                        Flatpickr::make('end_time')
+                                            ->timePicker()
+                                            ->rules([
+                                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                                    if (\Carbon\Carbon::parse($value)->lt(\Carbon\Carbon::parse($get('start_time')))) {
+                                                        $fail("End time lesser then start time");
+                                                    }
+                                                },
+                                            ])
+                                            ->live()
+                                            ->hiddenJs(<<<'JS'
+                                        $get('type') === 'ANNUAL'
+                                        JS),
+                                    ])->columnSpanFull(),
+
+                                RichEditor::make('description')
+                                    ->columnSpanFull(),
+                                TagsInput::make('tags'),
+                            ])
+                    ])->columnSpanFull(),
+                Section::make('Event Access Details')
+                    ->relationship('accesses')
+                    ->schema([
+                                Grid::make(2)
+                                    ->schema([
+                                        Grid::make(2)
+                                        ->schema([
+                                            Select::make('type')
+                                            ->label('Access Type')
+                                            ->options(EventAccessType::class)
+                                            ->required(),
+                                        ])->columnSpanFull(),
+                                        
+                                        
+                                       
+
+                                       
+
+                                        TextInput::make('map_url')
+                                            ->label('Map URL')
+                                            ->url()
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('meeting_url')
+                                            ->label('Meeting URL')
+                                            ->url()
+                                            ->columnSpanFull(),
+
+                                        TextInput::make('meeting_passcode')
+                                            ->label('Meeting Passcode')
+                                            ->maxLength(100),
+                                    ])
+                            
+                  
+                            ->columnSpanFull()
+                    ])->columnSpanFull()
+            ]);
+    }
+}
+
+
+

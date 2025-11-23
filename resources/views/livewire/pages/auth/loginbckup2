@@ -1,0 +1,53 @@
+<?php
+
+use App\Livewire\Forms\LoginForm;
+use Illuminate\Support\Facades\Session;
+use Livewire\Attributes\Layout;
+use Livewire\Volt\Component;
+
+new #[Layout('layouts.app')] class extends Component
+{
+    public LoginForm $form;
+
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function login(): void
+    {
+        $this->validate();
+
+        $this->form->authenticate();
+
+        Session::regenerate();
+
+        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+    }
+}; ?>
+
+<form wire:submit.prevent="login" class="max-w-sm bg-white">
+    <!-- Session Status -->
+    <x-auth-session-status :status="session('status')" />
+    <div class="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
+        <img src="{{ asset('images/drm.jpg') }}" alt="" class="w-20 h-auto">
+    </div>
+    <div class="w-full p-6 space-y-4">
+        <h1 class="font-sora text-lg text-center font-semibold">Login</h1>
+        <div>
+            <x-input-label for="email" class="font-semibold">Email</x-input-label>
+            <x-text-input id="email" type="email" name="email" wire:model.defer="form.email" class="w-full rounded-none my-2" autocomplete="username" />
+            <x-input-error :messages="$errors->get('form.email')" class="mt-1" />
+        </div>
+        <div>
+            <x-input-label for="password" class="font-semibold">Password</x-input-label>
+            <x-text-input id="password" type="password" name="password" wire:model.defer="form.password" class="w-full rounded-none my-2" autocomplete="current-password" />
+            <x-input-error :messages="$errors->get('form.password')" class="mt-1" />
+        </div>
+        <div class="flex items-center justify-between">
+            <label for="remember" class="inline-flex items-center gap-2 text-sm text-gray-600">
+                <input wire:model="form.remember" id="remember" type="checkbox" class="border-gray-300 text-primary-green shadow-sm focus:ring-primary-green" name="remember">
+                <span>{{ __('Remember me') }}</span>
+            </label>
+        </div>
+        <x-button type="submit" class="w-full">Masuk</x-button>
+    </div>
+</form>

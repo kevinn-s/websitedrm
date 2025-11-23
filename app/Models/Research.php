@@ -9,6 +9,7 @@ class Research extends Model
     //
     protected $table = 'research';
     protected $fillable = [
+        'alumni_id',
         'title',
         'type',
         'publication_year',

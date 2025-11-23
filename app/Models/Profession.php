@@ -10,6 +10,7 @@ class Profession extends Model
     protected $table = "profession";
     //
     protected $fillable = [
+        "alumni_id",
         "profession",
         "company",
         "city",

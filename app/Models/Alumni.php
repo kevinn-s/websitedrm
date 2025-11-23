@@ -22,6 +22,7 @@ class Alumni extends Model
         'email',
         'phone_number',
         'profile_photo_path',
+        'bio',
         'competency',
         'x',
         'instagram',
@@ -98,7 +99,7 @@ class Alumni extends Model
     public function viewAny(){
         return true;
     }
-    
+
 
     public function education(){
         return $this->hasOne(Education::class);

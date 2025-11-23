@@ -1,0 +1,165 @@
+<?php
+
+use Livewire\Volt\Component;
+use Livewire\Attributes\Layout;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage as StorageFacade;
+use Illuminate\Validation\Rule;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use App\Models\Alumni;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+new #[Layout('layouts.app')] class extends Component {
+    use WithFileUploads;
+
+    public Alumni $alumni;
+
+    public string $name = '';
+
+    public string $email = '';
+
+    public string $phone = '';
+
+    public array $profession = [
+        'profession' => '',
+        'company' => '',
+        'city' => '',
+        'province' => '',
+    ];
+
+    public array $social = [
+        'x' => '',
+        'instagram' => '',
+        'facebook' => '',
+        'linkedin' => '',
+    ];
+
+}; ?>
+
+<div class="max-w-3xl mx-auto px-4 py-10 font-noto">
+    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div>
+            <h1 class="text-2xl font-semibold text-gray-900">Profile</h1>
+            <p class="text-sm text-gray-500">Update your photo and personal details here.</p>
+        </div>
+
+    </div>
+
+    <div class="mt-8 bg-white shadow-sm">
+        <div class="font-semibold pb-4 border-b-gray-200 border-b-[0.3px]">Account Detail</div>
+        <div class="space-y-4 my-4">
+                    <label class="text-sm font-medium text-gray-900">Foto profil</label>
+                    <div class="flex items-center gap-4">
+                        <img src="https://i.pravatar.cc/100?img=65" alt="Profile preview" class="h-16 w-16 rounded-full object-cover" />
+                        <!-- <div class="flex gap-2">
+
+                            <button type="button" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Delete</button>
+                            <button type="button" class="rounded-lg bg-primary-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-green-700">Update</button>
+                        </div> -->
+                    </div>
+        </div>
+        <div class="grid gap-8 border-gray-200 my-4 md:grid-cols-2">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label for="username" class="text-sm font-medium text-gray-900">Nama lengkap</label>
+                    <x-input class="w-full h-10 border-gray-200" required
+                wire:model="name"></x-input>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="password" class="text-sm font-medium text-gray-900">Password</label>
+                    <x-input class="w-full h-10 border-gray-200" required
+                wire:model="password"></x-input>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                 <div class="space-y-2">
+                    <label for="email" class="text-sm font-medium text-gray-900">Email</label>
+                    <x-input class="w-full h-10 border-gray-200" required
+                wire:model="email"></x-input>
+                </div>
+
+                  <div class="space-y-2">
+                    <label for="password" class="text-sm font-medium text-gray-900">Konfirmasi Password</label>
+                    <x-input class="w-full h-10 border-gray-200" required
+                wire:model="password"></x-input>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12 bg-white shadow-sm">
+        <div class="font-semibold pb-4 border-b-gray-200 border-b-[0.3px]">Pekerjaan</div>
+        <div class="grid gap-8 border-gray-200 my-4 md:grid-cols-2">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label for="profession-title" class="text-sm font-medium text-gray-900">Profesi</label>
+                    <x-input id="profession-title" class="w-full h-10 border-gray-200" required
+                wire:model="profession.profession"></x-input>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="profession-city" class="text-sm font-medium text-gray-900">Kota</label>
+                    <x-input id="profession-city" class="w-full h-10 border-gray-200" required
+                wire:model="profession.city"></x-input>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                 <div class="space-y-2">
+                    <label for="profession-company" class="text-sm font-medium text-gray-900">Perusahaan</label>
+                    <x-input id="profession-company" class="w-full h-10 border-gray-200" required
+                wire:model="profession.company"></x-input>
+                </div>
+
+                  <div class="space-y-2">
+                    <label for="profession-province" class="text-sm font-medium text-gray-900">Provinsi</label>
+                    <x-input id="profession-province" class="w-full h-10 border-gray-200" required
+                wire:model="profession.province"></x-input>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-12 bg-white shadow-sm">
+        <div class="font-semibold pb-4 border-b-gray-200 border-b-[0.3px]">Akun Media Sosial</div>
+        <div class="grid gap-8 border-gray-200 my-4 md:grid-cols-2">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label for="social-x" class="text-sm font-medium text-gray-900">X</label>
+                    <x-input id="social-x" class="w-full h-10 border-gray-200"
+                wire:model="social.x"></x-input>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="social-facebook" class="text-sm font-medium text-gray-900">Facebook</label>
+                    <x-input id="social-facebook" class="w-full h-10 border-gray-200"
+                wire:model="social.facebook"></x-input>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                 <div class="space-y-2">
+                    <label for="social-instagram" class="text-sm font-medium text-gray-900">Instagram</label>
+                    <x-input id="social-instagram" class="w-full h-10 border-gray-200"
+                wire:model="social.instagram"></x-input>
+                </div>
+
+                  <div class="space-y-2">
+                    <label for="social-linkedin" class="text-sm font-medium text-gray-900">LinkedIn</label>
+                    <x-input id="social-linkedin" class="w-full h-10 border-gray-200"
+                wire:model="social.linkedin"></x-input>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>

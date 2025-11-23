@@ -2,12 +2,17 @@
 
 namespace App\Filament\Resources\Events\Tables;
 
+use App\Enums\EventType;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Livewire\Livewire;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 
 class EventsTable
 {
@@ -16,34 +21,35 @@ class EventsTable
         return $table
             ->columns([
                 TextColumn::make('title')
+                    ->placeholder('-')
                     ->searchable(),
-                ImageColumn::make('image'),
-                TextColumn::make('category')
-                    ->searchable(),
-                TextColumn::make('type'),
-                TextColumn::make('published_at')
-                    ->dateTime()
-                    ->sortable(),
+                TextColumn::make('type')
+                    ->formatStateUsing(fn(?EventType $state) => $state ? ucfirst(strtolower($state->value)) : '-')
+                    ->placeholder('-'),
                 TextColumn::make('date')
+                    ->placeholder('-')
                     ->date()
                     ->sortable(),
-                TextColumn::make('time')
-                    ->searchable(),
-                TextColumn::make('annual_date')
-                    ->searchable(),
-                TextColumn::make('speaker_name')
-                    ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('start_time')
+                    ->placeholder('-')
+                    ->time()
+                    ->label('Start Time'),
+                TextColumn::make('end_time')
+                    ->placeholder('-')
+                    ->time()       
+                    ->label('End Time'),
+                TextColumn::make('tags')
+                    ->placeholder('-'),
             ])
             ->filters([
                 //
+                SelectFilter::make('type')
+              
+             
+                ->options([
+        'SCHEDULED' => 'Scheduled',
+        'ANNUAL' => 'Annual',
+    ]),
             ])
             ->recordActions([
                 EditAction::make(),

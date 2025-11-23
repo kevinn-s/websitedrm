@@ -8,8 +8,8 @@ new #[Layout('layouts.app')] class extends Component {
 }; ?>
 
 <div>
-     <x-page-title 
-        title="Rekening Asosiasi Alumni" 
+     <x-page-title
+        title="Rekening Asosiasi Alumni"
         :breadcrumbs="[
             ['label' => 'Beranda', 'url' => ''],
             ['label' => 'Kegiatan', 'url' => ''],
@@ -17,14 +17,14 @@ new #[Layout('layouts.app')] class extends Component {
     />
     <div class="px-6 md:px-36 pb-32 bg-white">
         <div class="md:w-8/12">
-            <div class="py-10 text-lg md:text-xl">
+            <div class="py-10 text-lg md:text-lg">
                 Asosiasi Alumni Doktor Riset Manajemen BINUS University berkomitmen untuk terus mengembangkan program-program berkualitas dan membangun jaringan alumni yang kuat. Kontribusi Anda membantu kami mencapai visi tersebut.
             </div>
-            <div class=" text-lg md:text-xl">
+            <div class=" text-lg md:text-lg">
                 Dukungan dapat diberikan baik melalui transfer langsung maupun dengan berkomitmen pada iuran berkala
                 yang telah ditetapkan.
             </div>
-            <div x-data="{ activeSection: 'TRANSFER' }" class="py-8 md:py-12">
+            <div x-data="{ activeSection: 'TRANSFER', copiedId: null }" class="py-8 md:py-12">
                 <div class="hidden border-gray-300 border-b-2 md:flex font-semibold">
                     <div class="px-4 py-4 hover:bg-[#14a15b] hover:text-white transition-all duration-200 select-none"
                         :class="activeSection === 'TRANSFER' ? 'hover:bg-[#02743D] bg-[#02743D] text-white' : 'hover:bg-[#14a15b] hover:text-white'"
@@ -92,8 +92,12 @@ new #[Layout('layouts.app')] class extends Component {
                                         <div class="font-semibold">
                                             BANK CENTRAL ASIA
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            @click="navigator.clipboard.writeText('BANK CENTRAL ASIA'); copiedId = 'bank'; setTimeout(() => copiedId = null, 2000)"
+                                            :class="copiedId === 'bank' ? 'text-green-600' : 'text-amber-700 hover:text-green-600'"
+                                            class="h-6 w-6 cursor-pointer transition-colors duration-200"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                            title="Klik untuk copy">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                         </svg>
@@ -109,8 +113,12 @@ new #[Layout('layouts.app')] class extends Component {
                                         <div class="font-semibold w-10/12 md:w-full">
                                             PERKUMPULAN ALUMNI DOKTOR RISET MANAJEMEN
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            @click="navigator.clipboard.writeText('PERKUMPULAN ALUMNI DOKTOR RISET MANAJEMEN'); copiedId = 'rekening'; setTimeout(() => copiedId = null, 2000)"
+                                            :class="copiedId === 'rekening' ? 'text-green-600' : 'text-amber-700 hover:text-green-600'"
+                                            class="h-6 w-6 cursor-pointer transition-colors duration-200 flex-shrink-0"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                            title="Klik untuk copy">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                         </svg>
@@ -126,8 +134,12 @@ new #[Layout('layouts.app')] class extends Component {
                                         <div class="text-[17px] font-semibold">
                                             594-188-8811
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            @click="navigator.clipboard.writeText('594-188-8811'); copiedId = 'nomor'; setTimeout(() => copiedId = null, 2000)"
+                                            :class="copiedId === 'nomor' ? 'text-green-600' : 'text-amber-700 hover:text-green-600'"
+                                            class="h-6 w-6 cursor-pointer transition-colors duration-200"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                            title="Klik untuk copy">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                         </svg>
@@ -143,8 +155,12 @@ new #[Layout('layouts.app')] class extends Component {
                                         <div class="font-semibold">
                                             CABANG CIPONDOH
                                         </div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-700"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            @click="navigator.clipboard.writeText('CABANG CIPONDOH'); copiedId = 'cabang'; setTimeout(() => copiedId = null, 2000)"
+                                            :class="copiedId === 'cabang' ? 'text-green-600' : 'text-amber-700 hover:text-green-600'"
+                                            class="h-6 w-6 cursor-pointer transition-colors duration-200"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                            title="Klik untuk copy">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                         </svg>

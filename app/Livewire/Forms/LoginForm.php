@@ -39,10 +39,16 @@ class LoginForm extends Form
             $this->failAuthentication(trans('auth.failed'));
         }
 
-        if ($this->isAdmin($user)) {
-            throw ValidationException::withMessages([
-                'form.email' => trans('auth.failed')
-            ]);
+        if ($user->role->isAdmin()) {
+
+        }
+
+        if ($this->isPending($user)) {
+            $this->failAuthentication(__('Akun Anda saat ini sedang dalam proses verifikasi. Mohon menunggu hingga akun Anda aktif.'));
+        }
+
+        if ($this->isRejected($user)) {
+            $this->failAuthentication(__('Akun anda telah ditolak. Silakan hubungi kami untuk informasi lebih lanjut.'));
         }
 
         if (! $this->isVerified($user)) {
@@ -56,15 +62,6 @@ class LoginForm extends Form
         RateLimiter::clear($this->throttleKey());
     }
 
-    protected function isAdmin(User $user): bool
-    {
-        $role = $user->role;
-
-        return $role instanceof UserRole
-            ? $role->isAdmin()
-            : $role === UserRole::Admin->value;
-    }
-
     protected function isVerified(User $user): bool
     {
         $status = $user->status;
@@ -72,6 +69,24 @@ class LoginForm extends Form
         return $status instanceof Status
             ? $status->isVerified()
             : $status === Status::Verified->value;
+    }
+
+    protected function isPending(User $user): bool
+    {
+        $status = $user->status;
+
+        return $status instanceof Status
+            ? $status->isPending()
+            : $status === Status::Pending->value;
+    }
+
+    protected function isRejected(User $user): bool
+    {
+        $status = $user->status;
+
+        return $status instanceof Status
+            ? $status->isRejected()
+            : $status === Status::Rejected->value;
     }
 
     protected function failAuthentication(string $message): never

@@ -50,5 +50,14 @@ class UserSeeder extends Seeder
             'name' => $user2->name,
             'email' => $user2->email
         ]);
+
+        // Admin User
+        User::create([
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('admin123'),
+            'role' => UserRole::Admin->value,
+            'status' => Status::Verified->value
+        ]);
     }
 }

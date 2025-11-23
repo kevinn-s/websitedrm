@@ -60,7 +60,7 @@ new #[Layout('layouts.app')] class extends Component {
         [
             "nama" => "DR. IR. Mohammad Hamsal",
             "jabatan" => "Ketua"
-        ], 
+        ],
         [
             "nama" => "Sri  Bramantoro Abdinagoro",
             "jabatan" => "Anggota"
@@ -73,63 +73,39 @@ new #[Layout('layouts.app')] class extends Component {
         ['label' => 'Beranda', 'url' => ''],
         ['label' => 'Struktur Organisasi', 'url' => ''],
     ]"    title="Struktur Organisasi" background="bg-amber-950"></x-page-title>
-    <div class="px-6 md:px-36 pb-32 bg-white">
-        <div class="py-10 text-lg space-y-8 md:w-[70%]">
-            <div>Berikut merupakan struktur organisasi Asosiasi Alumni  <br class="block md:hidden">Doktor
-Riset Manajemen.</div>
-        </div>
-        <!-- <div>
-            <img src="{{ asset('images/hierarchy.png') }}" alt="" class="w-1/2 h-1/2">
-        </div> -->
-        <div class="font-source space-y-12">
-            <!-- Dewan Pengurus Section -->
-            <div>
-                <ul class="space-y-2 list-none md:w-[90%]">
-            <x-list title="Dewan Pengurus"
-                            class="text-normal"
-                            /></ul>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-12 mt-8">
-                    @foreach($dewanPengurus as $member)
-                        <div class="relative w-full overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
-                            <img class="w-full h-96 object-cover"
-                                src="{{ asset('images/placeholder.png') }}"
-                                alt="{{ $member['nama'] }}">
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-10 pb-5 px-5">
-                                <div class="text-white text-lg font-semibold drop-shadow-lg leading-tight">
-                                    {{ $member['nama'] }}
-                                </div>
-                                <div class="text-gray-200 text-sm mt-1 drop-shadow-md">
-                                    {{ $member['jabatan'] }}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
+    <div class="max-w-5xl w-full mx-auto my-10 space-y-12">
+        <div>
+            <div class="text-[26px] leading-[2.125rem] font-bold font-sora tracking-tighter text-primary-green-950">
+                Bagan Organisasi
             </div>
-
-            <!-- Dewan Pengawas Section -->
-            <div>
-                <ul class="space-y-2 list-none md:w-[90%]">
-            <x-list title="Dewan Pengawas"
-                            class="text-normal"
-                            /></ul>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-12 mt-8">
-                    @foreach($dewanPengawas as $member)
-                        <div class="relative w-full overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-300">
-                            <img class="w-full h-96 object-cover"
-                                src="{{ asset('images/placeholder.png') }}"
-                                alt="{{ $member['nama'] }}">
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-10 pb-5 px-5">
-                                <div class="text-white text-lg font-semibold drop-shadow-lg leading-tight">
-                                    {{ $member['nama'] }}
-                                </div>
-                                <div class="text-gray-200 text-sm mt-1 drop-shadow-md">
-                                    {{ $member['jabatan'] }}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
+            <div class="mt-4">
+                <img src="https://library.washu.edu/wp-content/uploads/2025/07/OrgChart_WashULibraries_072025-1024x663.png" alt="" srcset="">
+            </div>
+        </div>
+        <div class="space-y-6">
+            <div class="text-2xl font-bold font-sora tracking-tighter text-primary-green-950">
+                Dewan Pengurus
+            </div>
+            <div class="space-y-4">
+                @foreach ($dewanPengurus as $dewan)
+                        <div class="bg-gray-50 text-lg border-b-[0.3px] p-4">
+                    <h1 class="text-[19px] font-semibold tracking-[0.010rem]">{{ $dewan["nama"] }}</h1>
+                    <h3>{{ $dewan["jabatan"] }}</h3>
                 </div>
+                @endforeach
+            </div>
+        </div>
+        <div class="space-y-6">
+            <div class="text-2xl font-bold font-sora tracking-tighter text-primary-green-950">
+                Dewan Pengawas
+            </div>
+            <div class="space-y-4">
+                @foreach ($dewanPengawas as $dewan)
+                        <div class="bg-gray-50 text-lg border-b-[0.3px] p-4">
+                    <h1 class="text-[19px] font-semibold tracking-[0.010rem]">{{ $dewan["nama"] }}</h1>
+                    <h3>{{ $dewan["jabatan"] }}</h3>
+                </div>
+                @endforeach
             </div>
         </div>
     </div>

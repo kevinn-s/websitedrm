@@ -36,26 +36,41 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <div class="mb-4 text-sm text-gray-600">
-        {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+<form wire:submit="sendPasswordResetLink" class="max-w-md mt-12 w-full bg-white">
+    <div class="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
+        <img src="{{ asset('images/drm.jpg') }}" alt="" class="w-20 h-auto">
     </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="w-full p-6 space-y-4">
+        <div class="space-y-2">
+            <h1 class="font-sora text-2xl font-semibold">Lupa Password?</h1>
+            <p class="text-sm text-gray-600">
+                Masukkan email Anda dan kami akan mengirimkan link untuk mengatur ulang password Anda.
+            </p>
+        </div>
 
-    <form wire:submit="sendPasswordResetLink">
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="email" class="font-semibold">Email</x-input-label>
+            <x-text-input wire:model="email" id="email" class="w-full rounded-none my-2" type="email" name="email" required autofocus autocomplete="email" />
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Email Password Reset Link') }}
-            </x-primary-button>
+        @if (session('status'))
+            <div class="p-4 text-[13px] text-gray-800 bg-primary-green-400 bg-opacity-50">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <x-button type="submit" class="w-full">
+            <div class="flex items-center gap-2">
+                <span class="text-base">Kirim Link Reset Password</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 15 15"><path fill="#ffffff" d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414Z"/></svg>
+            </div>
+        </x-button>
+
+        <div class="text-sm text-center">
+           <p>Sudah ingat password? <a href="{{ route('login') }}" class="text-primary-green-800 tracking-tight hover:underline">Masuk</a></p>
         </div>
-    </form>
-</div>
+    </div>
+</form>

@@ -1,9 +1,9 @@
-@props(['active'])
+@props(['active' => false])
 
 @php
 $classes = ($active ?? false)
-            ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400  font-bold leading-5 text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out'
-            : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent  font-[700] leading-5 text-black hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out';
+            ? 'inline-flex items-center border-b-4 px-6 pt-4 pb-5 border-b-2 border-b-primary-green-500 transition duration-150 ease-in-out box-border'
+            : 'inline-flex items-center border-b-4 px-6 pt-4 pb-5 border-transparent leading-5 text-black hover:bg-primary-green-500 hover:text-white focus:outline-none transition duration-150 ease-in-out box-border';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>

@@ -11,17 +11,14 @@ return new class extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('image');
-            $table->string('category')->nullable();
-            
-            // Native ENUM for event type (MySQL 8.0+)
+            $table->string('image')->nullable();
+            $table->json('tags')->nullable();
             $table->enum('type', ['ANNUAL', 'SCHEDULED'])->default('SCHEDULED');
-
             $table->timestamp('published_at')->nullable();
-            $table->date('date')->nullable();        // for SCHEDULED events
-            $table->string('time')->nullable();      // e.g., "10:00 AM - 12:00 PM"
-            $table->string('annual_date')->nullable();    // e.g., "October"
-            $table->string('speaker_name')->nullable();
+            $table->date('date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
+            $table->string('registration_link')->nullable();
             $table->longText('description')->nullable();
             $table->timestamps();
         });

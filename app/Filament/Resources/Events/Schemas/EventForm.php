@@ -2,18 +2,28 @@
 
 namespace App\Filament\Resources\Events\Schemas;
 
+use Closure;
 use App\Enums\EventType;
+use App\Enums\EventAccessType;
+use Coolsam\Flatpickr\Forms\Components\Flatpickr;
+use Coolsam\Flatpickr\Enums\FlatpickrMode;
+
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TimePicker;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
-
 class EventForm
 {
     public static function configure(Schema $schema): Schema
@@ -25,61 +35,110 @@ class EventForm
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('title')
-                                    ->required(),
-                                FileUpload::make('image')
-                                    ->image()
-                                    ->disk('public')
-                                    ->directory('events')
-                                    ->required()
-                                    ->columnSpanFull(),
-                                TextInput::make('category'),
-                                Select::make('type')
-                                    ->options(EventType::class)
-                                    ->default('SCHEDULED')
-                                    ->required(),
-                                DatePicker::make('date'),
-                                TextInput::make('time'),
-                                TextInput::make('annual_date'),
-                                TextInput::make('speaker_name'),
+                                    ->required()->columnSpanFull(),
+                                Grid::make(2)
+                                    ->schema([
+                                        Select::make('type')
+                                            ->options(EventType::class)
+                                            ->default('SCHEDULED')
+                                            ->required()
+                                            ->reactive(),
+                                        Flatpickr::make('date')
+                                            ->enableTime(false)
+                                            ->dateFormat('d M Y')
+                                            ->altFormat('d/m/Y')
+                                            ->hiddenJs(<<<'JS'
+                                                $get('type') !== 'SCHEDULED'
+                                            JS)
+                                            ->label('Date')
+                                            ->required(),
+                                        Flatpickr::make('date')
+                                            ->monthPicker()
+                                            ->enableTime(false)
+                                            ->dateFormat('M Y')
+                                            ->altFormat('m/Y')
+                                            ->hiddenJs(<<<'JS'
+                                                $get('type') !== 'ANNUAL'
+                                            JS)
+                                            ->label('Date')
+                                    ])->columnSpanFull(),
+                                Grid::make(2)
+                                    ->schema([
+                                        Flatpickr::make('start_time')
+                                            ->timePicker()
+                                            ->hiddenJs(<<<'JS'
+                                        $get('type') === 'ANNUAL'
+                                        JS),
+                                        Flatpickr::make('end_time')
+                                            ->timePicker()
+                                            ->rules([
+                                                fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                                                    if (\Carbon\Carbon::parse($value)->lt(\Carbon\Carbon::parse($get('start_time')))) {
+                                                        $fail("End time lesser then start time");
+                                                    }
+                                                },
+                                            ])
+                                            ->live()
+                                            ->hiddenJs(<<<'JS'
+                                        $get('type') === 'ANNUAL'
+                                        JS),
+                                    ])->columnSpanFull(),
+
                                 RichEditor::make('description')
-                                    ->columnSpanFull()
+                                    ->columnSpanFull(),
+                                Grid::make(2)
+                                    ->schema([
+                                        FileUpload::make('image')
+                                            ->image()
+                                            ->disk('public')
+                                            ->directory('events')
+                                            ->label('Event Poster')
+                                    ])->columnSpanFull(),
+                                Grid::make(2)
+                                    ->schema([
+                                        TagsInput::make('tags'),
+                                    ])->columnSpanFull()
                             ])
                     ])->columnSpanFull(),
                 Section::make('Event Access Details')
+                    ->relationship('accesses')
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                Select::make('accesses.type')
+                                Select::make('type')
                                     ->label('Access Type')
-                                    ->options([
-                                        'physical' => 'Physical Location',
-                                        'virtual' => 'Virtual Meeting',
-                                        'hybrid' => 'Hybrid (Both)',
-                                    ])
+                                    ->options(EventAccessType::class)
                                     ->required(),
-
-                                TextInput::make('accesses.name')
-                                    ->label('Location/Meeting Name')
-                                    ->maxLength(255),
-
-                                TextInput::make('accesses.address')
-                                    ->label('Physical Address')
-                                    ->maxLength(500),
-
-                                TextInput::make('accesses.map_url')
-                                    ->label('Map URL')
-                                    ->url(),
-
-                                TextInput::make('accesses.meeting_url')
-                                    ->label('Meeting URL')
-                                    ->url(),
-
-                                TextInput::make('accesses.meeting_passcode')
-                                    ->label('Meeting Passcode')
-                                    ->maxLength(100),
+                            ])->columnSpanFull(),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('name')
+                                    ->label('Location Name'),
+                                TextInput::make('map_url')
+                                    ->label('Location Link'),
+                                TextInput::make('address'),
                             ])
-                            ->relationship('accesses')
+                            ->hiddenJs(
+                                <<<'JS'
+                                $get('type') === 'VIRTUAL'
+                                JS
+                            ),
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('meeting_url')
+                                    ->label("Meeting Link"),
+                                TextInput::make('meeting_passcode')
+                                    ->label('Meeting Passcode')
+                            ])->hiddenJs(
+                                <<<'JS'
+                                $get('type') === 'PHYSICAL'
+                                JS
+                            )
                     ])->columnSpanFull()
             ]);
+
     }
 }
+
+
+

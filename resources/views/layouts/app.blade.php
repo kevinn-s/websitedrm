@@ -25,14 +25,18 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap"
         rel="stylesheet">
-
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Sora:wght@100..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite-datepicker@1.3.0/dist/flowbite-datepicker.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flowbite-datepicker@1.3.0/dist/flowbite-datepicker.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="antialiased">
-    <div class="min-h-screen bg-gray-300">
+    <div class="min-h-screen ">
         <livewire:layout.navigation />
 
         <!-- Page Heading -->
@@ -45,12 +49,14 @@
         @endif
 
         <!-- Page Content -->
-        <main class="pt-16 md:pt-0">
-            <div class="px-2 md:px-12  font-inter">
-                {{ $slot }}
-            </div>
+        <main class="pt-16 md:pt-0 font-noto">
+            {{ $slot }}
         </main>
+
+        <x-footer></x-footer>
     </div>
 </body>
 
 </html>
+
+

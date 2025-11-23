@@ -1,0 +1,70 @@
+<?php
+
+use App\Livewire\Actions\Logout;
+
+use Livewire\Volt\Component;
+
+new class extends Component {
+    public function profile(): void
+    {
+        $this->redirect(route('profile'), navigate: true);
+    }
+
+    public function login(): void
+    {
+        $this->redirect('login', navigate: true);
+    }
+
+    public function register(): void
+    {
+        $this->redirect('register', navigate: true);
+    }
+    /**
+     * Log the current user out of the application.
+     */
+    public function logout(Logout $logout): void
+    {
+        $logout();
+
+        $this->redirect('/', navigate: true);
+    }
+}; ?>
+
+<div>
+    <div>
+       <div class="px-20 py-3 bg-primary-green-600 flex justify-end space-x-8">
+    <a href="#" class="flex items-center gap-2 text-white hover:text-primary-green-100 transition-colors duration-200 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" class="group-hover:scale-110 transition-transform duration-200">
+            <path fill="currentColor" d="M5 5a5 5 0 0 1 10 0v2A5 5 0 0 1 5 7V5zM0 16.68A19.9 19.9 0 0 1 10 14c3.64 0 7.06.97 10 2.68V20H0v-3.32z"/>
+        </svg>
+        <p class="text-sm font-medium whitespace-nowrap">Gabung menjadi anggota</p>
+    </a>
+    <a href="#" class="flex items-center gap-2 text-white hover:text-primary-green-100 transition-colors duration-200 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 384 384" class="group-hover:scale-110 transition-transform duration-200">
+            <path fill="currentColor" d="m151 269l55-56H0v-42h206l-55-56l30-30l107 107l-107 107zM341 0q18 0 30.5 12.5T384 43v298q0 18-12.5 30.5T341 384H43q-18 0-30.5-12.5T0 341v-85h43v85h298V43H43v85H0V43q0-18 12.5-30.5T43 0h298z"/>
+        </svg>
+        <p class="text-sm font-medium whitespace-nowrap">Masuk</p>
+    </a>
+</div>
+        <div class="hidden md:flex items-center bg-white px-20 justify-between pt-2">
+            <div>
+                <img src="{{ asset('images/drm.jpg') }}" alt="" class="w-16 h-auto">
+            </div>
+
+            <div class="flex justify-center flex-1 flex-nowrap whitespace-nowrap select-none">
+                <x-nav-link class="pb-5 mt-8 mx-6 whitespace-nowrap">Kegiatan</x-nav-link>
+                <x-nav-link class="pb-5 mt-8 mx-6 whitespace-nowrap">Tentang</x-nav-link>
+                <x-nav-link class="pb-5 mt-8 mx-6 whitespace-nowrap">Kontak Kami</x-nav-link>
+                <x-nav-link class="pb-5 mt-8 mx-6 whitespace-nowrap">Rekening</x-nav-link>
+            </div>
+
+            <!-- Optional: Add an empty div to balance the logo space -->
+            <div class="w-20"></div>
+        </div>
+    </div>
+
+
+    <div class="md:hidden block">
+
+    </div>
+</div>

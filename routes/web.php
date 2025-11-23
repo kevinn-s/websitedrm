@@ -3,6 +3,8 @@
 
 
 use App\Models\Alumni;
+use App\Mail\RegisterEmail;
+use App\Mail\AccountVerifiedEmail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
@@ -22,23 +24,26 @@ Volt::route('/visi-misi', 'pages.about.vision-mission')
 Volt::route('/tujuan', 'pages.about.purpose')
     ->name('tujuan');
 
-Volt::route('/struktur-organisasi', 'pages.about.boardmembers')
+Volt::route('/struktur-asosiasi-alumni', 'pages.about.boardmembers')
     ->name('struktur-organisasi');
 
 Volt::route('/kontak', 'pages.contact.index')
     ->name('kontak');
 
-Volt::route('/rekening', 'pages.contributions.index')
-    ->name('rekening');
+Volt::route('/test', 'datatest')
+    ->name('test');
 
-Route::prefix('/dokumen')
-    ->name('dokumen.')
-    ->group(function() {
-        Volt::route('/ad-art', 'pages.about.document.ad-art')
-        ->name('ad-art');
-        Volt::route('/akta-asosiasi', 'pages.about.document.akta')
-        ->name('akta-asosiasi');
-    });
+Route::get('/test-email', function () {
+    return new RegisterEmail(
+        'John Doe',
+        'john.doe@example.com',
+        '12345678'
+    );
+})->name('test-email');
+
+Route::get('/test-email-verified', function () {
+    return new AccountVerifiedEmail('John Doe');
+})->name('test-email-verified');
 
 Route::prefix('/kegiatan')
     ->name('kegiatan.')
@@ -54,7 +59,35 @@ Route::prefix('/rekening')
         ->name('');
     });
 
-Route::prefix('download')->name('download.')->group(function () {
+
+Volt::route('profile', 'pages.alumni.edit')
+    ->middleware(['auth'])
+    ->name('profile');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::prefix("/alumni")
+        ->name("alumni.")
+        ->group(function() {
+            Route::prefix("/profile")
+            ->group(function(){
+               Volt::route('{alumni}', 'pages.alumni.profile')
+               ->name('profile');
+            });
+            Volt::route('', 'pages.alumni.find')
+            ->name('directory');
+        });
+
+    Route::prefix('/dokumen')
+    ->name('dokumen.')
+    ->group(function() {
+        Volt::route('/ad-art', 'pages.about.document.ad-art')
+        ->name('ad-art');
+        Volt::route('/akta-asosiasi', 'pages.about.document.akta')
+        ->name('akta-asosiasi');
+    });
+
+    Route::prefix('download')->name('download.')->group(function () {
     // Route: /download/akta-asosiasi
     Route::get('/akta-asosiasi', function () {
         $path = 'documents/akta_asosiasi.pdf';
@@ -79,24 +112,6 @@ Route::prefix('download')->name('download.')->group(function () {
         );
     })->name('ad-art');
 });
-Volt::route('profile', 'pages.alumni.edit')
-    ->middleware(['auth'])
-    ->name('profile');
-
-
-Route::middleware(['auth'])->group(function () {
-    // Fix: Use prefix() and name() separately, then define routes inside
-    Route::prefix("/alumni")
-        ->name("alumni.")
-        ->group(function() {
-            Route::prefix("/profile")
-            ->group(function(){
-               Volt::route('{alumni}', 'pages.alumni.profile')
-               ->name('profile');
-            });
-            Volt::route('', 'pages.alumni.find')
-            ->name('directory');
-        });
 });
 
 require __DIR__.'/auth.php';

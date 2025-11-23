@@ -14,18 +14,13 @@ return new class extends Migration
         Schema::create('event_accesses', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Event::class)->constrained()->unique();
-            
-            // Native ENUM for access type
             $table->enum('type', ['PHYSICAL', 'VIRTUAL', 'HYBRID']);
-
-            $table->string('name')->nullable();            // e.g., "Main Hall", "Zoom Room"
-            $table->string('address')->nullable();         // for PHYSICAL
-            $table->string('map_url')->nullable();         // Google Maps link
-            $table->string('meeting_url')->nullable();     // Zoom, Teams, etc.
+            $table->string('name')->nullable();           
+            $table->string('address')->nullable();
+            $table->string('map_url')->nullable(); 
+            $table->string('meeting_url')->nullable();
             $table->string('meeting_passcode')->nullable();
             $table->timestamps();
-
-            // Prevent duplicate access types per event
             $table->unique(['event_id', 'type']);
         });
     }

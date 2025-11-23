@@ -69,37 +69,53 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<div>
-    <form wire:submit="resetPassword">
+<form wire:submit="resetPassword" class="max-w-md mt-12 w-full bg-white">
+    <div class="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
+        <img src="{{ asset('images/drm.jpg') }}" alt="" class="w-20 h-auto">
+    </div>
+
+    <div class="w-full p-6 space-y-4">
+        <div class="space-y-2">
+            <h1 class="font-sora text-2xl font-semibold">Reset Password</h1>
+            <p class="text-sm text-gray-600">Masukkan email dan password baru Anda untuk mengatur ulang password.</p>
+        </div>
+
         <!-- Email Address -->
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-label for="email" class="font-semibold">Email</x-input-label>
+            <x-text-input wire:model="email" id="email" class="w-full rounded-none my-2" type="email" name="email" required autofocus autocomplete="username" />
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div>
+            <x-input-label for="password" class="font-semibold">Password Baru</x-input-label>
+            <x-text-input wire:model="password" id="password" class="w-full rounded-none my-2" type="password" name="password" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password')" class="mt-1" />
         </div>
 
         <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                          type="password"
-                          name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        <div>
+            <x-input-label for="password_confirmation" class="font-semibold">Konfirmasi Password</x-input-label>
+            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="w-full rounded-none my-2" type="password" name="password_confirmation" required autocomplete="new-password" />
+            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
+        @if (session('status'))
+            <div class="p-4 text-[13px] text-gray-800 bg-primary-green-400 bg-opacity-50">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        <x-button type="submit" class="w-full">
+            <div class="flex items-center gap-2">
+                <span class="text-base">Reset Password</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 15 15"><path fill="#ffffff" d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414Z"/></svg>
+            </div>
+        </x-button>
+
+        <div class="text-sm text-center">
+           <p>Sudah ingat password? <a href="{{ route('login') }}" class="text-primary-green-800 tracking-tight hover:underline">Masuk</a></p>
         </div>
-    </form>
-</div>
+    </div>
+</form>

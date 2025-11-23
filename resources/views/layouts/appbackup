@@ -1,0 +1,4 @@
+
+    <!-- <div class="px-2 md:px-12  font-inter">
+                {{ $slot }}
+            </div> -->
