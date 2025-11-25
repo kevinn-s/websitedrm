@@ -13,79 +13,39 @@ use App\Enums\ContributionType;
 new #[Layout('layouts.app')] class extends Component {
     use WithFileUploads;
 
-    public string $type;
-    public $amount;
-    public $proof;
-
-    public bool $success = false;
-
-    public function casts(): array
-    {
-        return [
-            'type' => ContributionType::class,
-        ];
-    }
+    public Status $type;
+    public int $amount;
+    public string $proof;
 
     protected function rules(): array
     {
-        return [
-            'type' => ['required', new Enum(ContributionType::class)],
-            'amount' => [
-                'required',
-                'numeric',
-                function ($attribute, $value, $fail) {
-                    if ($this->type === ContributionType::Monthly->name && $value < 10000) {
-                        $fail('Minimum for Monthly contribution is Rp 10.000.');
-                    }
-                    if ($this->type === ContributionType::Yearly->name && $value < 100000) {
-                        $fail('Minimum for Yearly contribution is Rp 100.000.');
-                    }
-                },
-            ],
-            'proof' => ['required', 'file', 'mimes:jpeg,png,pdf', 'max:2048'],
-        ];
+    return [
+        'type' => ['required', new Enum(ContributionType::class)],
+        'amount' => [
+            'required',
+            'integer',
+            function ($attribute, $value, $fail) {
+                if ($this->type === ContributionType::Monthly && $value < 10000) {
+                    $fail('Minimum nominal untuk kontribusi bulanan adalah Rp 10.000.');
+                }
+
+                if ($this->type === ContributionType::Yearly && $value < 100000) {
+                    $fail('Minimum nominal untuk kontribusi tahunan adalah Rp 100.000.');
+                }
+            },
+        ],
+        'proof' => ['required', 'file', 'mimes:jpeg,png,pdf', 'max:2048'],
+    ];
     }
 
-    protected function messages(): array
-    {
-        return [
-            'proof.required' => 'Bukti transfer wajib diupload.',
-            'proof.file' => 'Bukti transfer harus berupa file.',
-            'proof.mimes' => 'Format file bukti transfer harus JPG, PNG, atau PDF.',
-            'proof.max' => 'Ukuran file bukti transfer maksimal 2MB.',
-            'type.required' => 'Jenis iuran wajib dipilih.',
-            'amount.required' => 'Nominal iuran wajib diisi.',
-            'amount.numeric' => 'Nominal iuran harus berupa angka.',
-        ];
-    }
+
     public function save(): void
     {
         $this->validate();
-
-        try {
-            $user = auth()->user();
-
-            Donation::create([
-                'user_id' => $user?->id,
-                'contribution_type' => $this->type,
-                'amount' => $this->amount,
-                'proof_path' => $this->proof->store('kontribusi', 'public'),
-                'status' => Status::Pending,
-            ]);
-
-            $this->reset(['type', 'amount', 'proof']);
-            $this->success = true;
-
-            // Optional: Add success message
-            session()->flash('message', 'Bukti transfer berhasil diupload!');
-
-
-        } catch (\Exception $e) {
-            // Handle file upload errors
-            session()->flash('error', 'Gagal mengupload bukti transfer: ' . $e->getMessage());
-        }
+        dd($this->type);
     }
 }; ?>
+
 
 <div class="space-y-10" x-data="{ showContent: true }">
     <x-page-title title="Rekening Asosiasi Alumni" :breadcrumbs="[
@@ -254,48 +214,59 @@ new #[Layout('layouts.app')] class extends Component {
             </div>
         </div>
     </div>
-    <div class="max-w-md mx-auto space-y-4" x-show="showContent === false">
+    <div class="mx-auto max-w-md" x-data="{
 
-        <div x-data="{showSuccess: @entangle('success')}">
-            <form x-show="!showSuccess" wire:submit.prevent="save" x-data="{
-                dropdownOpen: false,
-                selectedValue: '',
-                selectedFilter: 'Pilih jenis iuran',
-                nominalIuran: 0,
-                options: [
-                    { value: 'MONTHLY', label: 'Iuran Bulanan' },
-                    { value: 'YEARLY', label: 'Iuran Tahunan' }
-                ],
-                selectOption(value, label) {
-                    this.dropdownOpen = false;
-                    this.selectedValue = value;
-                    this.selectedFilter = label;
-                    @this.set('type', value, false);
-                    if(value === 'MONTHLY'){
-                        this.nominalIuran =  10000;
-                        @this.set('amount', 10000, false);
-                    } else if(value === 'YEARLY'){
-                        this.nominalIuran = 100000;
-                        @this.set('amount', 100000, false);
-                    }
-                },
-                getMinimumAmount() {
-                    return this.selectedValue === 'MONTHLY' ? 10000 : this.selectedValue === 'YEARLY' ? 100000 : 0;
-                },
-                validateAmount() {
-                    const min = this.getMinimumAmount();
-                    if (this.nominalIuran && parseInt(this.nominalIuran) < min) {
-                        return false;
-                    }
-                    return true;
-                }
-            }" class="space-y-4">
+    dropdownOpen: false,
+    selectedValue: '',
+    selectedFilter: 'Pilih jenis iuran',
+    nominalIuran: '',
+    options: [
+        { value: 'bulanan', label: 'Iuran Bulanan' },
+        { value: 'tahunan', label: 'Iuran Tahunan' }
+    ],
+    selectOption(value, label) {
+        this.selectedValue = value;
+        this.selectedFilter = label;
+        this.dropdownOpen = false;
+        this.nominalIuran = '';
+
+        $wire.set('form.contribution_type', value);
+    },
+    getMinimumAmount() {
+        return this.selectedValue === 'bulanan' ? 10000 : this.selectedValue === 'tahunan' ? 100000 : 0;
+    },
+    formatCurrency(value) {
+        if (!value) return '';
+        return 'Rp ' + parseInt(value).toLocaleString('id-ID');
+    },
+    validateAmount() {
+        const min = this.getMinimumAmount();
+        if (this.nominalIuran && parseInt(this.nominalIuran) < min) {
+            return false;
+        }
+        return true;
+    }
+}" x-show="showContent === false">
+        <div class="w-full p-6 space-y-4">
+            <div class="flex justify-between items-start mb-4">
+                <div class="space-y-2">
+                    <h1 class="font-sora text-2xl font-semibold">Bayar Iuran Alumni</h1>
+                    <p class="text-sm text-gray-600">
+                        Silakan lengkapi formulir pembayaran di bawah ini untuk berkontribusi.
+                    </p>
+                </div>
+            </div>
+
+            <form wire:submit.prevent="submit">
+            <!-- Pilih Tipe Iuran -->
+             <div class="space-y-4">
                 <div>
-                    <x-input-label for="type" class="font-semibold">Pilih Tipe Iuran</x-input-label>
+                    <x-input-label for="contribution_type" class="font-semibold">Pilih Tipe Iuran</x-input-label>
 
                     <div class="relative inline-block w-full my-2" @click.outside="dropdownOpen = false">
                         <button type="button" @click="dropdownOpen = !dropdownOpen"
-                            class="w-full font-semibold flex items-center justify-between bg-white border border-gray-300 px-4 py-2 text-left outline-0 focus:outline-none rounded-none">
+                            class="w-full font-semibold flex items-center justify-between bg-white border border-gray-300 px-4 py-2 text-left outline-0 focus:outline-none rounded-none"
+                            :class="{ 'text-gray-500': selectedValue === '', 'text-gray-900': selectedValue !== '' }">
                             <span x-text="selectedFilter"></span>
                             <svg class="inline ml-2 w-4 h-4 transition-transform duration-200"
                                 :class="{ 'rotate-180': dropdownOpen }" fill="none" stroke="currentColor"
@@ -314,57 +285,61 @@ new #[Layout('layouts.app')] class extends Component {
                             <template x-for="option in options" :key="option.value">
                                 <div @click="selectOption(option.value, option.label)"
                                     class="px-4 py-2 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
+                                    :class="{ 'bg-gray-100 border-l-4 border-primary-gold': selectedValue === option.value }"
                                     x-text="option.label"></div>
                             </template>
                         </div>
+
+                        <input type="hidden" name="contribution_type" :value="selectedValue"
+                            wire:model.defer="form.contribution_type">
                     </div>
-                    @error('type')
-                        <x-input-error :messages="$message" class="mt-1" />
-                    @enderror
+
+                    <x-input-error :messages="$errors->get('form.contribution_type')" class="mt-1" />
                 </div>
+            <!-- Nominal Iuran -->
                 <div>
                     <x-input-label for="amount" class="font-semibold">Nominal Iuran</x-input-label>
                     <div class="relative my-2">
                         <x-text-input id="amount" type="number" name="amount" x-model="nominalIuran"
-                            wire:model.defer="amount" class="w-full rounded-none border border-gray-300 px-4 py-2"
+                            wire:model.defer="form.amount" class="w-full rounded-none border border-gray-300 px-4 py-2"
                             placeholder="Masukkan nominal" x-bind:min="getMinimumAmount()"
                             x-bind:disabled="selectedValue === ''" />
                     </div>
+
                     <!-- Minimum amount info -->
-                    <p class="text-xm text-gray-500 mt-1" x-show="selectedValue !== ''">
-                    <div x-show="selectedValue === 'MONTHLY'">
-                        <span class="text-sm" x-show="nominalIuran && validateAmount()">Minimal untuk iuran bulanan: Rp
-                            10.000</span>
-                        <span class="text-red-600 text-xm" x-show="nominalIuran && !validateAmount()">Nominal minimum untuk
-                            iuran bulanan adalah Rp 10.000</span>
-                    </div>
-                    <div x-show="selectedValue === 'YEARLY'">
-                        <span x-show="nominalIuran && validateAmount()">Minimal untuk iuran tahunan: Rp 100.000</span>
-                        <span class="text-red-600 text-xm" x-show="nominalIuran && !validateAmount()">Nominal minimum untuk
-                            iuran tahunan adalah Rp 100.000</span>
-                    </div>
+                    <p class="text-xs text-gray-500 mt-1" x-show="selectedValue !== ''">
+                        <template x-if="selectedValue === 'bulanan'">
+                            <span>Minimal untuk iuran bulanan: Rp 10.000</span>
+                        </template>
+                        <template x-if="selectedValue === 'tahunan'">
+                            <span>Minimal untuk iuran tahunan: Rp 100.000</span>
+                        </template>
                     </p>
 
-                    @error('amount')
-                        <x-input-error :messages="$message" class="mt-1" />
-                    @enderror
+                    <!-- Validation error -->
+                    <p class="text-xs text-red-600 mt-1" x-show="nominalIuran && !validateAmount()">
+                        <template x-if="selectedValue === 'bulanan'">
+                            <span>Nominal minimum untuk iuran bulanan adalah Rp 10.000</span>
+                        </template>
+                        <template x-if="selectedValue === 'tahunan'">
+                            <span>Nominal minimum untuk iuran tahunan adalah Rp 100.000</span>
+                        </template>
+                    </p>
+
+                    <x-input-error :messages="$errors->get('form.amount')" class="mt-1" />
                 </div>
+            <!-- Bukti Transfer -->
                 <div>
                     <x-input-label for="proof" class="font-semibold">Bukti Transfer</x-input-label>
-                    <div class="my-2 flex justify-between items-center w-full border-gray-300 border rounded-none">
-                        <input id="proof" type="file" name="proof" wire:model="proof" accept="image/*,.pdf"
-                            class="truncate flex-1 min-w-0" />
-                        <div wire:loading wire:target="proof" class="flex-shrink-0 mr-2">
-                            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 2v4m0 12v4m8-10h-4M6 12H2m15.364-7.364l-2.828 2.828M7.464 17.536l-2.828 2.828m12.728 0l-2.828-2.828M7.464 6.464L4.636 3.636" />
-                            </svg>
-                        </div>
+                    <div class="my-2">
+                        <input id="proof" type="file" name="proof" wire:model="form.proof" accept="image/*,.pdf"
+                            class="w-full text-gray-500 rounded-none border border-gray-300 px-3 py-0.5 file:mr-4 file:py-2 file:px-4 file:rounded-none file:border-2 file:border-primary-green-500 file:text-sm file:font-semibold file:bg-primary-green-500 file:text-white hover:file:bg-primary-green-600 file:cursor-pointer" />
                     </div>
                     <p class="text-xs text-gray-500 my-2">Format: JPG, PNG, atau PDF (Maks. 2MB)</p>
-                    <x-input-error :messages="$errors->get('proof')" class="mt-1" />
+                    <x-input-error :messages="$errors->get('form.proof')" class="mt-1" />
                 </div>
-                <x-button wire:click="save" type="submit" class="w-full"
+
+                <x-button type="submit" class="w-full"
                     x-bind:disabled="!selectedValue || !nominalIuran || !validateAmount()">
                     <div class="flex items-center gap-2">
                         <span class="text-base">Kirim Pembayaran</span>
@@ -374,10 +349,13 @@ new #[Layout('layouts.app')] class extends Component {
                         </svg>
                     </div>
                 </x-button>
+                </div>
             </form>
-
-            <div x-show="showSuccess">
-                doaijjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+            <div class="text-sm text-center">
+                <button class="hover:underline"
+                    @click="showContent = true; $nextTick(() => window.scrollTo({ top: 0, behavior: 'smooth' }))">
+                    <p>Kembali ke halaman sebelumnya</p>
+                </button>
             </div>
         </div>
     </div>

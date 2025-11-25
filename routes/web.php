@@ -30,7 +30,7 @@ Volt::route('/struktur-asosiasi-alumni', 'pages.about.boardmembers')
 Volt::route('/kontak', 'pages.contact.index')
     ->name('kontak');
 
-Volt::route('/test', 'datatest')
+Volt::route('/test', 'pages.contributions.test')
     ->name('test');
 
 Route::get('/test-email', function () {
@@ -49,7 +49,8 @@ Route::prefix('/kegiatan')
     ->name('kegiatan.')
     ->group(function(){
           Volt::route('/{slug}', 'pages.events.show')
-            ->name('show');
+            ->name('show')
+            ->where('slug', '[^ ]+');
     });
 
 Route::prefix('/rekening')

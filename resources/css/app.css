@@ -16,12 +16,9 @@ body {
 	font-family: var(--font-source);
 }
 
-
-
-
 @layer utilities {
 	.banner {
-    background-image: url('https://www.griffith.edu.au/__data/assets/image/0032/1924763/Copy-of-Website-Banner-1900px-x-690px-2.png');
+    background-image: url('');
     background-blend-mode: multiply;
     background-color: rgba(0,0,0,0.5);
 		    background-position: center;   /* gambar berada di tengah */

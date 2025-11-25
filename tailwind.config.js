@@ -44,6 +44,7 @@ export default {
             fontSize: {
                 'xm': '13px',
                 'sm+': '15px',
+                'base+': '17px',
                 '1.5xl': ['1.375rem', { lineHeight: '1.45' }], // previous one
                 '2.5xl': ['1.6875rem', { lineHeight: '1.47' }],
             }

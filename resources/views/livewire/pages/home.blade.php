@@ -136,7 +136,6 @@ new #[Layout('layouts.app')] class extends Component {
                             </svg>
                             <span class="text-sm+ font-medium tracking-normal block">
                                 <p class="line-clamp-1">{{ $event["location"] }}</p>
-
                             </span>
                         </div>
                     </div>

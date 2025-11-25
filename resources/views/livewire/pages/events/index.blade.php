@@ -4,10 +4,13 @@ use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Computed;
 use App\Models\Event;
+use App\Enums\EventType;
+
 
 new #[Layout('layouts.app')] class extends Component {
+
+    public ?EventType $type = null;
     public string $search = '';
-    public ?string $type = null;
     public ?string $date = null;
 
     public function resetFilters(): void
@@ -109,7 +112,7 @@ new #[Layout('layouts.app')] class extends Component {
                     </svg>
                     <p class="block tracking-wide">Filter</p>
                 </button>
-                <div class="absolute right-0 border-[0.5px] mt-4 border-gray-300 border-b-primary-green-700 border-b-4 p-4 space-y-4 w-80 bg-white z-10 transition-all duration-200"
+                <div class="absolute right-0 border-[0.5px] mt-4 border-gray-300 border-b-primary-green-700 border-b-4 p-4 space-y-4 w-[21rem] bg-white z-10 transition-all duration-200"
                     :class="toggle ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'"
                     x-show="toggle" x-transition>
                     <div class="flex justify-between items-center">
@@ -237,8 +240,8 @@ new #[Layout('layouts.app')] class extends Component {
                                 </svg>
                             </button>
                         </div>
-                        <p class="my-4 leading-relaxed text-gray-700 h-[3.25em] overflow-hidden">
-                            Adelphi University's 10-week art intensive, For the Love of Art,
+                        <p class="line-clamp-2 my-4 leading-relaxed text-gray-700 h-[3.25em] overflow-hidden">
+                            Adelphi University's 10-week art intensive, For the Love of Art, Adelphi University's 10-week art intensive, For the Love of Art, Adelphi University's 10-week art intensive, For the Love of Art,
                         </p>
                         {{-- Date & Time --}}
                         <div class="flex items-center gap-2 text-gray-700">

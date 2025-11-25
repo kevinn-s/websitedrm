@@ -77,37 +77,166 @@ new #[Layout('layouts.app')] class extends Component {
         ['label' => 'Alumni', 'url' => ''],
     ]" background="bg-black" />
 
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-5xl mx-auto flex gap-1.5">
         <div class="lg:w-1/4 bg-gray-50 p-4">
-            <div class="px-2 font-extrabold bg-primary-gold text-white w-fit">
-                W66
+            <img src="{{ asset('images/avatar.jpg') }}" alt="" class="w-full h-auto aspect-[4/4]" srcset="">
+            <div class="my-2 space-y-2">
+                <div class="px-2 font-extrabold bg-primary-gold text-white w-fit">
+                    W66
+                </div>
+                <div class="flex justify-between">
+                    <h2 class="text-lg leading-[1.25] tracking-[0.013rem] text-gray-900 font-medium">
+                        <p class="line-clamp-2">
+                            Norval Ashton
+                        </p>
+                    </h2>
+                    <button class="select-none cursor-pointer group inline-flex items-center gap-2 rounded bg-transparent">
+                        <svg class="w-6 h-6 transition-transform duration-300 ease-out transform group-hover:translate-x-2 motion-reduce:transition-none"
+                            :class="hovered === true ? 'translate-x-2' : '' " xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                            <!-- rotate the shape -90deg around the center (256,256) so the arrow points right -->
+                            <g transform="rotate(-90 256 256)">
+                                <path fill="currentColor"
+                                    d="m367.997 338.75l-95.998 95.997V17.503h-32v417.242l-95.996-95.995l-22.627 22.627L256 496l134.624-134.623l-22.627-22.627z" />
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-2 mb-2">
+                    <p class="text-gray-600 text-sm">Customer Success</p>
+                    <p class="text-gray-600 text-sm">Slack International</p>
+                </div>
+                <div>
             </div>
-            <div class="flex justify-between py-2">
-                <h2 class="text-lg leading-[1.25] tracking-[0.013rem] text-gray-900 font-medium">
-                    <p class="line-clamp-2">
-                        Norval Ashton
-                    </p>
-                </h2>
-                <button class="select-none cursor-pointer group inline-flex items-center gap-2 rounded bg-transparent">
-                    <svg class="w-6 h-6 transition-transform duration-300 ease-out transform group-hover:translate-x-2 motion-reduce:transition-none"
-                        :class="hovered === true ? 'translate-x-2' : '' " xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 512 512" aria-hidden="true" focusable="false">
-                        <!-- rotate the shape -90deg around the center (256,256) so the arrow points right -->
-                        <g transform="rotate(-90 256 256)">
-                            <path fill="currentColor"
-                                d="m367.997 338.75l-95.998 95.997V17.503h-32v417.242l-95.996-95.995l-22.627 22.627L256 496l134.624-134.623l-22.627-22.627z" />
-                        </g>
-                    </svg>
-                </button>
-            </div>
-            <div class="mt-3 mb-2">
-                <p class="text-gray-600 text-sm">Customer Success</p>
-                <p class="text-gray-600 text-sm">Slack International</p>
+            <div>
+                <button>
+                    <a href="">
 
+                    </a>
+                </button>
             </div>
 
         </div>
+        </div>
+        <div class="lg:w-1/4 bg-gray-50 p-4">
+            <img src="{{ asset('images/avatar.jpg') }}" alt="" class="w-full h-auto aspect-[4/4]" srcset="">
+            <div class="my-2 space-y-2">
+                <div class="px-2 font-extrabold bg-primary-gold text-white w-fit">
+                    W66
+                </div>
+                <div class="flex justify-between">
+                    <h2 class="text-lg leading-[1.25] tracking-[0.013rem] text-gray-900 font-medium">
+                        <p class="line-clamp-2">
+                            Norval Ashton
+                        </p>
+                    </h2>
+                    <button class="select-none cursor-pointer group inline-flex items-center gap-2 rounded bg-transparent">
+                        <svg class="w-6 h-6 transition-transform duration-300 ease-out transform group-hover:translate-x-2 motion-reduce:transition-none"
+                            :class="hovered === true ? 'translate-x-2' : '' " xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                            <!-- rotate the shape -90deg around the center (256,256) so the arrow points right -->
+                            <g transform="rotate(-90 256 256)">
+                                <path fill="currentColor"
+                                    d="m367.997 338.75l-95.998 95.997V17.503h-32v417.242l-95.996-95.995l-22.627 22.627L256 496l134.624-134.623l-22.627-22.627z" />
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-2 mb-2">
+                    <p class="text-gray-600 text-sm">Customer Success</p>
+                    <p class="text-gray-600 text-sm">Slack International</p>
+                </div>
+                <div>
+            </div>
+            <div>
+                <button>
+                    <a href="">
 
-    </div>
+                    </a>
+                </button>
+            </div>
+
+        </div>
+        </div>
+        <div class="lg:w-1/4 bg-gray-50 p-4">
+            <img src="{{ asset('images/avatar.jpg') }}" alt="" class="w-full h-auto aspect-[4/4]" srcset="">
+            <div class="my-2 space-y-2">
+                <div class="px-2 font-extrabold bg-primary-gold text-white w-fit">
+                    W66
+                </div>
+                <div class="flex justify-between">
+                    <h2 class="text-lg leading-[1.25] tracking-[0.013rem] text-gray-900 font-medium">
+                        <p class="line-clamp-2">
+                            Norval Ashton
+                        </p>
+                    </h2>
+                    <button class="select-none cursor-pointer group inline-flex items-center gap-2 rounded bg-transparent">
+                        <svg class="w-6 h-6 transition-transform duration-300 ease-out transform group-hover:translate-x-2 motion-reduce:transition-none"
+                            :class="hovered === true ? 'translate-x-2' : '' " xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                            <!-- rotate the shape -90deg around the center (256,256) so the arrow points right -->
+                            <g transform="rotate(-90 256 256)">
+                                <path fill="currentColor"
+                                    d="m367.997 338.75l-95.998 95.997V17.503h-32v417.242l-95.996-95.995l-22.627 22.627L256 496l134.624-134.623l-22.627-22.627z" />
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-2 mb-2">
+                    <p class="text-gray-600 text-sm">Customer Success</p>
+                    <p class="text-gray-600 text-sm">Slack International</p>
+                </div>
+                <div>
+            </div>
+            <div>
+                <button>
+                    <a href="">
+
+                    </a>
+                </button>
+            </div>
+
+        </div>
+        </div>
+        <div class="lg:w-1/4 bg-gray-50 p-4">
+            <img src="{{ asset('images/avatar.jpg') }}" alt="" class="w-full h-auto aspect-[4/4]" srcset="">
+            <div class="my-2 space-y-2">
+                <div class="px-2 font-extrabold bg-primary-gold text-white w-fit">
+                    W66
+                </div>
+                <div class="flex justify-between">
+                    <h2 class="text-lg leading-[1.25] tracking-[0.013rem] text-gray-900 font-medium">
+                        <p class="line-clamp-2">
+                            Norval Ashton
+                        </p>
+                    </h2>
+                    <button class="select-none cursor-pointer group inline-flex items-center gap-2 rounded bg-transparent">
+                        <svg class="w-6 h-6 transition-transform duration-300 ease-out transform group-hover:translate-x-2 motion-reduce:transition-none"
+                            :class="hovered === true ? 'translate-x-2' : '' " xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                            <!-- rotate the shape -90deg around the center (256,256) so the arrow points right -->
+                            <g transform="rotate(-90 256 256)">
+                                <path fill="currentColor"
+                                    d="m367.997 338.75l-95.998 95.997V17.503h-32v417.242l-95.996-95.995l-22.627 22.627L256 496l134.624-134.623l-22.627-22.627z" />
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                <div class="mt-2 mb-2">
+                    <p class="text-gray-600 text-sm">Customer Success</p>
+                    <p class="text-gray-600 text-sm">Slack International</p>
+                </div>
+                <div>
+            </div>
+            <div>
+                <button>
+                    <a href="">
+
+                    </a>
+                </button>
+            </div>
+
+        </div>
+        </div>
 
 </div>

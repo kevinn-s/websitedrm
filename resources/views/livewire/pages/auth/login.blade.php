@@ -21,7 +21,7 @@ new #[Layout('layouts.guest')] class extends Component
     }
 }; ?>
 
-<form wire:submit.prevent="login" class="max-w-md mt-12 w-full bg-white">
+<form wire:submit.prevent="login" class="max-w-md my-12 w-full bg-white">
     <!-- Session Status -->
     <x-auth-session-status :status="session('status')" />
     <div class="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">

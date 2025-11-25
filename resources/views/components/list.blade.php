@@ -21,6 +21,10 @@
             'title' => 'text-lg pl-8',
             'content' => 'text-base'
         ],
+        'md+' => [
+            'title' => 'text-lg pl-8',
+            'content' => 'text-base+ pl-8'
+        ],
         'lg' => [
             'title' => 'text-xl pl-8',
             'content' => 'text-lg pl-8'
