@@ -18,7 +18,7 @@ body {
 
 @layer utilities {
 	.banner {
-    background-image: url('');
+    background-image: url("");
     background-blend-mode: multiply;
     background-color: rgba(0,0,0,0.5);
 		    background-position: center;   /* gambar berada di tengah */

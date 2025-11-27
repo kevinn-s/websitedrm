@@ -59,7 +59,7 @@ new #[Layout('layouts.app')] class extends Component {
 
     <div class="max-w-5xl mx-auto">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-20">
-            <aside class="lg:col-span-5 bg-yellow-100 h-[420px]">left</aside>
+            <aside class="lg:col-span-5 bg-yellow-100 h-[420px]"></aside>
 
             <main class="lg:col-span-7">
                 <h1

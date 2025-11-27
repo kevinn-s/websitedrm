@@ -1,0 +1,3 @@
+- [ ] Update Livewire component for event filters
+- [ ] Wire up buttons and filters in events Blade template
+- [ ] Render filtered events list dynamically

@@ -43,7 +43,7 @@ class EventAccess extends Model
          return $this->type === EventAccessType::PHYSICAL;
     }
 
-    public function isHybrid(): bool 
+    public function isHybrid(): bool
     {
         return $this->type === EventAccessType::HYBRID;
     }
