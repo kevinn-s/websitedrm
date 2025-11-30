@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\AlumniRegistered;
+use App\Listeners\NotifyAlumniOfVerification;
+use App\Listeners\SendAlumniRegisteredEmail;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Event::listen(
+            AlumniRegistered::class,
+            SendAlumniRegisteredEmail::class
+        );
     }
 }
