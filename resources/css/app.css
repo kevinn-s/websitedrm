@@ -1,0 +1,56 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme inline {
+    /* Custom fonts */
+    --font-sora: 'Sora', sans-serif;
+    --font-noto: 'Noto Sans', sans-serif;
+
+    /* Custom font sizes */
+    --text-xm: 13px;
+    --text-xm--line-height: 1.43;
+    --text-smp: 15px;
+    --text-smp--line-height: 1.47;
+    --text-basep: 17px;
+    --text-basep--line-height: 1.5;
+    --text-lgp: 19px;
+    --text-lgp--line-height: 1.5;
+    --text-1xl: 22px;
+    --text-1xl--line-height: 1.36;
+    --text-2-5xl: 27px;
+    --text-2-5xl--line-height: 1.26;
+    --text-3-5xl: 33px;
+    --text-3-5xl--line-height: 1.15;
+    --text-4-5xl: 42px;
+    --text-4-5xl--line-height: 1.05;
+
+    /* Custom colors - Primary Green */
+    --color-primary-green-50: rgb(240, 249, 244);
+    --color-primary-green-100: rgb(220, 242, 227);
+    --color-primary-green-200: rgb(188, 229, 202);
+    --color-primary-green-300: rgb(139, 210, 166);
+    --color-primary-green-400: rgb(83, 184, 125);
+    --color-primary-green-500: rgb(2, 116, 61);
+    --color-primary-green-600: rgb(1, 98, 51);
+    --color-primary-green-700: rgb(1, 80, 41);
+    --color-primary-green-800: rgb(1, 65, 34);
+    --color-primary-green-900: rgb(0, 53, 28);
+    --color-primary-green-950: rgb(0, 28, 15);
+
+    /* Custom colors - Primary Gold */
+    --color-primary-gold-50: rgb(253, 250, 242);
+    --color-primary-gold-100: rgb(250, 243, 223);
+    --color-primary-gold-200: rgb(245, 231, 191);
+    --color-primary-gold-300: rgb(237, 213, 147);
+    --color-primary-gold-400: rgb(220, 187, 90);
+    --color-primary-gold-500: rgb(192, 152, 49);
+    --color-primary-gold-600: rgb(163, 128, 38);
+    --color-primary-gold-700: rgb(135, 105, 30);
+    --color-primary-gold-800: rgb(110, 86, 26);
+    --color-primary-gold-900: rgb(90, 70, 22);
+    --color-primary-gold-950: rgb(48, 37, 12);
+}
