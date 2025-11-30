@@ -5,12 +5,12 @@
 use App\Models\Alumni;
 use App\Mail\RegisterEmail;
 use App\Mail\AccountVerifiedEmail;
+use App\Mail\ContributionThankYouEmail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
 
 use Livewire\Volt\Volt;
-
 
 Volt::route('/', 'pages.home')
     ->name('dashboard');
@@ -30,20 +30,6 @@ Volt::route('/struktur-asosiasi-alumni', 'pages.about.boardmembers')
 Volt::route('/kontak', 'pages.contact.index')
     ->name('kontak');
 
-Volt::route('/test', 'pages.contributions.test')
-    ->name('test');
-
-Route::get('/test-email', function () {
-    return new RegisterEmail(
-        'John Doe',
-        'john.doe@example.com',
-        '12345678'
-    );
-})->name('test-email');
-
-Route::get('/test-email-verified', function () {
-    return new AccountVerifiedEmail('John Doe');
-})->name('test-email-verified');
 
 Route::prefix('/kegiatan')
     ->name('kegiatan.')

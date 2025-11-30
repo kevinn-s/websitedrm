@@ -59,13 +59,13 @@ new #[Layout('layouts.guest')] class extends Component {
     }
 }; ?>
 
-<form wire:submit.prevent="register" class="max-w-md my-12 w-full bg-white">
+<form wire:submit.prevent="register" class="max-w-md w-full my-6 sm:my-12 bg-white mx-auto">
     <!-- Session Status -->
     <x-auth-session-status :status="session('status')" />
-    <div class="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
-        <img src="{{ asset('images/drm.jpg') }}" alt="" class="w-20 h-auto">
+    <div class="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-4 sm:p-6">
+        <img src="{{ asset('images/drm.jpg') }}" alt="" class="w-16 sm:w-20 h-auto">
     </div>
-    <div class="w-full p-6 space-y-4">
+    <div class="w-full p-4 sm:p-6 space-y-4">
         @if($registered)
             <div class="space-y-4">
                 <div class="space-y-2 text-center">

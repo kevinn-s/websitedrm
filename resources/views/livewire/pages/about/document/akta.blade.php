@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Storage;
 
 new #[Layout('layouts.app')] class extends Component {
     public function download()
@@ -9,87 +10,77 @@ new #[Layout('layouts.app')] class extends Component {
         // Redirect the browser to the download route
         return redirect()->route('download.akta-asosiasi');
     }
+    public string $aktaPdfUrl = '';
+    public bool $aktaFileAvailable = false;
+
+    public function mount(): void
+    {
+        $path = 'documents/akta_asosiasi.pdf';
+
+        if (Storage::disk('public')->exists($path)) {
+            $this->aktaPdfUrl = Storage::url($path);
+            $this->aktaFileAvailable = true;
+        }
+    }
 }; ?>
 
-<div>
-     <x-page-title 
-        title="Dokumen Akta Asosiasi" 
+<div class="bg-white">
+    <x-page-title
+        title="Dokumen<br> Akta Asosiasi"
         :breadcrumbs="[
             ['label' => 'Beranda', 'url' => url('dashboard')],
             ['label' => 'Dokumen Akta Asosiasi', 'url' => ''],
         ]"
- 
     />
 
-    <div class="px-6 md:px-20 lg:px-36 pb-32 pt-6 md:pt-10 bg-white">
-        <div class="">
-            <div class="flex gap-4 items-center">
-                        <div class="w-10 mt-1.5 md:mt-0 h-10 flex items-center justify-center bg-primary-green flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 8 8"><path fill="#ffffff" d="M0 0v8h7V4H3V0H0zm4 0v3h3L4 0zM1 2h1v1H1V2zm0 2h1v1H1V4zm0 2h4v1H1V6z"/></svg>
-                        </div>
-                        <div class="flex-1 space-y-1 md:space-y-0">
-                            <div class="text-sm md:text-base">
-                                Informasi mengenai Akta Pendirian<br> Asosiasi Alumni DRM 
-                            </div>
-                             
-                        </div>
-                    </div>
-            <div class="text-base md:text-lg w-full lg:w-[70%] my-5">
-                <div class="w-full lg:w-[70%] md:border-[0.3px] md:border-gray-300 md:p-4">
-                        <div class="hidden md:grid grid-cols-[1fr_max-content] grid-rows-2 gap-x-6 gap-y-4 text-[15px]">
-                        <div>
-                            <div class="font-semibold text-gray-700 mb-1">Nomor Akta</div>
-                            <p>AHU-0011584.AH.01.</p>
-                            <p>07.TAHUN 2024</p>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-gray-700 mb-1">Nomor Pendaftaran</div>
-                            <p>6024 1211 3610 0578</p>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-gray-700 mb-1">Tanggal Pengesahan</div>
-                            <p>11 Desember 2024</p>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-gray-700 mb-1">Notaris</div>
-                            <p>JHONNI MARIHOTUA SIANTURI, SH</p>
-                        </div>
-                    </div>
-
-                    <div class="md:hidden grid grid-rows-4 mt-8 gap-4">
-                        <div class="py-3 md:py-4 px-8 border border-gray-200">
-                            <div class="font-semibold text-sm mb-2">Nomor Akta</div>
-                            <div class="text-sm">AHU-0011584.AH.01.07.TAHUN 2024</div>
-                        </div>
-                        <div class="py-3 md:py-4 px-8 border border-gray-200">
-                            <div class="font-semibold text-sm mb-2">Nomor Pendaftaran</div>
-                            <div class="text-sm">6024 1211 3610 0578</div>
-                        </div>
-                        <div class="py-3 md:py-4 px-8 border border-gray-200">
-                            <div class="font-semibold text-sm mb-2">Tanggal Pengesahan</div>
-                            <div class="text-sm">11 Desember 2024</div>
-                        </div>
-                        <div class="py-3 md:py-4 px-8 border border-gray-200">
-                            <div class="font-semibold text-sm mb-2">Notaris</div>
-                            <div class="text-sm">JHONNI MARIHOTUA SIANTURI, SH</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 md:mt-10 text-sm md:text-base">
-                    Dokumen dapat diunduh dengan klik tombol dibawah ini : 
-                </div>
+    <section class="py-12 bg-white">
+        <div class="max-w-5xl mx-auto px-6 lg:px-0 space-y-6 text-primary-green-950">
+            <div class="space-y-3 md:w-8/12">
+                <p class="text-lg leading-relaxed">
+                    Akta Asosiasi Alumni ditampilkan di bawah ini. Salinan
+                    @if ($aktaFileAvailable && $aktaPdfUrl)
+                        <a href="{{ $aktaPdfUrl }}"
+                            class="font-bold text-primary-green-900 hover:text-primary-green-700 transition duration-150 ease-in-out cursor-pointer inline-flex items-center"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            versi PDF lengkap <span class="ml-1">↗</span>
+                        </a>
+                    @else
+                        <span class="font-semibold">versi PDF lengkap</span>
+                    @endif
+                    juga tersedia untuk diunduh.
+                </p>
             </div>
-        </div>
 
-        <div class="space-y-4">
-            <button 
-        wire:click="download" 
-        class="w-full md:w-auto inline-flex items-center justify-center gap-3 font-bold transition-all duration-300 ease-in-out px-4 md:px-3 py-3 text-sm md:text-base bg-[#02743D] text-white border-2 border-primary-green hover:bg-white hover:text-primary-green hover:border-primary-green">
-        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path fill="currentColor" d="M7 7v1H1V7m2-3V1h2v3h2L4 7L1 4"/></svg>
-        Unduh Dokumen Akta Asosiasi
-    </button>
-    <h1 class="text-xs md:text-sm text-gray-800">Last updated: 14 Sep 2025</h1>
         </div>
-    </div>  
-   
+    </section>
+
+    <section class="bg-primary-green-50 py-10">
+        <div class="max-w-5xl mx-auto px-6 lg:px-0">
+            @if ($aktaFileAvailable && $aktaPdfUrl)
+                <div
+                    x-data="pdfViewer(@js($aktaPdfUrl))"
+                    class=" border border-primary-green-100 bg-white shadow-[0_30px_80px_rgba(15,118,80,0.08)] overflow-hidden"
+                >
+                    <div
+                        x-ref="pdfContainer"
+                        class="min-h-[640px] w-full"
+                    ></div>
+                    <div class="border-t border-primary-green-100 bg-primary-green-50/50 p-4 flex items-center gap-3">
+                        <a href="{{ $aktaPdfUrl }}" class="text-sm font-semibold text-primary-green-700 underline" target="_blank" rel="noopener noreferrer">
+                            Unduh Dokumen
+                        </a>
+                        <button type="button" class="text-sm text-gray-600 underline" @click="closePDF()">
+                            Tutup Dokumen
+                        </button>
+                    </div>
+                </div>
+            @else
+                <div class=" border border-primary-green-200 bg-white p-8 text-center text-primary-green-900">
+                    <p class="text-lg font-semibold">Dokumen belum tersedia.</p>
+                    <p class="mt-2 text-sm text-gray-600">Silakan coba lagi nanti atau unduh melalui tombol di atas ketika file sudah siap.</p>
+                </div>
+            @endif
+        </div>
+    </section>
 </div>

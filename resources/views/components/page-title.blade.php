@@ -5,19 +5,26 @@
     'description' => ''
 ])
 
-<div class="relative banner h-[384px] sm:h-[384px] lg:h-[284px] w-screen text-white">
-    <div class="max-w-5xl w-full h-full mx-auto">
-        <div class="h-full max-w-2xl md:py-20">
-            <div class="max-w-lg">
-                <div class="max-w-lg">
-                    <h1 class="font-sora text-4xl md:text-5xl font-bold tracking-tighter mb-5">
-                        {!! $title !!}
-                    </h1>
-                    <p class="font-noto text-lg leading-[22px] mb-8">
-                        {!! $description !!}
-                    </p>
-                </div>
+<div class="relative min-h-[280px] sm:h-[340px] lg:h-[344px] w-full text-white"
+ style="
+        background-image: url('{{ asset('images/JWC-74-min-scaled.jpg') }}');
+        background-blend-mode: multiply;
+        background-color: rgba(0,0,0,0.7);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+     "
+>
+    <div class="max-w-5xl w-full h-full mx-auto px-4 sm:px-6 lg:px-0">
+        <div class="h-full max-w-2xl flex flex-col justify-center py-16 md:py-20">
+            <div class="max-w-xl">
+                <h1 class="font-sora text-4xl md:text-5xl font-black md:font-bold tracking-tighter mb-3 sm:mb-5">
+                    {!! $title !!}
+                </h1>
             </div>
+            <p class="font-noto text-sm+ sm:text-lg md:text-[19px] font-medium leading-snug sm:leading-[1.5rem]">
+                {!! $description !!}
+            </p>
         </div>
     </div>
 </div>

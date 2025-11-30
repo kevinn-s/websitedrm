@@ -56,7 +56,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->brandLogo(asset("images/drm.jpg"))   ->brandLogoHeight('2.5rem') ;
 
 
             return $panel;

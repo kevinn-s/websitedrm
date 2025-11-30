@@ -35,7 +35,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="-mx-2 px-3 md:px-48 py-12 bg-white">
+<div class="px-4 sm:px-6 lg:px-12 xl:px-48 py-8 sm:py-12 bg-white">
         <div class="pb-4 border-b border-gray-200 w-full">
             <div class="flex flex-col items-center text-primary-grey">
 

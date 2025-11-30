@@ -5,10 +5,12 @@ use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
 
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\Donation;
 use App\Enums\Status;
 use App\Enums\ContributionType;
+use App\Mail\ContributionThankYouEmail;
 
 new #[Layout('layouts.app')] class extends Component {
     use WithFileUploads;
@@ -73,6 +75,14 @@ new #[Layout('layouts.app')] class extends Component {
                 'status' => Status::Pending,
             ]);
 
+            // Send thank you email
+            $contributionTypeLabel = $this->type === 'MONTHLY' ? 'Iuran Bulanan' : 'Iuran Tahunan';
+            Mail::to($user->email)->send(new ContributionThankYouEmail(
+                $user->name,
+                $contributionTypeLabel,
+                (string) $this->amount
+            ));
+
             $this->reset(['type', 'amount', 'proof']);
             $this->success = true;
 
@@ -92,9 +102,9 @@ new #[Layout('layouts.app')] class extends Component {
         ['label' => 'Beranda', 'url' => ''],
         ['label' => 'Kegiatan', 'url' => ''],
     ]" />
-    <div class="max-w-5xl mx-auto" x-show="showContent">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0" x-show="showContent">
         <div class="md:w-8/12">
-            <div class="py-10 text-lg md:text-lg">
+            <div class="py-6 sm:py-10 text-base sm:text-lg md:text-lg">
                 Asosiasi Alumni Doktor Riset Manajemen BINUS University berkomitmen untuk terus mengembangkan
                 program-program berkualitas dan membangun jaringan alumni yang kuat. Kontribusi Anda membantu kami
                 mencapai visi tersebut.
@@ -151,7 +161,11 @@ new #[Layout('layouts.app')] class extends Component {
                             <div>Anda dapat melanjutkan pembayaran iuran alumni dengan menekan tombol di bawah ini:
                             </div>
                             <x-button class="relative z-20 mt-4"
-                                @click="showContent = false; $nextTick(() => window.scrollTo({ top: 0, behavior: 'smooth' }))">Bayar
+                                @click="showContent = false;   $nextTick(() => {
+        $nextTick(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        });
+    });">Bayar
                                 Iuran Alumni</x-button>
                         </div>
                     </div>
@@ -254,7 +268,7 @@ new #[Layout('layouts.app')] class extends Component {
             </div>
         </div>
     </div>
-    <div class="max-w-md mx-auto space-y-4" x-show="showContent === false">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-0 space-y-4" x-show="showContent === false">
 
         <div x-data="{}">
             <form x-show="!showSuccess" wire:submit.prevent="save" x-data="{
@@ -379,10 +393,10 @@ new #[Layout('layouts.app')] class extends Component {
 
         </div>
     </div>
-      <div class="max-w-3xl mx-auto" x-show="showSuccess">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-0" x-show="showSuccess">
                  <div class="relative overflow-hidden border border-primary-green-200 bg-white shadow-md">
                      <div class="absolute inset-y-0 left-0 w-2 bg-primary-green-500"></div>
-                     <div class="relative px-8 py-10 md:px-12 md:py-14">
+                     <div class="relative px-4 sm:px-8 md:px-12 py-8 sm:py-10 md:py-14">
                             <div class="flex flex-col gap-6 md:flex-row md:items-start">
                                    <div class="flex h-16 w-16 items-center justify-center rounded-full bg-primary-green-100 text-primary-green-700">
                                           <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">

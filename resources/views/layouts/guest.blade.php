@@ -20,7 +20,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="antialiased bg-indigo-100 flex justify-center font-noto">
+    <body class="antialiased bg-indigo-100 flex justify-center items-center min-h-screen px-4 sm:px-0 font-noto">
         {{ $slot }}
     </body>
 </html>

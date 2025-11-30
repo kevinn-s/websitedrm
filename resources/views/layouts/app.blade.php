@@ -49,7 +49,7 @@
         @endif
 
         <!-- Page Content -->
-        <main class="pt-16 md:pt-0 font-noto">
+        <main class="pt-0 font-noto">
             {{ $slot }}
         </main>
 

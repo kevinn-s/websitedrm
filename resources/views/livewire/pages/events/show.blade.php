@@ -15,159 +15,214 @@ use Carbon\Carbon;
 
 new #[Layout('layouts.app')] class extends Component {
     public string $title = '';
-    public string $image = '';
+    public string $imageUrl = '';
 
     public EventType $type;
+    public string $typeLabel = '';
+    public array $tags = [];
     public string $category = '';
     public Carbon $publishedDate;
     public Carbon $date;
     public string $description = '';
-    public ?string $time = null; // time as string (e.g., "14:00")
+    public string $summary = '';
+    public ?string $time = null;
+    public ?string $timeRange = null;
     public ?EventAccess $access;
-    public string $hostUrl = '';
+    public string $locationLabel = 'Lokasi belum ditentukan';
+    public ?string $mapUrl = null;
+    public ?string $meetingUrl = null;
+    public ?string $meetingPasscode = null;
+    public ?string $registrationLink = null;
+
     public function mount(string $slug): void
     {
         $slug = Str::slug($slug);
 
-        if (!$slug) {
+        if (! $slug) {
             abort(404);
         }
 
-        $event = Event::all()->firstWhere(fn($e) => Str::slug($e->title) === $slug);
+        $event = Event::query()
+            ->with('accesses')
+            ->get()
+            ->firstWhere(fn ($e) => Str::slug($e->title) === $slug);
 
-        if (!$event) {
+        if (! $event) {
             abort(404);
         }
 
         $this->title = $event->title;
-        $this->image = $event->image;
+        $this->tags = (array) ($event->tags ?? []);
         $this->type = $event->type;
+        $this->typeLabel = match ($event->type) {
+            EventType::Annual => 'Kegiatan Tahunan',
+            EventType::Scheduled => 'Kegiatan Mendatang',
+            default => 'Kegiatan',
+        };
         $this->category = $event->category ?? '';
         $this->publishedDate = $event->published_at ? Carbon::make($event->published_at) : Carbon::now();
         $this->date = $event->type === EventType::Annual ? Carbon::make($event->annual_date) : Carbon::make($event->date);
         $this->description = $event->description ?? '';
+        $this->summary = Str::limit(strip_tags($this->description), 200);
         $this->time = $event->time;
+        $this->timeRange = $event->formattedTimeRange();
+        $this->registrationLink = $event->registration_link;
+
+        $imagePath = $event->image;
+        if ($imagePath) {
+            if (Str::startsWith($imagePath, ['http://', 'https://'])) {
+                $this->imageUrl = $imagePath;
+            } else {
+                $this->imageUrl = asset('storage/' . ltrim($imagePath, '/'));
+            }
+        } else {
+            $this->imageUrl = asset('images/avatar.jpg');
+        }
+
         $this->access = $event->accesses;
+
+        if ($this->access) {
+            $this->locationLabel = $this->access->address
+                ?: ($this->access->name ?? 'Lokasi menyusul');
+
+            if ($this->access->type === EventAccessType::VIRTUAL) {
+                $this->locationLabel = $this->access->name ?: 'Pertemuan daring';
+            } elseif ($this->access->type === EventAccessType::HYBRID) {
+                $physical = $this->access->address ?: 'Lokasi fisik menyusul';
+                $this->locationLabel = $physical . ' + sesi daring';
+            }
+
+            $this->mapUrl = $this->access->map_url ?: null;
+            $this->meetingUrl = $this->access->meeting_url ?: null;
+            $this->meetingPasscode = $this->access->meeting_passcode ?: null;
+        }
     }
 }; ?>
 
-<div>
-    <x-page-title 
-        :title="$title" 
-        :breadcrumbs="[
-            ['label' => 'Kegiatan', 'url' => url('kegiatan')],
-            ['label' => '', 'url' => ''],
-        ]"
-    />
 
-    <div class="px-6 md:px-20 lg:px-36 pb-20 md:pb-32 py-6 md:py-10 bg-white">
-        <div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
-            <!-- Image Section -->
-            <div class="w-full lg:w-1/4 space-y-8">
-                <div class="aspect-[225/350] bg-slate-600 overflow-hidden shadow-lg">
-                    <img src="{{ asset('storage/' . $image) }}" alt="{{ $title }}" class="w-full h-full object-cover">
+<div class="bg-white">
+
+    @php
+        $currentUrl = url()->current();
+        $accessTypeLabel = $access
+            ? match ($access->type) {
+                EventAccessType::PHYSICAL => 'Tatap muka',
+                EventAccessType::VIRTUAL => 'Daring',
+                EventAccessType::HYBRID => 'Hybrid',
+                default => 'Format belum ditentukan'
+            }
+            : 'Format belum ditentukan';
+
+        $calendarStart = $date->copy()->startOfDay();
+        $calendarEnd = $date->copy()->addDay()->startOfDay();
+        $calendarParams = array_filter([
+            'action' => 'TEMPLATE',
+            'text' => $title,
+            'dates' => $calendarStart->format('Ymd') . '/' . $calendarEnd->format('Ymd'),
+            'details' => $summary,
+            'location' => $locationLabel,
+        ], fn ($value) => $value !== null && $value !== '');
+        $calendarUrl = 'https://calendar.google.com/calendar/render?' . http_build_query($calendarParams, '', '&', PHP_QUERY_RFC3986);
+    @endphp
+    <section class="relative overflow-hidden text-white">
+        <img src="{{ asset('images/sl_022120_28320_29.webp') }}" alt="Ilustrasi latar acara"
+    class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30" loading="lazy" aria-hidden="true">
+<div class="pointer-events-none absolute inset-0 bg-primary-green-500 bg-opacity-85" aria-hidden="true"></div>
+        <div class="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-8 sm:gap-12 px-4 sm:px-6 lg:px-0 py-10 sm:py-16 lg:flex-row lg:items-center">
+            <div class="w-full max-w-xs sm:max-w-sm flex-shrink-0">
+                <div class="overflow-hidden border border-white/10">
+                    <img src="{{ $imageUrl }}" alt="Poster {{ $title }}" class="h-full w-full object-cover" loading="lazy">
                 </div>
-                <div class="py-4">
-                    <div class="text-lg font-semibold mb-4">Bagikan</div>
-                    <div class="flex gap-4">
-                        <!-- Copy Link -->
-                        <button type="button" onclick="navigator.clipboard.writeText(window.location.href)" 
-                                class="w-10 h-10 rounded-full border-[0.5px] border-gray-800 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                        </button>
-                        
-                        <!-- Instagram -->
-                        <a href="https://www.instagram.com/" target="_blank"
-                           class="w-10 h-10 rounded-full border-[0.5px] border-gray-800 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                            </svg>
-                        </a>
-                        
-                        <!-- WhatsApp -->
-                        <a href="https://wa.me/?text={{ urlencode($title . ' - ' . url()->current()) }}" target="_blank"
-                           class="w-10 h-10 rounded-full border-[0.5px] border-gray-800 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                            </svg>
-                        </a>
-                        
-                        <!-- LinkedIn -->
-                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}" target="_blank"
-                           class="w-10 h-10 rounded-full border-[0.5px] border-gray-800 flex items-center justify-center hover:bg-gray-100 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-                            </svg>
-                        </a>
+            </div>
+
+            <div class="flex w-full flex-col gap-4 sm:gap-6 text-center lg:text-left">
+                <div class="flex flex-wrap items-center justify-center gap-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-green-200 lg:justify-start">
+                    <span class="border border-white/20 px-2 sm:px-3 py-1 text-white/80">{{ $typeLabel }}</span>
+                    @if ($category)
+                        <span class="border border-white/10 px-2 sm:px-3 py-1 text-white/60">{{ $category }}</span>
+                    @endif
+                </div>
+
+                <h1 class="font-sora text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight tracking-tight">{{ $title }}</h1>
+
+                <div class="grid gap-4 text-left sm:grid-cols-2">
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="mt-1 text-primary-green-200">
+                            <path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 14H5V10h14Zm0-10H5V6h14Z" />
+                        </svg>
+                        <div>
+                            <p class="text-xs font-semibold tracking-wide text-white/60">Tanggal</p>
+                            <p class="text-lg font-semibold text-white">{{ $date->translatedFormat('l, d F Y') }}</p>
+                            @if ($timeRange)
+                                <p class="text-sm font-medium text-white/60">{{ $timeRange }}</p>
+                            @elseif ($time)
+                                <p class="text-sm font-medium text-white/60">Mulai {{ $time }}</p>
+                            @else
+                                <p class="text-sm font-medium text-white/30">Waktu menyusul</p>
+                            @endif
+                        </div>
                     </div>
+
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="mt-1 text-primary-green-200">
+                            <path fill="currentColor" d="M12 2A7 7 0 0 0 5 9c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 14.5 9A2.5 2.5 0 0 1 12 11.5Z" />
+                        </svg>
+                        <div>
+                            <p class="text-xs font-semibold tracking-wide text-white/60">Lokasi</p>
+                            <p class="text-lg font-semibold text-white">{{ $locationLabel }}</p>
+                            @if ($mapUrl)
+                                <a href="{{ $mapUrl }}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-primary-green-200 underline">
+                                    Lihat lokasi
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+<!--
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="mt-1 text-primary-green-200">
+                            <path fill="currentColor" d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14l-5-3l-5 3l-5-3l-3 1.8V5Z" />
+                        </svg>
+                        <div>
+                            <p class="text-xs font-semibold tracking-wide text-white/60">Format</p>
+                            <p class="text-lg font-semibold text-white">{{ $accessTypeLabel }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" class="mt-1 text-primary-green-200">
+                            <path fill="currentColor" d="M12 3a9 9 0 1 0 9 9a9 9 0 0 0-9-9Zm0 4a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 12 7m1.75 10h-3.5v-1.5h1v-3h-1V11h2a1 1 0 0 1 1 1v3h.5Z" />
+                        </svg>
+                        <div>
+                            <p class="text-xs font-semibold tracking-wide text-white/60">Dipublikasikan</p>
+                            <p class="text-lg font-semibold text-white">{{ $publishedDate->translatedFormat('d F Y') }}</p>
+                        </div>
+                    </div> -->
                 </div>
-            </div>
-        <div class="flex-1 space-y-8">
-            <!-- When Section -->
-            <div class="space-y-2">
-                <h3 class="text-sm font-bold uppercase tracking-wide text-gray-900">TANGGAL</h3>
-                <div class="text-base text-gray-700">
-                    {{ $date->format('l, d F Y') }}
-                    @if($time)
-                        <br>{{ $time }}
+
+                <div class="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 pt-2 lg:justify-start">
+                    <a href="{{ $calendarUrl }}" target="_blank" rel="noopener noreferrer"
+                        class="w-full sm:w-auto inline-flex items-center justify-center border border-white/30 px-4 sm:px-6 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white/60 hover:bg-white/10">
+                        + Tambah ke kalender
+                    </a>
+                    @if ($registrationLink)
+                        <a href="{{ $registrationLink }}" target="_blank" rel="noopener noreferrer"
+                            class="w-full sm:w-auto inline-flex items-center justify-center bg-primary-green-500 px-4 sm:px-6 py-3 text-xs sm:text-sm font-semibold uppercase tracking-wide text-white shadow-lg transition hover:bg-primary-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/60">
+                            Daftar kegiatan
+                        </a>
                     @endif
-                </div>
-            </div>
-
-            <!-- Where Section -->
-            <div class="space-y-2">
-                <h3 class="text-sm font-bold uppercase tracking-wide text-gray-900">LOKASI</h3>
-                <div class="text-base text-gray-700">
-                    @if($access)
-                        {{ $access->location ?? 'Location TBA' }}
-                        @if($access->type === EventAccessType::VIRTUAL || $access->type ===EventAccessType::HYBRID)
-                            <br>(Livestream available)
-                        @endif
-                        @if($access->registration_link)
-                            <br><a href="{{ $access->registration_link }}" target="_blank" class="text-blue-600 underline hover:text-blue-800">View on Google maps</a>
-                        @endif
-                    @else
-                        Location TBA
-                    @endif
-                </div>
-            </div>
-
-         
-
-            <!-- Event Type Section -->
-            <div class="space-y-2">
-                <h3 class="text-sm font-bold uppercase tracking-wide text-gray-900">TIPE KEGIATAN</h3>
-                <div class="text-base text-gray-700">
-                    <span class="underline">
-                        @if($access)
-                            {{ match($access->type) {
-                                EventAccessType::PHYSICAL => 'Onsite',
-                                EventAccessType::VIRTUAL => 'Online',
-                                EventAccessType::HYBRID => 'Hybrid',
-                                default => 'Conference'
-                            } }}
-                        @else
-                            Conference
-                        @endif
-                    </span>
-                </div>
-            </div>
-
-            <!-- Registration Button -->
-            <div class="pt-4">
-                <button type="button" class="bg-primary-green text-white font-semibold px-6 py-3 hover:opacity-90 transition-opacity">
-                    Daftar 
-                </button>
-            </div>
-
-            <!-- Description Section -->
-            <div class="space-y-4 pt-6 border-t border-gray-200 w-9/12">
-                <div class="prose prose-sm max-w-none text-gray-700 leading-relaxed">
-                    {!! $description !!}
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+    <section class="bg-white py-8 sm:py-10">
+        <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-0">
+            <h2 class="text-xl sm:text-2xl font-semibold text-primary-green-950">Tentang kegiatan</h2>
+            <div class="mt-4 text-base sm:text-lg leading-relaxed text-gray-700">
+                {!! $description !!}
+            </div>
+        </div>
+    </section>
+
+
+
 </div>

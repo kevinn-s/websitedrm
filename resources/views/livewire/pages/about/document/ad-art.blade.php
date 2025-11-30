@@ -2,45 +2,78 @@
 
 use Livewire\Volt\Component;
 use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Storage;
 
 new #[Layout('layouts.app')] class extends Component {
-    //
+    /**
+     * @var array<int, array{label: string, url: string}>
+     */
+    public array $documents = [];
+
+    public bool $hasDocuments = false;
+
+    public function mount(): void
+    {
+        $sources = [
+            [
+                'label' => 'Anggaran Dasar (AD)',
+                'path' => 'documents/ad.pdf',
+            ],
+            [
+                'label' => 'Anggaran Rumah Tangga (ART)',
+                'path' => 'documents/art.pdf',
+            ],
+            [
+                'label' => 'Akta Asosiasi DRM',
+                'path' => 'documents/akta_asosiasi.pdf',
+            ],
+        ];
+
+        $this->documents = collect($sources)
+            ->filter(fn ($doc) => Storage::disk('public')->exists($doc['path']))
+            ->map(fn ($doc) => [
+                'label' => $doc['label'],
+                'url' => Storage::url($doc['path']),
+            ])
+            ->values()
+            ->all();
+
+        $this->hasDocuments = count($this->documents) > 0;
+    }
 }; ?>
 
-<div>
-     <x-page-title 
-        title="Dokumen AD/ART" 
+<div class="space-y-14">
+     <x-page-title
+        title="Dokumen AD/ART"
         :breadcrumbs="[
             ['label' => 'Beranda', 'url' => url('dashboard')],
             ['label' => 'Dokumen AD/ART', 'url' => ''],
         ]"
- 
+        description="Anggaran Dasar (AD) dan Anggaran Rumah Tangga (ART) merupakan dasar hukum dan pedoman organisasi dalam menjalankan seluruh kegiatan dan pengambilan keputusan."
     />
 
-    <div class="px-6 md:px-20 lg:px-36 pb-32 bg-white">
-        <div class="">
-            <div class="text-base md:text-lg w-full lg:w-[70%]">
-                <div class="py-6 md:py-10">
-                    Anggaran Dasar (AD) dan Anggaran Rumah Tangga (ART) merupakan dasar hukum dan pedoman organisasi dalam menjalankan seluruh kegiatan dan pengambilan keputusan.<br>
-                </div>
-                <div class="text-sm md:text-base">
-                    Dokumen dapat diunduh dengan klik tombol dibawah ini : 
-                </div>
-            </div>
-        </div>
+    <div class="max-w-5xl mx-auto space-y-6">
+        @php
+            $defaultPdf = $documents[0]['url'] ?? null;
+        @endphp
 
-        <div class="my-6 md:my-10 space-y-4">
-             <button type="button" class="
-    w-full md:w-auto inline-flex items-center justify-center gap-3 font-bold transition-all 
-    duration-300 ease-in-out px-4 md:px-3 py-3 text-sm md:text-base bg-[#02743D] text-white
-    border-2 border-primary-green hover:bg-white hover:text-primary-green 
-    hover:border-primary-green">
-    <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><path fill="currentColor" d="M7 7v1H1V7m2-3V1h2v3h2L4 7L1 4"/></svg>
-        Unduh Dokumen AD / ART
-    </button>
-    <h1 class="text-xs md:text-sm text-gray-800">Last updated
-    17 May 2024</h1>
-        </div>
-    </div>  
-   
+        <h1 class="max-w-3xl text-xl font-medium leading-relaxed text-primary-green-950">
+            AD/ART ditampilkan di bawah ini. Salinan
+            @if ($defaultPdf)
+                <a href="{{ $defaultPdf }}"
+                    class="font-bold text-primary-green-900 transition duration-150 ease-in-out hover:text-primary-green-700 inline-flex items-center"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    versi PDF lengkap <span class="ml-1">↗</span>
+                </a>
+            @else
+                <span class="font-semibold text-primary-green-700">versi PDF akan tersedia setelah dokumen diunggah.</span>
+            @endif
+            juga tersedia untuk diunduh.
+        </h1>
+
+
+                <div x-ref="pdfContainer" class="border border-gray-300" style="height: 650px;"></div>
+
+    </div>
 </div>

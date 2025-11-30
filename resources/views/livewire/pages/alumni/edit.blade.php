@@ -249,19 +249,19 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="min-h-screen bg-gray-50 py-8 font-noto">
+<div class="min-h-screen bg-gray-50 py-4 sm:py-8 font-noto">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white shadow">
             <!-- Header -->
-            <div class="px-6 py-5 border-b border-gray-200">
-                <h2 class="text-xl font-semibold text-gray-900">Profile</h2>
-                <p class="mt-1 text-sm text-gray-500">Update your photo and personal details here.</p>
+            <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200">
+                <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Profil</h2>
+                <p class="mt-1 text-xs sm:text-sm text-gray-500">Perbarui foto dan detail pribadi Anda di sini.</p>
             </div>
 
             <!-- Form -->
-            <div class="px-6 py-6 space-y-10">
+            <div class="px-4 sm:px-6 py-4 sm:py-6 space-y-6 sm:space-y-10">
                 <!-- Full Name -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <label class="block text-sm font-medium text-gray-700 md:pt-2">
                         Nama lengkap
                     </label>
@@ -275,7 +275,7 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
 
                 <!-- Email -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <label class="block text-sm font-medium text-gray-700 md:pt-2">
                         Email
                     </label>
@@ -288,12 +288,12 @@ new #[Layout('layouts.app')] class extends Component {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Email untuk profil
                         </label>
-                        <p class="mt-1 text-xm text-gray-500">Alamat email yang akan ditampilkan di halaman profil anda.
+                        <p class="mt-1 text-xs sm:text-xm text-gray-500">Alamat email yang akan ditampilkan di halaman profil anda.
                         </p>
                     </div>
                     <div class="md:col-span-2">
@@ -306,7 +306,7 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
 
                 <!-- Phone Number -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <label class="block text-sm font-medium text-gray-700 md:pt-2">
                         Nomor Telepon
                     </label>
@@ -320,12 +320,12 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
 
                 <!-- Your photo -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Foto profil anda
                         </label>
-                        <p class="mt-1 text-xm text-gray-500">This will be displayed on your profile.</p>
+                        <p class="mt-1 text-xs sm:text-xm text-gray-500">Foto ini akan ditampilkan di profil Anda.</p>
                     </div>
                     <div class="md:col-span-2">
                         <div class="flex items-center space-x-4">
@@ -339,7 +339,7 @@ new #[Layout('layouts.app')] class extends Component {
                                         src="{{ asset('storage/' . Auth::user()->alumni->profile_photo_path) }}"
                                         alt="Profile photo">
                                 @else
-                                    <img class="h-16 w-16 rounded-full object-cover"
+                                    <img class="h-16 w-16 rounded-full object-cover bg-gray-500"
                                         src="https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=10b981&color=fff&size=128"
                                         alt="Profile photo">
                                 @endif
@@ -353,16 +353,16 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
 
                 <!-- Change Password -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Ubah password
                         </label>
-                        <p class="mt-1 text-xm text-gray-500">Update your password to keep your account secure.</p>
+                        <p class="mt-1 text-xs sm:text-xm text-gray-500">Perbarui kata sandi Anda untuk menjaga keamanan akun.</p>
                     </div>
                     <div class="md:col-span-2 grid gap-4 md:grid-cols-2" x-data="{ showPassword: false, showConfirmPassword: false }">
                         <div class="space-y-2">
-                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
                             <div class="relative">
                                 <input :type="showPassword ? 'text' : 'password'" id="password" wire:model="password"
                                     class="w-full h-10 px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none text-sm">
@@ -385,8 +385,8 @@ new #[Layout('layouts.app')] class extends Component {
                         </div>
 
                         <div class="space-y-2">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm
-                                Password</label>
+                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Konfirmasi
+                                Kata Sandi</label>
                             <div class="relative">
                                 <input :type="showConfirmPassword ? 'text' : 'password'" id="password_confirmation" wire:model="password_confirmation"
                                     class="w-full h-10 px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none text-sm">
@@ -408,12 +408,12 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
 
                 <!-- Job Information -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Pekerjaan
                         </label>
-                        <p class="mt-1 text-xm text-gray-500">Information about your current employment and location.
+                        <p class="mt-1 text-xs sm:text-xm text-gray-500">Informasi tentang pekerjaan dan lokasi Anda saat ini.
                         </p>
                     </div>
                     <div class="md:col-span-2 grid gap-4 md:grid-cols-2 w-full">
@@ -449,13 +449,13 @@ new #[Layout('layouts.app')] class extends Component {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Akun Media Sosial Anda
                         </label>
-                        <p class="mt-1 text-[13px] text-gray-500">Add your social media handles to help others connect
-                            with you.</p>
+                        <p class="mt-1 text-[12px] sm:text-[13px] text-gray-500">Tambahkan akun media sosial Anda agar orang lain dapat terhubung
+                            dengan Anda.</p>
                     </div>
                     <div class="md:col-span-2 grid gap-4 md:grid-cols-2 w-full">
                         <div class="space-y-2">
@@ -512,12 +512,12 @@ new #[Layout('layouts.app')] class extends Component {
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Kompetensi
                         </label>
-                        <p class="mt-1 text-[13px] text-gray-500">Anda bisa menambahkan kompetensi atau kemampuan yang
+                        <p class="mt-1 text-[12px] sm:text-[13px] text-gray-500">Anda bisa menambahkan kompetensi atau kemampuan yang
                             anda miliki.</p>
                     </div>
                     <div class="md:col-span-2" x-data="{
@@ -553,18 +553,18 @@ new #[Layout('layouts.app')] class extends Component {
                                 </div>
                             </template>
                             <input type="text" x-model="tagInput" @keydown.enter.prevent="addTag()"
-                                placeholder="Add a tag..."
+                                placeholder="Tambahkan tag..."
                                 class="flex-1 border-none outline-none focus:ring-0 text-sm min-w-[120px] p-1" />
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 items-start">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">
                             Karya ilmiah
                         </label>
-                        <p class="mt-1 text-[13px] text-gray-500">Tambahkan karya ilmiah atau publikasi yang telah Anda buat.</p>
+                        <p class="mt-1 text-[12px] sm:text-[13px] text-gray-500">Tambahkan karya ilmiah atau publikasi yang telah Anda buat.</p>
                     </div>
                     <div class="md:col-span-2 space-y-4">
                         @if(count($karyaIlmiah) > 0)
@@ -651,9 +651,9 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
             </div>
 
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex justify-end space-x-3">
-                <x-button type="button" variant="secondary" onclick="window.history.back()">Cancel</x-button>
-                <x-button type="button" wire:click="save">Simpan perubahan</x-button>
+            <div class="px-4 sm:px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex flex-col sm:flex-row justify-end gap-3 sm:space-x-3">
+                <x-button type="button" variant="secondary" onclick="window.history.back()" class="w-full sm:w-auto justify-center">Batal</x-button>
+                <x-button type="button" wire:click="save" class="w-full sm:w-auto justify-center">Simpan perubahan</x-button>
             </div>
         </div>
 

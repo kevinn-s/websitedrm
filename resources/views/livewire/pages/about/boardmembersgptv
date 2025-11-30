@@ -1,0 +1,247 @@
+<?php
+
+use Livewire\Volt\Component;
+use Livewire\Attributes\Layout;
+
+new #[Layout('layouts.app')] class extends Component {
+    //
+    public $dewanPengurus = [
+        [
+            "nama" => "Dr. Rano Kartono Rahim, B.IT., M.BUS.",
+            "jabatan" => "Ketua"
+        ],
+        [
+            "nama" => "Dr. Marindra Bawono",
+            "jabatan" => "Sekretaris"
+        ],
+        [
+            "nama" => "Dr. Adele Bl. Mailangkay",
+            "jabatan" => "Bendahara"
+        ],
+        [
+            "nama" => "Dr. Ervinawaty",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Khristian Edi Nugroho",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Dhiraj Kelly Sawlani, S.E.M.MSI.M.M.CIGS",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Daniel Sanjaya",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Prio Utomo",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Dewi Tamara",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Emardial Ulza",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Desman Hidayat",
+            "jabatan" => "Anggota"
+        ],
+        [
+            "nama" => "Dr. Vicky Dhanis Wardhana",
+            "jabatan" => "Anggota"
+        ]
+        ];
+
+    public $dewanPengawas = [
+        [
+            "nama" => "DR. IR. Mohammad Hamsal",
+            "jabatan" => "Ketua"
+        ],
+        [
+            "nama" => "Sri  Bramantoro Abdinagoro",
+            "jabatan" => "Anggota"
+        ]
+        ];
+
+    public $campusHighlights = [
+        [
+            "name" => "BINUS @Kemanggisan",
+            "tagline" => "Heritage Campus",
+            "description" => "Legacy academic hub that connects decades of BINUS excellence with modern laboratories, student hubs, and alumni mentoring lounges in West Jakarta.",
+            "accent" => "Built on tradition, energized by industry collaboration."
+        ],
+        [
+            "name" => "BINUS @Alam Sutera",
+            "tagline" => "Innovation Campus",
+            "description" => "Future-ready environment that mirrors global campuses such as WashU with light-filled studios, collaborative commons, and a growing research corridor.",
+            "accent" => "Where design thinking meets entrepreneurial drive."
+        ]
+        ];
+
+    public $governancePillars = [
+        [
+            "title" => "Inclusive Leadership",
+            "description" => "Voices from faculties, alumni, and the BINUS Global network sit at the same table to co-create long-term priorities."
+        ],
+        [
+            "title" => "Stewardship & Impact",
+            "description" => "Data-informed decisions, transparent reporting, and community accountability keep every initiative grounded."
+        ],
+        [
+            "title" => "Future-ready Culture",
+            "description" => "Programs align with innovation tracks and global partnerships, echoing the momentum of BINUS Alumni communities."
+        ]
+        ];
+}; ?>
+
+<div>
+    <x-page-title :breadcrumbs="[
+        ['label' => 'Beranda', 'url' => ''],
+        ['label' => 'Struktur Organisasi', 'url' => ''],
+    ]" title="Struktur Organisasi" background="bg-amber-950"></x-page-title>
+
+    <section class="relative overflow-hidden bg-gradient-to-br from-primary-green-950 via-primary-green-900 to-amber-900 text-white">
+        <div class="max-w-6xl w-full mx-auto px-6 lg:px-0 py-16 space-y-8">
+            <p class="text-xs tracking-[0.35em] uppercase text-amber-200">Leadership &amp; Governance</p>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-semibold font-sora leading-tight">Two main campuses, one mission.</h1>
+                <div class="mt-4 h-[3px] w-28 bg-amber-300 rounded-full"></div>
+                <p class="mt-6 max-w-3xl text-base md:text-lg text-white/80">Mengambil inspirasi dari detail editorial WashU dan keramahan BINUS Alumni, kami menghadirkan pengalaman struktur organisasi yang hangat, modern, dan teguh memegang identitas BINUSIAN.</p>
+            </div>
+            <div class="grid gap-6 sm:grid-cols-3">
+                <div class="rounded-2xl border border-white/20 bg-white/10 p-5">
+                    <p class="text-xs uppercase tracking-[0.35em] text-amber-200">Campuses</p>
+                    <p class="mt-2 text-3xl font-semibold">2</p>
+                    <p class="text-sm text-white/70">Kemanggisan &amp; Alam Sutera bergerak sinkron untuk alumni dan masyarakat.</p>
+                </div>
+                <div class="rounded-2xl border border-white/20 bg-white/10 p-5">
+                    <p class="text-xs uppercase tracking-[0.35em] text-amber-200">Alumni</p>
+                    <p class="mt-2 text-3xl font-semibold">120K+</p>
+                    <p class="text-sm text-white/70">Jejaring profesional yang menjadi mitra strategis dewan pengurus.</p>
+                </div>
+                <div class="rounded-2xl border border-white/20 bg-white/10 p-5">
+                    <p class="text-xs uppercase tracking-[0.35em] text-amber-200">Partnerships</p>
+                    <p class="mt-2 text-3xl font-semibold">30+</p>
+                    <p class="text-sm text-white/70">Kolaborasi global memastikan tata kelola adaptif dan relevan.</p>
+                </div>
+            </div>
+        </div>
+        <div class="pointer-events-none absolute -right-10 top-10 hidden lg:block">
+            <div class="h-48 w-48 rounded-full bg-white/20 blur-3xl"></div>
+        </div>
+    </section>
+
+    <section class="bg-white py-16">
+        <div class="max-w-6xl w-full mx-auto px-6 lg:px-0">
+            <div class="flex flex-col gap-4">
+                <p class="text-sm uppercase tracking-[0.35em] text-primary-green-600">Our Campuses</p>
+                <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                    <h2 class="text-3xl md:text-4xl font-semibold text-primary-green-950">Dua lanskap kampus, satu pengalaman BINUSIAN.</h2>
+                    <div class="h-[2px] w-20 bg-primary-green-900 rounded-full md:mb-2"></div>
+                </div>
+                <p class="text-gray-600 max-w-3xl">Seperti WashU yang merayakan kedalaman sejarahnya sekaligus berani bereksperimen dengan ruang baru, kedua kampus BINUS menyatu dalam ritme yang sama—menyambut alumni untuk kembali memberi dampak.</p>
+            </div>
+            <div class="mt-10 grid gap-8 md:grid-cols-2">
+                @foreach ($campusHighlights as $campus)
+                    <article class="group flex h-full flex-col rounded-3xl border border-primary-green-100 bg-white p-8 shadow-sm transition hover:-translate-y-1 hover:border-primary-green-300">
+                        <p class="text-xs uppercase tracking-[0.35em] text-primary-green-500">{{ $campus['tagline'] }}</p>
+                        <h3 class="mt-3 text-2xl font-semibold text-primary-green-950">{{ $campus['name'] }}</h3>
+                        <div class="mt-3 h-[2px] w-16 bg-primary-green-900 rounded-full"></div>
+                        <p class="mt-4 text-base text-gray-600">{{ $campus['description'] }}</p>
+                        <p class="mt-auto pt-6 text-sm font-semibold text-primary-green-800">{{ $campus['accent'] }}</p>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-primary-green-50 py-16">
+        <div class="max-w-6xl w-full mx-auto px-6 lg:px-0 space-y-12">
+            <div class="grid gap-10 md:grid-cols-[1.1fr_1.4fr] md:items-center">
+                <div>
+                    <p class="text-sm uppercase tracking-[0.35em] text-primary-green-600">Bagan Organisasi</p>
+                    <h2 class="mt-3 text-3xl font-semibold text-primary-green-950">Struktur yang transparan dan mudah diikuti.</h2>
+                    <div class="mt-3 h-[2px] w-16 bg-primary-green-900 rounded-full"></div>
+                    <p class="mt-4 text-gray-600">Skema organisasi diperbarui secara berkala, menampilkan garis koordinasi yang jelas antara Dewan Pengurus, Dewan Pengawas, serta unit-unit pendukung lainnya.</p>
+                </div>
+                <figure class="rounded-3xl border border-primary-green-100 bg-white p-4 shadow-[0_25px_60px_rgba(16,58,38,0.08)]">
+                    <img class="w-full rounded-2xl object-cover" src="https://library.washu.edu/wp-content/uploads/2025/07/OrgChart_WashULibraries_072025-1024x663.png" alt="Bagan organisasi BINUS Alumni">
+                    <figcaption class="mt-3 text-sm text-gray-500">Pembaruan terakhir: Juli 2025 • Referensi WashU Libraries</figcaption>
+                </figure>
+            </div>
+            <div>
+                <div class="flex flex-col gap-2">
+                    <p class="text-sm uppercase tracking-[0.35em] text-primary-green-600">Governance Pillars</p>
+                    <div class="h-[2px] w-12 bg-primary-green-900 rounded-full"></div>
+                </div>
+                <div class="mt-8 grid gap-6 md:grid-cols-3">
+                    @foreach ($governancePillars as $pillar)
+                        <article class="rounded-2xl border border-primary-green-100 bg-white p-6 shadow-sm">
+                            <h3 class="text-lg font-semibold text-primary-green-900">{{ $pillar['title'] }}</h3>
+                            <p class="mt-3 text-sm text-gray-600">{{ $pillar['description'] }}</p>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-16">
+        <div class="max-w-6xl w-full mx-auto px-6 lg:px-0">
+            <div class="flex flex-col gap-3">
+                <p class="text-sm uppercase tracking-[0.35em] text-primary-green-600">Executive Board</p>
+                <div class="flex items-center gap-4">
+                    <h2 class="text-3xl font-semibold text-primary-green-950">Dewan Pengurus</h2>
+                    <div class="h-[2px] w-16 bg-primary-green-900 rounded-full"></div>
+                </div>
+                <p class="text-gray-600 max-w-3xl">Mereka memastikan setiap program alumni selaras dengan strategi akademik dan kontribusi sosial BINUS. Komposisi ini meniru ritme kepemimpinan WashU—tajam, kolaboratif, dan penuh empati.</p>
+            </div>
+            <div class="mt-10 grid gap-6 md:grid-cols-2">
+                @foreach ($dewanPengurus as $dewan)
+                    @php
+                        $isStrategic = in_array($dewan['jabatan'], ['Ketua', 'Sekretaris', 'Bendahara']);
+                    @endphp
+                    <article class="rounded-2xl border p-6 shadow-sm transition hover:-translate-y-1 {{ $isStrategic ? 'border-primary-green-300 bg-primary-green-50' : 'border-gray-100 bg-white' }}">
+                        <div class="flex items-center justify-between text-xs uppercase tracking-[0.35em] text-primary-green-500">
+                            <span>{{ $dewan['jabatan'] }}</span>
+                            <span class="text-primary-green-400">#{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-primary-green-950">{{ $dewan['nama'] }}</h3>
+                        <div class="mt-4 h-[2px] w-12 bg-primary-green-900 rounded-full"></div>
+                        <p class="mt-4 text-sm text-gray-600">Menjaga kesinambungan program alumni, riset, dan kemitraan lintas kampus.</p>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-primary-green-950 py-16 text-white">
+        <div class="max-w-6xl w-full mx-auto px-6 lg:px-0 space-y-6">
+            <div class="flex flex-col gap-3">
+                <p class="text-sm uppercase tracking-[0.35em] text-amber-200">Supervisory Board</p>
+                <div class="flex items-center gap-4">
+                    <h2 class="text-3xl font-semibold">Dewan Pengawas</h2>
+                    <div class="h-[2px] w-16 bg-amber-300 rounded-full"></div>
+                </div>
+                <p class="text-white/80 max-w-3xl">Dewan Pengawas memberi sudut pandang independen sekaligus memastikan aspirasi alumni BINUS terlindungi untuk generasi berikutnya.</p>
+            </div>
+            <div class="grid gap-6 md:grid-cols-2">
+                @foreach ($dewanPengawas as $dewan)
+                    <article class="rounded-2xl border border-white/20 bg-white/5 p-6 shadow-[0_25px_60px_rgba(0,0,0,0.25)]">
+                        <div class="flex items-center justify-between text-xs uppercase tracking-[0.35em] text-amber-200">
+                            <span>{{ $dewan['jabatan'] }}</span>
+                            <span>#DW-{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold">{{ $dewan['nama'] }}</h3>
+                        <div class="mt-4 h-[2px] w-12 bg-amber-300 rounded-full"></div>
+                        <p class="mt-4 text-sm text-white/80">Memberikan arahan strategis, melakukan evaluasi berkala, dan menjadi penjaga tata kelola yang berintegritas.</p>
+                    </article>
+                @endforeach
+            </div>
+        </div>
+    </section>
+</div>

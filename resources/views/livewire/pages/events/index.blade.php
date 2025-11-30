@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 new #[Layout('layouts.app')] class extends Component {
 
-    public string $activeTab = EventType::Scheduled->value;
+    public string $activeTab;
     public string $search = '';
     public $events;
     public ?string $date = null;
@@ -18,8 +18,7 @@ new #[Layout('layouts.app')] class extends Component {
     public function mount(): void
     {
         $this->activeTab = EventType::Scheduled->value;
-        $this->events = $this->queryEvents();
-        $this->dispatch('unloading');
+        $this->refreshEvents();
     }
 
     public function setActiveType(string $tab): void
@@ -29,24 +28,37 @@ new #[Layout('layouts.app')] class extends Component {
         }
 
         $this->activeTab = $tab;
-        $this->events = $this->queryEvents();
-        $this->dispatch('unloading');
-    }
-
-    public function runFilters(): void
-    {
-        $this->events = $this->queryEvents();
-        $this->search = '';
-        $this->date = null;
-        $this->dispatch('unloading');
+        // Keep the current filter state when switching tabs for a consistent browsing experience.
+        $this->refreshEvents();
     }
 
     public function resetFilters(): void
     {
         $this->search = '';
         $this->date = null;
-        $this->events = $this->queryEvents();
-        $this->dispatch('unloading');
+        // Reset performs a full refresh while ensuring the loading animation stays in sync.
+        $this->refreshEvents();
+    }
+
+    public function applyFilters(): void
+    {
+        $this->refreshEvents();
+    }
+
+    /**
+     * Reactively re-query whenever search text changes so filters apply instantly.
+     */
+    public function updatedSearch(): void
+    {
+        $this->applyFilters();
+    }
+
+    /**
+     * Reactively re-query whenever the selected date changes.
+     */
+    public function updatedDate(): void
+    {
+        $this->applyFilters();
     }
 
     #[Computed]
@@ -59,6 +71,16 @@ new #[Layout('layouts.app')] class extends Component {
             ->when($this->date, fn ($query) => $query->whereDate('date', $this->date))
             ->orderBy('date', 'asc')
             ->get();
+    }
+
+    /**
+     * Centralised helper that keeps the loading indicator in sync with Livewire queries.
+     */
+    protected function refreshEvents(): void
+    {
+        $this->dispatch('loading');
+        $this->events = $this->queryEvents();
+        $this->dispatch('unloading');
     }
 
     public function with(): array
@@ -74,8 +96,9 @@ new #[Layout('layouts.app')] class extends Component {
     <x-page-title title="Kegiatan" :breadcrumbs="[
         ['label' => 'Beranda', 'url' => url('kegiatan')],
         ['label' => 'Kegiatan', 'url' => ''],
-    ]" background="bg-black" />
-    <div class="max-w-5xl w-full mx-auto my-10" x-data="{
+    ]" background="bg-black" description="Kegiatan merupakan sarana bagi anda untuk tetap terhubung dengan sesama anggota asosiasi alumni.
+Lihat berbagai kegiatan yang tersedia, baik secara langsung maupun daring." />
+    <div class="max-w-5xl w-full mx-auto my-6 sm:my-10 px-4 sm:px-6 lg:px-0" x-data="{
             startTimeOnLoading: 0,
             activeTab: '{{ \App\Enums\EventType::Scheduled->value }}',
             scheduledType: '{{ \App\Enums\EventType::Scheduled->value }}',
@@ -119,23 +142,20 @@ new #[Layout('layouts.app')] class extends Component {
                 });
             }
         }">
-        <div class="flex justify-between mb-8">
-            <div class="space-x-4">
+        <div class="flex flex-col sm:flex-row sm:justify-between gap-4 mb-6 sm:mb-8">
+            <div class="flex flex-wrap gap-2 sm:gap-4">
                 <button @click="setActiveTab(scheduledType)"
                     :class="activeTab === scheduledType ? 'border-b-4 border-primary-green-600 bg-gray-100 text-primary-green-900' : 'bg-primary-green-500 text-white'"
-                    class="px-5 py-3 tracking-normal font-noto font-semibold text-sm+">
+                    class="px-3 sm:px-5 py-2 sm:py-3 tracking-normal font-noto font-semibold text-xs sm:text-sm+ flex-1 sm:flex-none text-center">
                     Kegiatan mendatang
                 </button>
                 <button @click="setActiveTab(annualType)"
                     :class="activeTab === annualType ? 'border-b-4 border-primary-green-600 bg-gray-100 text-primary-green-900' : 'bg-primary-green-500 text-white'"
-                    class="px-5 py-3 tracking-normal font-noto font-semibold text-sm+">
+                    class="px-3 sm:px-5 py-2 sm:py-3 tracking-normal font-noto font-semibold text-xs sm:text-sm+ flex-1 sm:flex-none text-center">
                     Kegiatan tahunan
                 </button>
             </div>
-            <div class="relative" x-data="{toggle: false, setFilter: function(){
-                this.loading = true;
-                $wire.runFilters();
-            } }">
+            <div class="relative" x-data="{ toggle: false }">
                 <button class="box-border h-11 px-4 inline-flex gap-2 items-center justify-center font-semibold font-noto
         tracking-tight text-white bg-primary-green-600 border-b-4 border-b-primary-green-800
         transition-all duration-200 hover:bg-primary-green-700 hover:border-b-gray-800 active:translate-y-[2px]
@@ -146,7 +166,7 @@ new #[Layout('layouts.app')] class extends Component {
                     </svg>
                     <p class="block tracking-wide">Filter</p>
                 </button>
-                <div class="absolute right-0 border-[0.5px] mt-4 border-gray-300 border-b-primary-green-700 border-b-4 p-4 space-y-4 w-[21rem] bg-white z-10 transition-all duration-200"
+                <div class="absolute right-0 sm:right-0 left-0 sm:left-auto border-[0.5px] mt-4 border-gray-300 border-b-primary-green-700 border-b-4 p-4 space-y-4 w-full sm:w-[21rem] bg-white z-10 transition-all duration-200"
                     :class="toggle ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'"
                     x-show="toggle" x-transition>
                     <div class="flex justify-between items-center">
@@ -172,90 +192,25 @@ new #[Layout('layouts.app')] class extends Component {
                                             d="M12.9 14.32a8 8 0 1 1 1.41-1.41l5.35 5.33l-1.42 1.42l-5.33-5.34zM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12z" />
                                     </svg>
                                 </div>
-                                <x-input class="w-full border-gray-300 pl-10" wire:model.defer="search" placeholder="Cari judul kegiatan"></x-input>
+                                <x-input class="w-full border-gray-300 pl-10" wire:model.live.debounce.500ms="search" placeholder="Cari judul kegiatan"></x-input>
                             </div>
                         </div>
                         <div class="space-y-1">
                             <div class="text-sm+">
                                 Kalender
                             </div>
-                            <div class="relative" x-data="{
-                                showPicker: false,
-                                selectedDate: '',
-                                formattedDate: '',
-                                init() {
-                                    if (this.selectedDate) {
-                                        const date = new Date(this.selectedDate);
-                                        this.formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                                    }
-                                  this.$watch('selectedDate', value => {
-    if (!value) {
-        this.formattedDate = '';
-        return;
-    }
-    const date = new Date(value);
-    if (!Number.isNaN(date.getTime())) {
-        // Format to Y-m-d for database
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        this.formattedDate = `${year}-${month}-${day}`;
-
-        // If you still need the Indonesian format for display, store it separately
-        this.displayDate = date.toLocaleDateString('id-ID', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
-    }
-
-       @this.set('date', this.formattedDate, false);
-});
-                                }
-                            }">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
                                         <path fill="#c0c0c0"
                                             d="M6 4V1.5h2V4h8V1.5h2V4h4v18H2V4h4ZM4 6v3h16V6H4Zm16 5H4v9h16v-9Z" />
                                     </svg>
                                 </div>
                                 <input
-                                    type="text"
-                                    @click="showPicker = !showPicker"
-                                    x-model="formattedDate"
-                                    readonly
-                                    placeholder="dd/mm/yyyy"
-                                    class="appearance-none w-full border border-gray-300 pl-10 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-green-600"
+                                    type="date"
+                                    wire:model.live="date"
+                                    class="w-full border border-gray-300 pl-10 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-green-600"
                                 >
-                                <div
-                                    x-show="showPicker"
-                                    @click.away="showPicker = false"
-                                    x-transition
-                                    class="absolute mt-1 bg-white border border-gray-300 shadow-lg z-20"
-                                >
-                                    <div
-                                        x-init="
-                                            const picker = new Datepicker($el, {
-                                                autohide: true,
-                                                format: 'yyyy-mm-dd',
-                                                todayBtn: true,
-                                                clearBtn: true,
-                                                todayBtnMode: 1
-                                            });
-                                            $el.addEventListener('changeDate', (e) => {
-                                                if (e.detail.date) {
-                                                    const date = new Date(e.detail.date);
-                                                    selectedDate = date.toISOString().split('T')[0];
-                                                    formattedDate = date.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                                                } else {
-                                                    selectedDate = null;
-                                                    formattedDate = '';
-                                                }
-                                                showPicker = false;
-                                            });
-                                        "
-                                    ></div>
-                                </div>
                             </div>
                         </div>
 
@@ -265,7 +220,7 @@ new #[Layout('layouts.app')] class extends Component {
                             @click.prevent="$wire.resetFilters(); toggle=false">
                             Reset
                         </button>
-                        <x-button type="button" @click="toggle = false; setFilter();">Terapkan</x-button>
+                        <x-button type="button" @click="toggle = false; $wire.applyFilters();">Terapkan</x-button>
                     </div>
                 </div>
             </div>
@@ -290,7 +245,7 @@ new #[Layout('layouts.app')] class extends Component {
         x-transition:enter-end="opacity-100 transform translate-y-0"
             >
                 @if($events->isEmpty())
-                <div class="text-gray-600">
+                <div class="text-gray-600 text-center">
                     Tidak ada kegiatan yang sesuai dengan pilihan/filter saat ini.
                 </div>
                 @else
@@ -320,15 +275,16 @@ new #[Layout('layouts.app')] class extends Component {
                             ? Str::limit(strip_tags($event->description), 200)
                             : null;
                     @endphp
-                    <div class="w-full space-y-10">
+                    <div class="w-full my-4">
                         <x-events.card
                             :tags="$event->tags"
                             :title="$event->title"
+                            :image="$event->image"
                             :date="$event->date->translatedFormat('l, d F Y')"
                             :location="$location"
                             :description="$description"
-                        >
-                        </x-events.card>
+                            :url="route('kegiatan.show', ['slug' => Str::slug($event->title)])"
+                        />
                     </div>
                 @endforeach
                 </div>
