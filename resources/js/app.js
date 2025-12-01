@@ -22,7 +22,7 @@ document.addEventListener('alpine:init', () => {
 
             this.pdfUrl = url;
             const options = {
-                height: "100%",
+                height: "95vh",
                 pdfOpenParams: {
                     view: 'FitH',
                     pagemode: 'none',

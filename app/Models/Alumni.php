@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Alumni extends Model
 {
@@ -111,6 +112,44 @@ class Alumni extends Model
 
     public function profession(){
         return $this->hasOne(Profession::class);
+    }
+
+    public function getProfilePhotoUrlAttribute(): string
+    {
+        $path = $this->profile_photo_path;
+
+        if (! filled($path)) {
+            return asset('images/placeholder.png');
+        }
+
+        if (filter_var($path, FILTER_VALIDATE_URL)) {
+            return $path;
+        }
+
+        $normalized = ltrim($path, '/');
+
+        if (str_starts_with($normalized, 'storage/')) {
+            $normalized = substr($normalized, strlen('storage/')) ?: '';
+        }
+
+        if ($normalized === '') {
+            return asset('images/placeholder.png');
+        }
+
+        $publicPath = Storage::disk('public')->exists($normalized)
+            ? Storage::url($normalized)
+            : '/storage/' . ltrim($normalized, '/');
+
+        if (str_starts_with($publicPath, 'http')) {
+            $publicPath = parse_url($publicPath, PHP_URL_PATH) ?: '/storage/' . ltrim($normalized, '/');
+        }
+
+        // Prefer the current request host (so ports like :8000 are respected) and fall back to app URL.
+        if (function_exists('request') && ($request = request()) && $request->getSchemeAndHttpHost()) {
+            return rtrim($request->getSchemeAndHttpHost(), '/') . '/' . ltrim($publicPath, '/');
+        }
+
+        return url($publicPath);
     }
 
     /**

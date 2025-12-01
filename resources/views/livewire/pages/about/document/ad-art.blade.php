@@ -17,7 +17,7 @@ new #[Layout('layouts.app')] class extends Component {
         $sources = [
             [
                 'label' => 'Anggaran Dasar (AD)',
-                'path' => 'documents/ad.pdf',
+                'path' => 'documents/ad_art.pdf',
             ],
             [
                 'label' => 'Anggaran Rumah Tangga (ART)',
@@ -31,10 +31,15 @@ new #[Layout('layouts.app')] class extends Component {
 
         $this->documents = collect($sources)
             ->filter(fn ($doc) => Storage::disk('public')->exists($doc['path']))
-            ->map(fn ($doc) => [
-                'label' => $doc['label'],
-                'url' => Storage::url($doc['path']),
-            ])
+            ->map(function ($doc) {
+                $fullUrl = Storage::url($doc['path']);
+                $pathOnly = parse_url($fullUrl, PHP_URL_PATH) ?: $fullUrl;
+
+                return [
+                    'label' => $doc['label'],
+                    'url' => '/'.ltrim($pathOnly, '/'),
+                ];
+            })
             ->values()
             ->all();
 
@@ -54,10 +59,15 @@ new #[Layout('layouts.app')] class extends Component {
 
     <div class="max-w-5xl mx-auto space-y-6">
         @php
-            $defaultPdf = $documents[0]['url'] ?? null;
+            $documentsCollection = collect($documents);
+            $firstDocument = $documentsCollection->first();
+            $defaultPdf = $firstDocument['url'] ?? null;
+            $documentFrames = [
+                'Anggaran Dasar (AD)' => $documentsCollection->firstWhere('label', 'Anggaran Dasar (AD)')['url'] ?? null,
+            ];
         @endphp
 
-        <h1 class="max-w-3xl text-xl font-medium leading-relaxed text-primary-green-950">
+        <h1 class="max-w-3xl px-4 text-base md:text-xl font-medium leading-relaxed text-primary-green-950">
             AD/ART ditampilkan di bawah ini. Salinan
             @if ($defaultPdf)
                 <a href="{{ $defaultPdf }}"
@@ -72,8 +82,22 @@ new #[Layout('layouts.app')] class extends Component {
             juga tersedia untuk diunduh.
         </h1>
 
-
-                <div x-ref="pdfContainer" class="border border-gray-300" style="height: 650px;"></div>
+        <div class="space-y-6 max-w-3xl px-4 ">
+            @foreach ($documentFrames as $label => $url)
+                <div class="space-y-3">
+                    @if ($url)
+                        <iframe
+                            src="{{ $url }}"
+                            title="{{ $label }}"
+                            class="w-full border border-gray-300"
+                            style="min-height: 700px"
+                        ></iframe>
+                    @else
+                        <p class="text-sm text-gray-600">Dokumen {{ strtolower($label) }} belum tersedia.</p>
+                    @endif
+                </div>
+            @endforeach
+        </div>
 
     </div>
 </div>

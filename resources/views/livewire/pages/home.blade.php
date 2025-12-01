@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Event;
 use App\Enums\EventType;
 use App\Enums\EventAccessType;
+use Illuminate\Support\Str;
 
 new #[Layout('layouts.app')] class extends Component {
 
@@ -20,6 +21,7 @@ new #[Layout('layouts.app')] class extends Component {
             ->map(function ($event) {
                 array_push($this->events, [
                     'title' => Str::title($event['title']),
+                    'slug' => Str::slug($event['title'] ?? ''),
                     'date' => Carbon::parse($event['date'])
                         ->locale('id')
                         ->translatedFormat('l, d F Y'),
@@ -59,7 +61,9 @@ new #[Layout('layouts.app')] class extends Component {
                             Bergerak, Berdampak, kami menjadi wadah bagi
                             para lulusan DRM untuk terus terhubung.
                         </p>
+                        @guest
                         <x-button variant="primary" href="{{ route('register') }}">Bergabung menjadi anggota</x-button>
+                        @endguest
                     </div>
                 </div>
             </div>
@@ -68,7 +72,9 @@ new #[Layout('layouts.app')] class extends Component {
 
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-0">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-20">
-            <aside class="hidden md:block lg:col-span-5 bg-yellow-100 h-[280px] sm:h-[350px] lg:h-[420px] order-2 lg:order-1"></aside>
+            <aside class="hidden md:block w-full lg:col-span-5 h-64 sm:h-80 lg:h-[420px] order-2 lg:order-1 border border-gray-200"
+                style="background-image: url('{{ asset('images/second_image_homepage.jpg') }}'); background-size: cover; background-position: center;">
+            </aside>
 
             <main class="lg:col-span-7 order-1 lg:order-2">
                 <h1
@@ -79,38 +85,46 @@ new #[Layout('layouts.app')] class extends Component {
                     Komunitas Alumni DRM, yang lahir dari semangat kebersamaan para lulusan, terus tumbuh menjadi ruang
                     kolaborasi yang solid dan berdampak.
                 </p>
-                <div class="flex flex-wrap sm:flex-nowrap h-auto sm:h-52">
-                    <div class="bg-primary-green-600 flex flex-col p-4 justify-center space-y-3 sm:space-y-4 w-full sm:w-1/3 lg:w-48 h-40 sm:h-full">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" class="sm:w-12 sm:h-12"
-                                    viewBox="0 0 48 48" fill="#222026">
-                                    <g fill="none" stroke="white" stroke-linejoin="round" stroke-width="4">
-                                        <path stroke-linecap="round" d="M5 24h38" />
-                                        <path
-                                            d="M28 4h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2ZM16 32H8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm24 0h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Z" />
-                                        <path stroke-linecap="round" d="M24 24v-8m12 16v-8m-24 8v-8" />
-                                    </g>
-                                </svg>
-                        <h1 class="text-lg sm:text-xl font-bold text-white font-inter leading-none">Connecting<br>Alumni</h1>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="border border-gray-300 bg-white p-5 h-full flex flex-col gap-4">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary-gold text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 48 48" fill="currentColor">
+                                <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                                    <path stroke-linecap="round" d="M5 24h38" />
+                                    <path d="M28 4h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2ZM16 32H8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Zm24 0h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2Z" />
+                                    <path stroke-linecap="round" d="M24 24v-8m12 16v-8m-24 8v-8" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">01</p>
+                            <h2 class="mt-1 text-lg font-semibold text-primary-green-900">Connecting Alumni</h2>
+                            <p class="mt-2 text-sm text-gray-600">Membangun jejaring antar lulusan untuk saling mendukung perjalanan karier.</p>
+                        </div>
                     </div>
-                    <div class="bg-primary-green-600 flex flex-col p-4 justify-center space-y-3 sm:space-y-4 w-full sm:w-1/3 lg:w-48 h-40 sm:h-full">
-                          <svg width="36" height="36" class="sm:w-12 sm:h-12" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 14 14">
-                                    <path fill="white" fill-rule="evenodd"
-                                        d="M9.724.625a.625.625 0 1 0-1.25 0v.8a.625.625 0 1 0 1.25 0zm3.157 1.711a.625.625 0 1 0-.884-.883l-.565.565a.625.625 0 1 0 .883.884zm-7.52-.883a.625.625 0 0 1 .883 0l.566.565a.625.625 0 1 1-.884.884l-.566-.566a.625.625 0 0 1 0-.883m3.05 4.749a1.39 1.39 0 0 1-.754-1.198A1.38 1.38 0 0 1 9.07 3.642a1.38 1.38 0 0 1 1.388 1.362c-.007.495-.31.977-.754 1.198a.63.63 0 0 0-.346.56v.582h-.602v-.583a.63.63 0 0 0-.346-.56m-2.004-1.19a2.63 2.63 0 0 1 2.651-2.62a2.63 2.63 0 0 1 2.651 2.62v.005a2.65 2.65 0 0 1-1.1 2.095v.658a.85.85 0 0 1-.846.824h-1.41a.85.85 0 0 1-.845-.824v-.658a2.65 2.65 0 0 1-1.1-2.095zm5.544-.003c0-.345.28-.625.625-.625h.8a.625.625 0 1 1 0 1.25h-.8a.625.625 0 0 1-.625-.625m-7.126-.625a.625.625 0 0 0 0 1.25h.8a.625.625 0 0 0 0-1.25zM4.173 9.36h-.002A4.21 4.21 0 0 0 .54 11.48A4.2 4.2 0 0 0 0 13.495A.5.5 0 0 0 .5 14h7.344a.5.5 0 0 0 .5-.505a4.2 4.2 0 0 0-.542-2.014a4.21 4.21 0 0 0-3.629-2.122m1.378-2.613c.36 0 .693-.108.971-.294A2.36 2.36 0 1 1 3.233 4.09a1.75 1.75 0 0 0 1.498 2.655z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                        <h1 class="text-lg sm:text-xl font-bold text-white font-inter leading-none">Make<br>Collaboration</h1>
-
+                    <div class="border border-gray-300 bg-white p-5 h-full flex flex-col gap-4">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary-gold text-white">
+                            <svg width="28" height="28" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.724.625a.625.625 0 1 0-1.25 0v.8a.625.625 0 1 0 1.25 0zm3.157 1.711a.625.625 0 1 0-.884-.883l-.565.565a.625.625 0 1 0 .883.884zm-7.52-.883a.625.625 0 0 1 .883 0l.566.565a.625.625 0 1 1-.884.884l-.566-.566a.625.625 0 0 1 0-.883m3.05 4.749a1.39 1.39 0 0 1-.754-1.198A1.38 1.38 0 0 1 9.07 3.642a1.38 1.38 0 0 1 1.388 1.362c-.007.495-.31.977-.754 1.198a.63.63 0 0 0-.346.56v.582h-.602v-.583a.63.63 0 0 0-.346-.56m-2.004-1.19a2.63 2.63 0 0 1 2.651-2.62a2.63 2.63 0 0 1 2.651 2.62v.005a2.65 2.65 0 0 1-1.1 2.095v.658a.85.85 0 0 1-.846.824h-1.41a.85.85 0 0 1-.845-.824v-.658a2.65 2.65 0 0 1-1.1-2.095zm5.544-.003c0-.345.28-.625.625-.625h.8a.625.625 0 1 1 0 1.25h-.8a.625.625 0 0 1-.625-.625m-7.126-.625a.625.625 0 0 0 0 1.25h.8a.625.625 0 0 0 0-1.25zM4.173 9.36h-.002A4.21 4.21 0 0 0 .54 11.48A4.2 4.2 0 0 0 0 13.495A.5.5 0 0 0 .5 14h7.344a.5.5 0 0 0 .5-.505a4.2 4.2 0 0 0-.542-2.014a4.21 4.21 0 0 0-3.629-2.122m1.378-2.613c.36 0 .693-.108.971-.294A2.36 2.36 0 1 1 3.233 4.09a1.75 1.75 0 0 0 1.498 2.655z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">02</p>
+                            <h2 class="mt-1 text-lg font-semibold text-primary-green-900">Make Collaboration</h2>
+                            <p class="mt-2 text-sm text-gray-600">Menyalurkan ide menjadi proyek bersama yang memberi manfaat nyata.</p>
+                        </div>
                     </div>
-                    <div class="bg-gray-200 flex flex-col p-4 justify-center space-y-3 sm:space-y-4 w-full sm:w-1/3 lg:w-48 h-40 sm:h-full">
-                         <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" class="sm:w-12 sm:h-12"
-                                    viewBox="0 0 1024 1024">
-                                    <path fill="#016233"
-                                        d="M992 1024H32q-13 0-22.5-9.5T0 992t9.5-22.5T32 960h32q27 0 45.5-19t18.5-45V64q0-26 19-45t45-19h640q27 0 45.5 19T896 64v832q0 27 19 45.5t45 18.5h32q13 0 22.5 9.5t9.5 22.5t-9.5 22.5t-22.5 9.5zM384 160q0-13-9.5-22.5T352 128h-64q-13 0-22.5 9.5T256 160v64q0 13 9.5 22.5T288 256h64q13 0 22.5-9.5T384 224v-64zm0 192q0-13-9.5-22.5T352 320h-64q-13 0-22.5 9.5T256 352v64q0 13 9.5 22.5T288 448h64q13 0 22.5-9.5T384 416v-64zm0 192q0-13-9.5-22.5T352 512h-64q-13 0-22.5 9.5T256 544v64q0 13 9.5 22.5T288 640h64q13 0 22.5-9.5T384 608v-64zm192-384q0-13-9.5-22.5T544 128h-64q-13 0-22.5 9.5T448 160v64q0 13 9.5 22.5T480 256h64q13 0 22.5-9.5T576 224v-64zm0 192q0-13-9.5-22.5T544 320h-64q-13 0-22.5 9.5T448 352v64q0 13 9.5 22.5T480 448h64q13 0 22.5-9.5T576 416v-64zm0 192q0-13-9.5-22.5T544 512h-64q-13 0-22.5 9.5T448 544v64q0 13 9.5 22.5T480 640h64q13 0 22.5-9.5T576 608v-64zm32 224H416q-13 0-22.5 9.5T384 800v128q0 13 9.5 22.5T416 960h192q13 0 22.5-9.5T640 928V800q0-13-9.5-22.5T608 768zm160-608q0-13-9.5-22.5T736 128h-64q-13 0-22.5 9.5T640 160v64q0 13 9.5 22.5T672 256h64q13 0 22.5-9.5T768 224v-64zm0 192q0-13-9.5-22.5T736 320h-64q-13 0-22.5 9.5T640 352v64q0 13 9.5 22.5T672 448h64q13 0 22.5-9.5T768 416v-64zm0 192q0-13-9.5-22.5T736 512h-64q-13 0-22.5 9.5T640 544v64q0 13 9.5 22.5T672 640h64q13 0 22.5-9.5T768 608v-64z" />
-                                </svg>
-                        <h1 class="text-lg sm:text-xl font-bold text-primary-green-600 font-inter leading-none">Self<br>Development
-                        </h1>
-
+                    <div class="border border-gray-300 bg-white p-5 h-full flex flex-col gap-4">
+                        <div class="w-12 h-12 flex items-center justify-center bg-primary-gold text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 1024 1024" fill="currentColor">
+                                <path d="M992 1024H32q-13 0-22.5-9.5T0 992t9.5-22.5T32 960h32q27 0 45.5-19t18.5-45V64q0-26 19-45t45-19h640q27 0 45.5 19T896 64v832q0 27 19 45.5t45 18.5h32q13 0 22.5 9.5t9.5 22.5t-9.5 22.5t-22.5 9.5zM384 160q0-13-9.5-22.5T352 128h-64q-13 0-22.5 9.5T256 160v64q0 13 9.5 22.5T288 256h64q13 0 22.5-9.5T384 224v-64zm0 192q0-13-9.5-22.5T352 320h-64q-13 0-22.5 9.5T256 352v64q0 13 9.5 22.5T288 448h64q13 0 22.5-9.5T384 416v-64zm0 192q0-13-9.5-22.5T352 512h-64q-13 0-22.5 9.5T256 544v64q0 13 9.5 22.5T288 640h64q13 0 22.5-9.5T384 608v-64zm192-384q0-13-9.5-22.5T544 128h-64q-13 0-22.5 9.5T448 160v64q0 13 9.5 22.5T480 256h64q13 0 22.5-9.5T576 224v-64zm0 192q0-13-9.5-22.5T544 320h-64q-13 0-22.5 9.5T448 352v64q0 13 9.5 22.5T480 448h64q13 0 22.5-9.5T576 416v-64zm0 192q0-13-9.5-22.5T544 512h-64q-13 0-22.5 9.5T448 544v64q0 13 9.5 22.5T480 640h64q13 0 22.5-9.5T576 608v-64zm32 224H416q-13 0-22.5 9.5T384 800v128q0 13 9.5 22.5T416 960h192q13 0 22.5-9.5T640 928V800q0-13-9.5-22.5T608 768zm160-608q0-13-9.5-22.5T736 128h-64q-13 0-22.5 9.5T640 160v64q0 13 9.5 22.5T672 256h64q13 0 22.5-9.5T768 224v-64zm0 192q0-13-9.5-22.5T736 320h-64q-13 0-22.5 9.5T640 352v64q0 13 9.5 22.5T672 448h64q13 0 22.5-9.5T768 416v-64zm0 192q0-13-9.5-22.5T736 512h-64q-13 0-22.5 9.5T640 544v64q0 13 9.5 22.5T672 640h64q13 0 22.5-9.5T768 608v-64z" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">03</p>
+                            <h2 class="mt-1 text-lg font-semibold text-primary-green-900">Self Development</h2>
+                            <p class="mt-2 text-sm text-gray-600">Fasilitas pembelajaran dan mentor untuk membantu alumni terus berkembang.</p>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -132,12 +146,13 @@ new #[Layout('layouts.app')] class extends Component {
          onerror="this.src='{{ asset('images/placeholder-487-300x200.png') }}'">
                     </div>
                     <div class="flex my-3 space-x-2 items-start" x-data="{hovered: false}">
-                        <a class="h-[3.5rem] select-none cursor-pointer block text-base sm:text-lg leading-tight font-bold text-gray-900 tracking-tight"
+                        <a href="{{ route('kegiatan.show', $event['slug'] ?? '') }}"
+                            class="h-[3.5rem] select-none cursor-pointer block text-base sm:text-lg leading-tight font-bold text-gray-900 tracking-tight"
                             @mouseenter="hovered = true" @mouseleave="hovered = false">
                             <p class="line-clamp-2">{{ $event['title'] }}</p>
                         </a>
 
-                        <button
+                        <a href="{{ route('kegiatan.show', $event['slug'] ?? '') }}"
                             class="select-none cursor-pointer group inline-flex items-center gap-2 rounded bg-transparent flex-shrink-0">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 ease-out transform group-hover:translate-x-2 motion-reduce:transition-none"
                                 :class="hovered === true ? 'translate-x-2' : '' " xmlns="http://www.w3.org/2000/svg"
@@ -148,7 +163,7 @@ new #[Layout('layouts.app')] class extends Component {
                                         d="m367.997 338.75l-95.998 95.997V17.503h-32v417.242l-95.996-95.995l-22.627 22.627L256 496l134.624-134.623l-22.627-22.627z" />
                                 </g>
                             </svg>
-                        </button>
+                        </a>
                     </div>
                     <div>
                         <div class="flex items-center gap-2 text-gray-700">
@@ -171,6 +186,8 @@ new #[Layout('layouts.app')] class extends Component {
             @endforeach
         </div>
 
-        <x-button href="{{ route('kegiatan') }}">Lihat kegiatan lainnya</x-button>
+        @if (count($events) > 0)
+            <x-button href="{{ route('kegiatan') }}">Lihat kegiatan lainnya</x-button>
+        @endif
     </div>
 </div>

@@ -17,21 +17,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
       public function avatar()
     {
-        if (! $this->alumni || ! $this->alumni->profile_photo_path) {
-            return asset('images/placeholder.png');
-        }
-
-        $image = $this->alumni->profile_photo_path;
-
-        if (filter_var($image, FILTER_VALIDATE_URL)) {
-            return $image;
-        }
-
-        if (StorageFacade::disk('public')->exists($image)) {
-            return StorageFacade::url($image);
-        }
-
-        return asset('storage/' . ltrim($image, '/'));
+        return $this->alumni?->profile_photo_url ?? asset('images/placeholder.png');
     }
 }; ?>
 
@@ -65,27 +51,29 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
             </div>
             <div class="flex w-full justify-center">
-                @can('update', $alumni)
-                            <button
-                                class="inline-flex items-center px-4 py-2 bg-[#03563D] text-white text-sm font-medium hover:bg-[#024a33] transition-colors duration-200">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
-                                    </path>
-                                </svg>
-                                <a href="">Edit Profile</a>
-                            </button>
-                @endcan
+                @if(auth()->check() && auth()->id() === $alumni->user_id)
+                    @can('update', $alumni)
+                        <a href="{{ route('profile') }}"
+                            class="inline-flex items-center px-4 py-2 bg-[#03563D] text-white text-sm font-medium hover:bg-[#024a33] transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                                </path>
+                            </svg>
+                            Edit Profile
+                        </a>
+                    @endcan
+                @endif
             </div>
         </div>
 
        <div class="my-8 flex flex-col gap-4">
     <div class="text-lg font-bold">Tentang</div>
     <div class="grid grid-cols-1 text-primary-grey text-sm md:text-[14.5px]">
-        <div class="py-4 px-4 md:px-8 flex border border-gray-300">
-            <div class="w-[40%] font-semibold">Email</div>
-            <div class="{{ empty($alumni->email) ? 'italic text-gray-500' : 'w-[60%]' }}">
+        <div class="py-4 px-4 md:px-8 grid grid-cols-[120px_minmax(0,1fr)] gap-4 border border-gray-300 items-start">
+            <div class="font-semibold">Email</div>
+            <div class="{{ empty($alumni->email) ? 'italic text-gray-500' : 'text-gray-800' }} break-words">
                 @if(!empty($alumni->email))
                     {{ $alumni->email }}
                 @else
@@ -94,9 +82,9 @@ new #[Layout('layouts.app')] class extends Component {
                 @endif
             </div>
         </div>
-        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
-            <div class="w-[40%] font-semibold">Nomor Telepon</div>
-            <div class="{{ empty($alumni->phone_number) ? 'italic text-gray-500' : 'w-[60%]' }}">
+        <div class="py-4 px-4 md:px-8 grid grid-cols-[120px_minmax(0,1fr)] gap-4 border border-gray-300 border-t-0 items-start">
+            <div class="font-semibold">Nomor Telepon</div>
+            <div class="{{ empty($alumni->phone_number) ? 'italic text-gray-500' : 'text-gray-800' }} break-words">
                 @if(!empty($alumni->phone_number))
                     {{ $alumni->phone_number }}
                 @else
@@ -105,9 +93,9 @@ new #[Layout('layouts.app')] class extends Component {
                 @endif
             </div>
         </div>
-        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
-            <div class="w-[40%] font-semibold">Pekerjaan</div>
-            <div class="{{ empty($alumni->profession?->profession) ? 'italic text-gray-500' : 'w-[60%]' }}">
+        <div class="py-4 px-4 md:px-8 grid grid-cols-[120px_minmax(0,1fr)] gap-4 border border-gray-300 border-t-0 items-start">
+            <div class="font-semibold">Pekerjaan</div>
+            <div class="{{ empty($alumni->profession?->profession) ? 'italic text-gray-500' : 'text-gray-800' }} break-words">
                 @if(!empty($alumni->profession?->profession))
                     {{ $alumni->profession->profession }}
                 @else
@@ -116,9 +104,9 @@ new #[Layout('layouts.app')] class extends Component {
                 @endif
             </div>
         </div>
-        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
-            <div class="w-[40%] font-semibold">Nama Perusahaan</div>
-            <div class="{{ empty($alumni->profession?->company) ? 'italic text-gray-500' : 'w-[60%]' }}">
+        <div class="py-4 px-4 md:px-8 grid grid-cols-[120px_minmax(0,1fr)] gap-4 border border-gray-300 border-t-0 items-start">
+            <div class="font-semibold">Nama Perusahaan</div>
+            <div class="{{ empty($alumni->profession?->company) ? 'italic text-gray-500' : 'text-gray-800' }} break-words">
                 @if(!empty($alumni->profession?->company))
                     {{ $alumni->profession->company }}
                 @else
@@ -127,9 +115,9 @@ new #[Layout('layouts.app')] class extends Component {
                 @endif
             </div>
         </div>
-        <div class="py-4 px-4 md:px-8 flex border border-gray-300 border-t-0">
-            <div class="w-[40%] font-semibold">Domisili Kerja</div>
-            <div class="{{ empty($alumni->profession?->province) ? 'italic text-gray-500' : 'w-[60%]' }}">
+        <div class="py-4 px-4 md:px-8 grid grid-cols-[120px_minmax(0,1fr)] gap-4 border border-gray-300 border-t-0 items-start">
+            <div class="font-semibold">Domisili Kerja</div>
+            <div class="{{ empty($alumni->profession?->province) ? 'italic text-gray-500' : 'text-gray-800' }} break-words">
                 @if(!empty($alumni->profession?->province))
                     {{ $alumni->profession->province . ', Indonesia' }}
                 @else

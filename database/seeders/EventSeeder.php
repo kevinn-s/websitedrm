@@ -111,5 +111,87 @@ class EventSeeder extends Seeder
                 'updated_at' => now(),
             ]);
         }
+
+        $annualEvents = [
+            [
+                'title' => 'Rapat Tahunan Alumni Nasional',
+                'image' => 'events/rapat-tahunan.png',
+                'tags' => ['Rapat', 'Tahunan'],
+                'description' => 'Pertemuan resmi untuk mengevaluasi program kerja dan menentukan agenda strategis asosiasi.',
+                'access' => [
+                    'type' => 'PHYSICAL',
+                    'name' => 'Auditorium Utama Kampus',
+                    'address' => 'Jl. Pendidikan No. 10, Jakarta Selatan',
+                    'map_url' => 'https://maps.google.com/?q=-6.234567,106.823456',
+                ],
+            ],
+            [
+                'title' => 'Malam Anugerah Alumni DRM',
+                'image' => 'events/malam-anugerah.png',
+                'tags' => ['Penghargaan', 'Gala'],
+                'description' => 'Malam penganugerahan bagi alumni berprestasi dengan rangkaian gala dinner dan networking.',
+                'access' => [
+                    'type' => 'PHYSICAL',
+                    'name' => 'Grand Ballroom Nusantara',
+                    'address' => 'Jl. Jend. Sudirman Kav. 18, Jakarta',
+                    'map_url' => 'https://maps.google.com/?q=-6.219999,106.816666',
+                ],
+            ],
+            [
+                'title' => 'Konferensi Pendidikan Nasional',
+                'image' => 'events/konferensi-pendidikan.png',
+                'tags' => ['Konferensi', 'Pendidikan'],
+                'description' => 'Sesi panel dan diskusi tematik seputar inovasi pendidikan tinggi di era digital.',
+                'access' => [
+                    'type' => 'HYBRID',
+                    'name' => 'Convention Center & Zoom',
+                    'address' => 'Jl. Gatot Subroto No. 1, Jakarta',
+                    'map_url' => 'https://maps.google.com/?q=-6.225432,106.807654',
+                    'meeting_url' => 'https://zoom.us/j/annual-edu',
+                    'meeting_passcode' => 'EDU2025',
+                ],
+            ],
+            [
+                'title' => 'Festival Kebudayaan Alumni',
+                'image' => 'events/festival-kebudayaan.png',
+                'tags' => ['Budaya', 'Festival'],
+                'description' => 'Pagelaran seni, kuliner, dan lokakarya budaya yang menghadirkan alumni lintas angkatan.',
+                'access' => [
+                    'type' => 'PHYSICAL',
+                    'name' => 'Lapangan Seni Nusantara',
+                    'address' => 'Jl. Melati No. 2, Bandung',
+                    'map_url' => 'https://maps.google.com/?q=-6.914744,107.609810',
+                ],
+            ],
+        ];
+
+        foreach ($annualEvents as $index => $ev) {
+            $event = Event::create([
+                'title' => $ev['title'],
+                'image' => $ev['image'],
+                'tags' => $ev['tags'],
+                'type' => 'ANNUAL',
+                'published_at' => now(),
+                'date' => now()->addMonths($index + 1)->format('Y-m-d'),
+                'start_time' => '18:00:00',
+                'end_time' => '21:00:00',
+                'registration_link' => 'https://example.com/register-annual',
+                'description' => $ev['description'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            EventAccess::create([
+                'event_id' => $event->id,
+                'type' => $ev['access']['type'],
+                'name' => $ev['access']['name'],
+                'address' => $ev['access']['address'] ?? null,
+                'map_url' => $ev['access']['map_url'] ?? null,
+                'meeting_url' => $ev['access']['meeting_url'] ?? null,
+                'meeting_passcode' => $ev['access']['meeting_passcode'] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }

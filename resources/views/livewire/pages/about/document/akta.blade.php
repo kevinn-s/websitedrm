@@ -18,7 +18,19 @@ new #[Layout('layouts.app')] class extends Component {
         $path = 'documents/akta_asosiasi.pdf';
 
         if (Storage::disk('public')->exists($path)) {
-            $this->aktaPdfUrl = Storage::url($path);
+            $publicPath = Storage::url($path);
+
+            if (str_starts_with($publicPath, 'http')) {
+                $publicPath = parse_url($publicPath, PHP_URL_PATH) ?: $publicPath;
+            }
+
+            if (function_exists('request') && ($request = request()) && $request->getSchemeAndHttpHost()) {
+                $publicPath = rtrim($request->getSchemeAndHttpHost(), '/') . '/' . ltrim($publicPath, '/');
+            } else {
+                $publicPath = url($publicPath);
+            }
+
+            $this->aktaPdfUrl = $publicPath;
             $this->aktaFileAvailable = true;
         }
     }
@@ -64,16 +76,9 @@ new #[Layout('layouts.app')] class extends Component {
                 >
                     <div
                         x-ref="pdfContainer"
-                        class="min-h-[640px] w-full"
+                        class="h-[85vh] w-full"
                     ></div>
-                    <div class="border-t border-primary-green-100 bg-primary-green-50/50 p-4 flex items-center gap-3">
-                        <a href="{{ $aktaPdfUrl }}" class="text-sm font-semibold text-primary-green-700 underline" target="_blank" rel="noopener noreferrer">
-                            Unduh Dokumen
-                        </a>
-                        <button type="button" class="text-sm text-gray-600 underline" @click="closePDF()">
-                            Tutup Dokumen
-                        </button>
-                    </div>
+
                 </div>
             @else
                 <div class=" border border-primary-green-200 bg-white p-8 text-center text-primary-green-900">

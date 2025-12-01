@@ -8,7 +8,6 @@ use App\Models\Education;
 use App\Enums\Status;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 new #[Layout('layouts.app')] class extends Component {
@@ -122,7 +121,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="space-y-20">
+<div class="space-y-10 md:space-y-20">
     <x-page-title title="Alumni" :breadcrumbs="[
         ['label' => 'Beranda', 'url' => url('dashboard')],
         ['label' => 'Alumni', 'url' => ''],
@@ -232,17 +231,7 @@ new #[Layout('layouts.app')] class extends Component {
                         $profession = $alumnus->profession;
                         $photo = $alumnus->profile_photo_path;
 
-                        if ($photo) {
-                            if (Str::startsWith($photo, ['http://', 'https://'])) {
-                                $avatar = $photo;
-                            } elseif (Storage::disk('public')->exists($photo)) {
-                                $avatar = Storage::url($photo);
-                            } else {
-                                $avatar = asset(ltrim($photo, '/'));
-                            }
-                        } else {
-                            $avatar = asset('images/avatar.jpg');
-                        }
+                        $avatar = $alumnus->profile_photo_url;
 
                         $competencyRaw = $alumnus->competency;
                         if (is_array($competencyRaw)) {

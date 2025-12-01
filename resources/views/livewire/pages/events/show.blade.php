@@ -51,6 +51,10 @@ new #[Layout('layouts.app')] class extends Component {
             abort(404);
         }
 
+        if (! $event->date) {
+            abort(404);
+        }
+
         $this->title = $event->title;
         $this->tags = (array) ($event->tags ?? []);
         $this->type = $event->type;
@@ -61,7 +65,7 @@ new #[Layout('layouts.app')] class extends Component {
         };
         $this->category = $event->category ?? '';
         $this->publishedDate = $event->published_at ? Carbon::make($event->published_at) : Carbon::now();
-        $this->date = $event->type === EventType::Annual ? Carbon::make($event->annual_date) : Carbon::make($event->date);
+        $this->date = Carbon::make($event->date);
         $this->description = $event->description ?? '';
         $this->summary = Str::limit(strip_tags($this->description), 200);
         $this->time = $event->time;

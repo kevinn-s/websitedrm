@@ -328,7 +328,8 @@ new #[Layout('layouts.app')] class extends Component {
                         <p class="mt-1 text-xs sm:text-xm text-gray-500">Foto ini akan ditampilkan di profil Anda.</p>
                     </div>
                     <div class="md:col-span-2">
-                        <div class="flex items-center space-x-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-4"
+                            x-data="{ fileName: @js(Auth::user()->alumni && Auth::user()->alumni->profile_photo_path ? basename(Auth::user()->alumni->profile_photo_path) : '') }">
                             <!-- Profile Image -->
                             <div class="flex-shrink-0">
                                 @if ($photo)
@@ -343,6 +344,30 @@ new #[Layout('layouts.app')] class extends Component {
                                         src="https://ui-avatars.com/api/?name={{ urlencode($name) }}&background=10b981&color=fff&size=128"
                                         alt="Profile photo">
                                 @endif
+                            </div>
+
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Unggah foto baru</label>
+                                    <div class="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center">
+                                        <input id="photo-upload" type="file" accept="image/*" wire:model="photo"
+                                            class="sr-only" @change="fileName = $event.target.files.length ? $event.target.files[0].name : ''">
+                                        <label for="photo-upload"
+                                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-primary-green-500 rounded-md cursor-pointer hover:bg-primary-green-600 focus:outline-none focus:ring-2 focus:ring-primary-green-500 focus:ring-offset-2">
+                                            Pilih foto
+                                        </label>
+                                        <span class="text-sm text-gray-600" x-text="fileName || 'Belum ada file'"></span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Format JPG/PNG, maksimum 5MB.</p>
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                                    <div wire:loading wire:target="photo" class="text-primary-green-600">Sedang mengunggah...</div>
+                                    @if(Auth::user()->alumni && Auth::user()->alumni->profile_photo_path)
+                                        <button type="button" wire:click="deletePhoto"
+                                            class="text-red-600 hover:text-red-800">Hapus foto saat ini</button>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 

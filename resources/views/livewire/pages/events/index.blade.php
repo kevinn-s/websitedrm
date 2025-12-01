@@ -274,8 +274,10 @@ Lihat berbagai kegiatan yang tersedia, baik secara langsung maupun daring." />
                         $description = $event->description
                             ? Str::limit(strip_tags($event->description), 200)
                             : null;
+                        $isAnnual = $event->type === EventType::Annual;
                     @endphp
                     <div class="w-full my-4">
+
                         <x-events.card
                             :tags="$event->tags"
                             :title="$event->title"
@@ -283,7 +285,8 @@ Lihat berbagai kegiatan yang tersedia, baik secara langsung maupun daring." />
                             :date="$event->date->translatedFormat('l, d F Y')"
                             :location="$location"
                             :description="$description"
-                            :url="route('kegiatan.show', ['slug' => Str::slug($event->title)])"
+                            :url="!$isAnnual ? route('kegiatan.show', ['slug' => Str::slug($event->title)]) : null"
+                            :showMeta="!$isAnnual"
                         />
                     </div>
                 @endforeach
