@@ -88,7 +88,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => [
-                        'type' => AuthError::INVALID_CREDENTIALS->name,
+                        'type' => AuthError::INVALID_CREDENTIALS->value,
                         'message' => 'The provided email or password is incorrect.'
                     ]
                 ], 401);
@@ -154,12 +154,10 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword(Request $request, AuthError $error = AuthError::SERVER_ERROR)
     {
         try {
             $request->validate(['email' => 'required|email']);
-
-            $error = AuthError::SERVER_ERROR;
 
             $status = Password::sendResetLink($request->only('email'), function ($user) use (&$error) {
                 if (
