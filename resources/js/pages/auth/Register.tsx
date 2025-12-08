@@ -10,6 +10,7 @@ import Button from "../../components/Button";
 
 enum ForgotPasswordError {
     DUPLICATE_USER = 'DUPLICATE_USER',
+    DATABASE_ERROR = 'DATABASE_ERROR',
     SERVER_ERROR = 'SERVER_ERROR'
 }
 
@@ -23,7 +24,11 @@ interface RegisterForm {
 
 const RegisterSuccessMessage = () => {
     return (
-        <div className="space-y-4">
+        <>
+         <div className="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
+                                <img src="/images/drm.webp" alt="" className="w-20 h-full" />
+                            </div>
+        <div className="p-6 space-y-4">
             <div className="space-y-2 text-center">
                 <h1 className="font-sora text-2xl font-semibold">Terima Kasih!</h1>
                 <p className="text-sm text-gray-600">
@@ -41,7 +46,7 @@ const RegisterSuccessMessage = () => {
                 <a href="/masuk" className="block">
                     <Button variant="primary" className="w-full px-5 py-2.5 gap-2">
                         <div className="flex items-center justify-center gap-2">
-                            <span className="text-base">Ke Halaman Masuk</span>
+                            <span className="text-base">Ke Halaman Login</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 15 15">
                                 <path fill="#ffffff"
                                     d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414Z" />
@@ -57,8 +62,27 @@ const RegisterSuccessMessage = () => {
                 </a>
             </div>
         </div>
+        </>
     )
 }
+
+const RegisterErrorMessage = ({ type, message }: { type: string; message?: string }) => {
+
+
+    return (
+        <div className="p-4 text-sm font-medium border-[0.3px] bg-opacity-50 text-red-600 border-red-400 bg-red-200">
+            {
+                message
+                ?? (type === ForgotPasswordError.DUPLICATE_USER
+                    ? "Email atau username sudah terdaftar. Silakan gunakan email/username lain atau coba login."
+                    : "Terjadi kesalahan pada server. Silakan coba lagi nanti.")
+            }
+        </div>
+
+    );
+};
+
+
 export const Register = () => {
     const login = useSignIn();
     const {
@@ -121,13 +145,13 @@ export const Register = () => {
             <div className="max-w-md my-auto h-full w-full mx-auto bg-white">
                 {
                     mutation.isSuccess && mutation.data?.success ?
-                    <RegisterSuccessMessage />
-                    :
-                    <>
-                        <div className="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
+                        <RegisterSuccessMessage />
+                        :
+                        <>
+                            <div className="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
                                 <img src="/images/drm.webp" alt="" className="w-20 h-full" />
-                        </div>
-                        <div className="p-6 space-y-4">
+                            </div>
+                            <div className="p-6 space-y-4">
                                 <h1 className="font-sora text-2xl font-semibold">Daftar</h1>
                                 <p className="text-sm text-gray-600">
                                     Lengkapi formulir ini untuk mendaftar. Akun Anda akan divalidasi terlebih dahulu sebelum dapat
@@ -204,6 +228,8 @@ export const Register = () => {
                                             </ul>
                                         )}
                                     </div>
+                                    {errors.root?.serverError && <RegisterErrorMessage type={errors.root.serverError.type as string} />}
+
                                     <div className="space-y-4">
                                         <Button variant="primary" className="w-full px-5 py-2.5 gap-2" type="submit">
                                             <span className="text-smp text-white">Daftar</span>
@@ -214,8 +240,8 @@ export const Register = () => {
                                         </div>
                                     </div>
                                 </form>
-                        </div>
-                     </>
+                            </div>
+                        </>
                 }
             </div>
         </>

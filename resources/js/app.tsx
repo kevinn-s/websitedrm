@@ -34,11 +34,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         <Route path="/masuk" element={<Login />} />
                         <Route path="/lupa-password" element={<ForgotPassword />} />
                         <Route path="/ubah-password" element={<ResetPassword />} />
-
                         <Route path="/profil" element={<Profile />} />
-
-
-
                     </Routes>
                 </div>
             </AuthProvider>

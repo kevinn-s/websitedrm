@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Mail\RegisterEmail;
 
 Route::get('/', function () {
     return view('app');

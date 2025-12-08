@@ -17,9 +17,14 @@ return new class extends Migration
             $table->string('name');
             $table->string('nim')->unique();
             $table->string('email')->unique();
+            $table->string('phone')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('status', [Status::PENDING, Status::REJECTED, Status::VERIFIED]);
+            $table->enum('status', [Status::PENDING, Status::REJECTED, Status::VERIFIED])->default(Status::PENDING);
+            $table->string('x', 100)->nullable();
+            $table->string('instagram', 100)->nullable();
+            $table->string('facebook', 100)->nullable();
+            $table->string('linkedin', 100)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

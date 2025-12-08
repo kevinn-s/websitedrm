@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 
 use App\Models\Alumni;
-use App\Models\KaryaIlmiah;
+use App\Models\publication;
 class ProfileController extends Controller
 {
 
@@ -38,18 +38,20 @@ class ProfileController extends Controller
 
         $request->validate(array_merge(
             [
-                'nama' => 'required|string|max:255',
-                // 'email' => [
-                //     'required',
-                //     'email',
-                //     'max:255',
-                //     Rule::unique('users')->ignore($request->user()->id),
-                // ],
-                'telepon' => 'nullable|string|max:20',
-                'nama_perusahaan' => 'nullable|string|max:255',
-                'posisi' => 'nullable|string|max:255',
-                'kota' => 'nullable|string|max:100',
-                'provinsi' => 'nullable|string|max:100'
+                'name' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'email',
+                    'max:255',
+                    Rule::unique('users')->ignore($request->user()->id),
+                ],
+                'phone' => 'nullable|string|max:20',
+            ],
+            [
+                'company' => 'nullable|string|max:255',
+                'profession' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:100',
+                'province' => 'nullable|string|max:100'
             ],
             [
                 'instagram' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9._]+$/',
@@ -58,43 +60,46 @@ class ProfileController extends Controller
                 'facebook' => 'nullable|string|max:100',
             ],
             [
-                'karya_ilmiah' => 'nullable|array',
-                'karya_ilmiah.*.judul' => 'required_with:karya_ilmiah|string|max:255',
-                'karya_ilmiah.*.jenis' => 'required_with:karya_ilmiah|string|max:100',
-                'karya_ilmiah.*.tahun' => 'required_with:karya_ilmiah|digits:4|integer|min:1900|max:' . date('Y'),
-                'karya_ilmiah.*.tautan' => 'nullable|url|max:500',
+                'publications' => 'nullable|array',
+                'publications.*.title' => 'required_with:publications|string|max:255',
+                'publications.*.type' => 'required_with:publications|string|max:100',
+                'publications.*.year' => [
+                    'required_with:publications',
+                    'digits:4',
+                    'integer',
+                    'min:1900',
+                    'max:' . date('Y'),
+                ],
+                'publications.*.url' => 'nullable|url|max:500',
             ]
         ));
         $request->user()->update(
             [
-                'nama' => $request->input('nama'),
+                'name' => $request->input('name'),
                 'email' => $request->input('email'),
-                'telepon' => $request->input('telepon'),
-                'nama_perusahaan' => $request->input('nama_perusahaan'),
-                'posisi' => $request->input('posisi'),
-                'kota' => $request->input('kota'),
-                'provinsi' => $request->input('provinsi'),
+                'phone' => $request->input('phone'),
                 'instagram' => $request->input('instagram'),
                 'linkedin' => $request->input('linkedin'),
                 'twitter' => $request->input('twitter'),
                 'facebook' => $request->input('facebook'),
             ]
         );
-        if (is_array($request->input('karya_ilmiah'))) {
-            array_map(function ($karyaIlmiah) use (&$request) {
-                KaryaIlmiah::updateOrCreate(array_merge([
-                    'alumni_id' => $request->user()->id
-                ], (function () use (&$karyaIlmiah) {
-                    if (!empty($karyaIlmiah['id'])) {
-                        return ['id' => $karyaIlmiah['id']]; }return [];
-                })()), [
-                    'alumni_id' => $request->user()->id,
-                    'judul' => $karyaIlmiah['judul'],
-                    'jenis' => $karyaIlmiah['jenis'],
-                    'tahun_publikasi' => (int) $karyaIlmiah['tahun'],
-                    'tautan' => $karyaIlmiah['tautan'] ?? null,
-                ]);
-            }, $request->input('karya_ilmiah', []));
+        if (is_array($request->input('publications'))) {
+            if (!empty($request->input('publications'))) {
+                foreach($request->input('publications') as $publication){
+                    Publication::updateOrCreate(array_merge([
+                        'alumni_id' => $request->user()->id
+                    ], (function () use (&$publication) {
+                        if (!empty($publication['id'])) {
+                            return ['id' => $publication['id']]; } return [];
+                    })()), [
+                        'title' => $publication['title'],
+                        'type' => $publication['type'],
+                        'year' => (int) $publication['year'],
+                        'url' => $publication['url'] ?? null,
+                    ]);
+                }
+            }
         } else {
             return response()->json([
                 'success' => false,

@@ -7,29 +7,21 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "../../components/forms/Input";
 import Label from "../../components/forms/Label";
 import Button from "../../components/Button";
-
-enum ForgotPasswordError {
-    RESET_LINK_FAILED = 'RESET_LINK_FAILED',
-    VALIDATION_ERROR = 'VALIDATION_ERROR',
-    SERVER_ERROR = 'SERVER_ERROR'
-}
+import { AuthenticationError } from "../../enums";
 
 const ForgotPasswordErrorMessage = ({ type }: { type: string }) => {
-    return (
-        <div className="p-4 text-sm font-medium border-[0.3px] bg-opacity-50 text-red-600 border-red-400 bg-red-200" >
-            {
-                type === ForgotPasswordError.RESET_LINK_FAILED ?
-                    "Email tidak ditemukan dalam sistem kami." :
-                    type === ForgotPasswordError.VALIDATION_ERROR ?
-                        "Format email tidak valid." :
-                        type === ForgotPasswordError.SERVER_ERROR ?
-                            "Terjadi kesalahan pada sistem. Silakan coba lagi nanti." :
-                            "Terjadi kesalahan yang tidak diketahui."
-            }
-        </div>
-    );
+  return (
+    <div className="p-4 text-sm font-medium border-[0.3px] bg-opacity-50 text-red-600 border-red-400 bg-red-200">
+      {type === AuthenticationError.USER_NOT_FOUND
+        ? 'Email tidak ditemukan dalam sistem kami.'
+        : type === AuthenticationError.EMAIL_SEND_FAILED
+        ? 'Gagal mengirim email. Pastikan koneksi internet Anda stabil.'
+        : type === AuthenticationError.INTERNAL_SERVER_ERROR
+        ? 'Terjadi kesalahan pada sistem. Silakan coba lagi nanti.'
+        : 'Terjadi kesalahan yang tidak diketahui.'}
+    </div>
+  );
 };
-
 interface ForgotPasswordForm {
     email: string,
 };
@@ -66,12 +58,10 @@ export const ForgotPassword = () => {
                     if (axios.isAxiosError(error) && error.response?.data?.error?.type) {
                         setError('root.serverError', {
                             type: error.response.data.error.type,
-                            message: 'Terjadi kesalahan sistem. Silakan coba lagi.'
                         });
                     } else {
                         setError('root.serverError', {
-                            type: ForgotPasswordError.SERVER_ERROR,
-                            message: 'Terjadi kesalahan sistem. Silakan coba lagi.'
+                            type: AuthenticationError.INTERNAL_SERVER_ERROR,
                         });
                     }
                 }

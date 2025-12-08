@@ -9,16 +9,20 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RegistrationReceived extends Mailable
+class ResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
-
+    public string $name;
+    public string $email;
+    public string $token;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(string $name, string $email, string $token)
     {
-        //
+        $this->name = $name;
+        $this->email = $email;
+        $this->token = $token;
     }
 
     /**
@@ -27,7 +31,7 @@ class RegistrationReceived extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Registration Received',
+            subject: 'Reset Password',
         );
     }
 
@@ -37,7 +41,7 @@ class RegistrationReceived extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.resetpassword',
         );
     }
 

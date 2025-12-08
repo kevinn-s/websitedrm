@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 use App\Enums\Status;
+use App\Notifications\ResetPasswordNotification;
 class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordContract
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -24,23 +25,19 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
      * @var list<string>
      */
     protected $fillable = [
-        'nama',
+        'name',
         'nim',
         'email',
         'password',
         'status',
-        'telepon',
-        'nama_perusahaan',
-        'posisi',
-        'kota',
-        'provinsi',
+        'phone',
         'instagram',
         'linkedin',
         'twitter',
         'facebook'
     ];
 
-    protected $hidden = ['password', 'nim', 'status'];
+    protected $hidden = ['password', 'status'];
 
     /**
      * Get the attributes that should be cast.
@@ -55,10 +52,16 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
             'password' => 'hashed',
         ];
     }
-    public function karyaIlmiah()
+    public function scholarProfile()
     {
-        return $this->hasOne(KaryaIlmiah::class);
+        return $this->hasOne(ScholarProfile::class);
     }
+
+    public function publications()
+    {
+        return $this->hasMany(Publication::class);
+    }
+
 
     public function getSocialLinksAttribute()
     {
@@ -91,9 +94,9 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
         return [];
     }
 
-    // public function getEmailForPasswordReset() {
-    //     if ($this->status->isVerified()) {
-    //         return $this->email;
-    //     } throw new \LogicException('Akun belum terverifikasi / akun ditolak');
-    // }
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
 }

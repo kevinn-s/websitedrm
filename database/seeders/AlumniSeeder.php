@@ -17,11 +17,10 @@ class AlumniSeeder extends Seeder
     {
         //
         Alumni::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Kevin S',
+            'email' => 'kevin@gmail.com',
             'nim' => '2602145680',
-            'password' => 'Test12345678',
-            'status' => Status::PENDING
+            'password' => 'Kevin893',
         ]);
     }
 }

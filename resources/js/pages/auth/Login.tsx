@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "../../components/forms/Input";
 import Label from "../../components/forms/Label";
 import Button from "../../components/Button";
+import { AuthenticationError } from "../../enums";
 
 interface LoginForm {
     email: string,
@@ -20,15 +21,23 @@ enum LoginError {
 }
 
 export const LoginErrorMessage = ({ type }: { type: string }) => {
-    return (
-        <div className={`p-4 text-xm font-medium border-[0.3px] bg-opacity-50 ${type === LoginError.USER_NOT_VERIFIED ? `text-primary-green-600 border-primary-green-400 bg-primary-green-200` : `text-red-500 border-red-400 bg-red-200`}`}>
-            {
-                type === LoginError.USER_NOT_VERIFIED ? "Akun Anda saat ini sedang dalam proses verifikasi. Mohon menunggu hingga akun Anda aktif." :
-                    type === LoginError.UNAUTHORIZED_ACCESS ? "Akses tidak diizinkan. Silakan hubungi kami." :
-                        type === LoginError.INVALID_CREDENTIALS ? "Email atau password yang Anda masukkan salah." : "Terjadi kesalahan yang tidak diketahui."
-            }
-        </div>
-    );
+  return (
+    <div
+      className={`p-4 text-sm font-medium border-[0.3px] bg-opacity-50 ${
+        type === AuthenticationError.USER_NOT_VERIFIED
+          ? 'text-primary-green-600 border-primary-green-400 bg-primary-green-200'
+          : 'text-red-500 border-red-400 bg-red-200'
+      }`}
+    >
+      {type === AuthenticationError.USER_NOT_VERIFIED
+        ? 'Akun Anda saat ini sedang dalam proses verifikasi. Mohon menunggu hingga akun Anda aktif.'
+        : type === AuthenticationError.UNAUTHORIZED_ACCESS
+        ? 'Akses tidak diizinkan. Silakan hubungi kami.'
+        : type === AuthenticationError.INVALID_CREDENTIALS
+        ? 'Email atau password yang Anda masukkan salah.'
+        : 'Terjadi kesalahan yang tidak diketahui.'}
+    </div>
+  );
 };
 
 export const Login = () => {
@@ -70,7 +79,7 @@ export const Login = () => {
 
     // }, []);
     return (
-        <div className="max-w-md my-auto h-full w-full mx-auto bg-white">
+        <div className="max-w-md h-screen w-full mx-auto bg-white">
             <div className="border-b-gray-200 border-b-[0.3px] w-full flex justify-center p-6">
                 <img src="/images/drm.webp" alt="" className="w-20 h-full" />
             </div>

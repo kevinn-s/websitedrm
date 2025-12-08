@@ -42,7 +42,6 @@ export const ResetPassword = () => {
             axios.post('/api/auth/reset-password', formData).then(res => res.data)
     });
 
-    // Validate URL params on mount
     useEffect(() => {
         if (!token || !email) {
             setError('root.serverError', {
@@ -103,7 +102,7 @@ export const ResetPassword = () => {
                     Masukkan password baru Anda untuk akun <strong>{email}</strong>
                 </p>
 
-                {isInvalidLink ? (
+                {errors.root && errors.root.serverError.type === ResetPasswordError.INVALID_LINK ? (
                     <div className="space-y-4">
                         <ResetPasswordErrorMessage
                             type={ResetPasswordError.INVALID_LINK}

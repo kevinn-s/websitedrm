@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Enum\AuthError;
+use App\Enums\AuthError;
+use App\Events\AlumniRegistered;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +14,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use DB;
 
 use App\Models\Alumni;
 use App\Enums\Status;
@@ -37,7 +40,7 @@ class AuthController extends Controller
                 'nim' => 'required|string|unique:alumni,nim|regex:/^\d{8,10}$/',
                 'password' => 'required|string|min:8',
             ]);
-            event(new Registered(
+            event(new AlumniRegistered(
                 Alumni::create([
                     'name' => $request->name,
                     'email' => $request->email,
@@ -52,13 +55,23 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             \Log::error('User registration failed', ['exception' => $th]);
             if ($th instanceof \Illuminate\Database\QueryException) {
-                return response()->json([
-                    'success' => false,
-                    'error' => [
-                        'type' => 'DUPLICATE_ENTRY',
-                        'message' => $th
-                    ]
-                ], 409);
+                if ($th->getCode() == 23000 || $th->errorInfo[1] == 1062) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => 'DUPLICATE_ENTRY',
+                            'message' => $th
+                        ]
+                    ], 409);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => 'DATABASE_ERROR',
+                            'message' => 'A database error occurred'
+                        ]
+                    ], 500);
+                }
             }
             return response()->json([
                 'success' => false,
@@ -89,7 +102,6 @@ class AuthController extends Controller
                     'success' => false,
                     'error' => [
                         'type' => AuthError::INVALID_CREDENTIALS->value,
-                        'message' => 'The provided email or password is incorrect.'
                     ]
                 ], 401);
             }
@@ -99,22 +111,20 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => [
-                        'type' => 'USER_NOT_VERIFIED',
-                        'message' => 'User is not verified',
+                        'type' => AuthError::USER_NOT_VERIFIED->value,
                     ]
-                ], 405);
+                ], 403);
             }
 
             if ($request->boolean('remember_me', false)) {
-                $auth->setTTL(120);
+                $auth->setTTL(43200); // 30 hari dalam menit (opsional: sesuaikan kebijakan Anda)
             }
             return $this->respondWithToken($token);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => 'VALIDATION_ERROR',
-                    'message' => 'Please check your input.',
+                    'type' => AuthError::PASSWORD_VALIDATION_FAILED->value,
                 ]
             ], 422);
         } catch (\Exception $e) {
@@ -125,8 +135,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::SERVER_ERROR->name,
-                    'message' => 'An unexpected error occurred. Please try again later.'
+                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
                 ]
             ], 500);
         }
@@ -159,40 +168,76 @@ class AuthController extends Controller
         try {
             $request->validate(['email' => 'required|email']);
 
-            $status = Password::sendResetLink($request->only('email'), function ($user) use (&$error) {
+            $status = Password::broker('alumni')->sendResetLink($request->only('email'), function (CanResetPassword $user, string $token) use (&$error) {
                 if (
-                    PasswordReset::where('email', $user->email)
-                        ->where('created_at', '>', now()->subHours(1))
-                        ->count() >= 3
+                    DB::table('password_reset_tokens')
+                        ->where('email', $user->email)
+                        ->where('created_at', '>', now()->subHour())
+                        ->count() === 3
                 ) {
-                    $error = AuthError::SERVER_ERROR->name;
+                    $error = AuthError::RESET_ATTEMPTS_EXCEEDED->value;
                     return false;
                 } else if (!$user->status->isVerified()) {
-                    $error = AuthError::USER_NOT_VERIFIED->name;
+                    $error = AuthError::USER_NOT_VERIFIED->value;
                     return false;
                 }
-                return true;
+                $user->sendPasswordResetNotification($token);
             });
 
-            return $status === Password::RESET_LINK_SENT
-                ? response()->json([
-                    'success' => true,
-                    'message' => 'Link reset password telah dikirim ke email Anda. Silakan cek inbox atau folder spam.'
-                ], 200)
-                : response()->json([
-                    'success' => false,
-                    'error' => [
-                        'type' => $error,
-                    ]
-                ], $error === AuthError::USER_NOT_VERIFIED->name ? 403 : 404);
+            switch ($status) {
+                case Password::RESET_LINK_SENT:
+                    return response()->json([
+                        'success' => true,
+                    ], 200);
+
+                case Password::INVALID_USER:
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => Password::INVALID_USER,
+                        ],
+                    ], 404);
+
+                case Password::RESET_THROTTLED:
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => Password::RESET_THROTTLED,
+                        ]
+                    ], 429);
+
+                case Password::INVALID_TOKEN:
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => Password::INVALID_TOKEN,
+                        ],
+                    ], 404);
+
+                default:
+                    if ($error === AuthError::USER_NOT_VERIFIED) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => AuthError::USER_NOT_VERIFIED->value,
+                        ]
+                    ], 403);
+                    } else if ($error === AuthError::RESET_ATTEMPTS_EXCEEDED) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => [
+                                'type' => AuthError::RESET_ATTEMPTS_EXCEEDED->value,
+                            ]
+                        ], 429);
+                    }
+            }
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::VALIDATION_ERROR->name,
-                    'message' => 'Format email tidak valid.',
-                    'details' => $e->errors()
+                    'type' => AuthError::VALIDATION_EXCEPTION->value,
+                    'message' => $e->getMessage()
                 ]
             ], 422);
 
@@ -205,11 +250,17 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::SERVER_ERROR->name,
-                    'message' => 'Terjadi kesalahan pada sistem. Silakan coba lagi nanti.'
+                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
                 ]
             ], 500);
         }
+
+        return response()->json([
+            'success' => false,
+            'error' => [
+                'type' => $error->value,
+            ]
+        ], 422);
     }
 
     public function resetPassword(Request $request)
@@ -222,36 +273,62 @@ class AuthController extends Controller
 
             ]);
 
-            $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-           function (Alumni $user, string $password) {
-                        $user->forceFill([
-                            'password' => Hash::make($password)
-                        ])->setRememberToken(Str::random(60));
-                        $user->save();
-                        event(new PasswordReset($user));
-                    }
+            $status = Password::broker('alumni')->reset(
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function (Alumni $user, string $password) {
+                    $user->forceFill([
+                        'password' => Hash::make($password)
+                    ])->setRememberToken(Str::random(60));
+                    $user->save();
+                    event(new PasswordReset($user));
+                }
             );
 
-            return $status === Password::PasswordReset ?
-            response()->json([
-                'success' => true,
-                'message' => 'Password berhasil direset. Silakan login dengan password baru Anda.'
-            ], 200)
-            :
-            response()->json([
-                'success' => false,
-                'error' => [
-                'type' => 'RESET_FAILED',
-                'message' => $this->getResetErrorMessage($status)
-            ]], 400);
+            switch ($status) {
+                case Password::RESET_LINK_SENT:
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Password berhasil direset. Silakan login dengan password baru Anda.'
+                    ], 200);
+
+                case Password::INVALID_USER:
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => Password::INVALID_USER,
+                        ],
+                    ], 404);
+
+                case Password::RESET_THROTTLED:
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => Password::RESET_THROTTLED,
+                        ]
+                    ], 429);
+
+                case Password::INVALID_TOKEN:
+                    return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => Password::INVALID_TOKEN,
+                        ],
+                    ], 404);
+
+                default :
+                     return response()->json([
+                        'success' => false,
+                        'error' => [
+                            'type' => AuthError::INTERNAL_SERVER_ERROR->value,
+                        ]
+                    ], 403);
+            }
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => 'VALIDATION_ERROR',
-                    'message' => 'Data tidak valid.',
+                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
                     'details' => $e->errors()
                 ]
             ], 422);
@@ -262,7 +339,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => 'SERVER_ERROR',
+                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
                     'message' => 'Terjadi kesalahan pada sistem.'
                 ]
             ], 500);

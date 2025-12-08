@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
-
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\Alumni;
 
 class AlumniController extends Controller
@@ -21,19 +21,23 @@ class AlumniController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function show(Request $request)
+    public function show(Request $request, Builder $builder = Alumni::query())
     {
         try {
-            //code...
-
         $request->validate([
-            'search' => 'string',
-            'filters' => 'array'
+            'search' => 'nullable|string',
+            'filters' => 'nullable|array',
+            'filters.*' => 'string'
         ]);
 
         return response()->json([
             "success" => true,
-            "data" => Alumni::where('nama', 'nim', $request->input('search'))
+            "data" => (function() use ($request, $builder) {
+                /** @var \Illuminate\Database\Eloquent\Builder $builder */
+                $builder->whereLike('name', trim($request->input('nama')))
+                        ->orWhereLike('');
+
+            })()
         ], 200);
 
         } catch (\Throwable $th) {

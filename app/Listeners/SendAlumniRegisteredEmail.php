@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\AlumniRegistered;
-use App\Mail\RegistrationReceived;
+use App\Mail\RegisterEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
@@ -23,6 +23,6 @@ class SendAlumniRegisteredEmail
      */
     public function handle(AlumniRegistered $event): void
     {
-        Mail::to($event->alumni)->send(new RegistrationReceived());
+        Mail::to($event->alumni)->send(new RegisterEmail($event->alumni->name, $event->alumni->email, $event->alumni->nim));
     }
 }
