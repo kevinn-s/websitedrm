@@ -100,14 +100,6 @@ class ProfileController extends Controller
                     ]);
                 }
             }
-        } else {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'type' => 'VALIDATION_ERROR',
-                    'message' => 'Please check your input.',
-                ]
-            ], 422);
         }
 
         return response()->json([

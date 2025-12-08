@@ -27,6 +27,7 @@
         "@vitejs/plugin-react": "^5.1.1",
         "react": "^19.2.0",
         "react-auth-kit": "^4.0.2-alpha.11",
+        "react-cropper": "^2.3.3",
         "react-dom": "^19.2.0",
         "react-hook-form": "^7.67.0",
         "react-router-dom": "^7.9.6",

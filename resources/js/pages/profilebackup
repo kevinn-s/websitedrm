@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
 import Header from '../components/Header'
 import Label from '../components/forms/Label'
@@ -7,69 +7,60 @@ import Button from '../components/Button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader'
-import Cropper, { ReactCropperElement } from "react-cropper";
-import "../../css/cropper.css";
+
+interface KaryaIlmiah {
+    judul: string;
+    jenis: string;
+    tahun: string;
+    tautan: string;
+}
 
 interface ProfileForm {
-    name: string;
-    image: File | null;
+    nama: string;
     email: string;
-    phone: string;
-    bib: number;
-    company: string;
-    profession: string;
-    city: string;
-    province: string;
+    telepon: string;
+    nama_perusahaan: string;
+    posisi: string;
+    kota: string;
+    provinsi: string;
     instagram: string;
     linkedin: string;
     twitter: string;
     facebook: string;
-}
-
-function ProfilePicture() {
-    const cropperRef = useRef<ReactCropperElement>(null);
-    const onCrop = () => {
-        const cropper = cropperRef.current?.cropper;
-    };
-
-    return (
-        <Cropper
-            src="https://raw.githubusercontent.com/roadmanfong/react-cropper/master/example/img/child.jpg"
-            style={{ height: 400, width: "100%" }}
-            // Cropper.js options
-            initialAspectRatio={16 / 9}
-            guides={false}
-            crop={onCrop}
-            ref={cropperRef}
-        />
-    );
-};
+    karya_ilmiah: KaryaIlmiah[];
 }
 
 export default function Profile() {
     const authHeader = useAuthHeader();
     const queryClient = useQueryClient();
-
     const form = useForm<ProfileForm>({
         defaultValues: {
-            name: '',
-            image: null,
+            nama: '',
             email: '',
-            phone: '',
-            company: '',
-            profession: '',
-            city: '',
-            province: '',
+            telepon: '',
+            nama_perusahaan: '',
+            posisi: '',
+            kota: '',
+            provinsi: '',
             instagram: '',
             linkedin: '',
             twitter: '',
             facebook: '',
+            karya_ilmiah: [{
+                judul: '',
+                jenis: '',
+                tahun: '',
+                tautan: ''
+            }],
         }
     });
 
     const { control, register, handleSubmit, formState: { errors }, reset } = form;
-
-    const { data: profile, isLoading, isError, error } = useQuery({
+    const { fields: karyaIlmiahFields, append: appendKaryaIlmiah, remove: removeKaryaIlmiah } = useFieldArray({
+        control,
+        name: "karya_ilmiah",
+    });
+    const { data: profileData, isLoading, isError, error } = useQuery({
         queryKey: ['profile'],
         queryFn: async () => {
             const response = await axios.get('/api/auth/profile', {
@@ -87,16 +78,17 @@ export default function Profile() {
         message?: string
     }, Error, ProfileForm>({
         mutationFn: async (data: ProfileForm) => {
-            return axios.post('/api/auth/profile', data, {
+            const response = await axios.post('/api/auth/profile', data, {
                 headers: {
                     Authorization: authHeader,
                     'Content-Type': 'application/json'
                 }
             });
+            return response.data;
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['profile'] });
-            // alert(data.message || 'Profil berhasil diperbarui!');
+            alert(data.message || 'Profil berhasil diperbarui!');
         },
         onError: (error) => {
             if (axios.isAxiosError(error)) {
@@ -115,23 +107,31 @@ export default function Profile() {
     };
 
     useEffect(() => {
-        if (profile) {
+        if (profileData) {
             reset({
-                // Mapping: field form ← field dari API
-                name: profile.nama || '',
-                email: profile.email || '',
-                phone: profile.telepon || '',
-                company: profile.nama_perusahaan || '',
-                profession: profile.posisi || '',
-                city: profile.kota || '',
-                province: profile.provinsi || '',
-                instagram: profile.instagram || '',
-                linkedin: profile.linkedin || '',
-                twitter: profile.twitter || '',
-                facebook: profile.facebook || '',
+                nama: profileData.nama || '',
+                email: profileData.email || '',
+                telepon: profileData.telepon || '',
+                nama_perusahaan: profileData.nama_perusahaan || '',
+                posisi: profileData.posisi || '',
+                kota: profileData.kota || '',
+                provinsi: profileData.provinsi || '',
+                instagram: profileData.instagram || '',
+                linkedin: profileData.linkedin || '',
+                twitter: profileData.twitter || '',
+                facebook: profileData.facebook || '',
+                karya_ilmiah: profileData.karya_ilmiah?.length > 0
+                    ? profileData.karya_ilmiah.map((k: { id: string, judul: string, jenis: string, tahun: number, tautan: string }) => ({
+                        id: k.id,
+                        judul: k.judul || '',
+                        jenis: k.jenis || '',
+                        tahun: k.tahun || '',
+                        tautan: k.tautan || ''
+                    }))
+                    : [],
             });
         }
-    }, [profile, reset]);
+    }, [profileData, reset]);
 
     return (
         <div className='w-full min-h-screen bg-gray-50'>
@@ -302,6 +302,87 @@ export default function Profile() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Karya Ilmiah Section */}
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
+                            <div className='mb-4 md:mb-0'>
+                                <Label className="text-sm text-gray-700">Karya ilmiah</Label>
+                                <p className="mt-1 text-[13px] text-gray-500">
+                                    Tambahkan karya ilmiah atau publikasi yang telah Anda buat.
+                                </p>
+                            </div>
+
+                            <div className='md:col-span-2 space-y-4'>
+                                {karyaIlmiahFields.map((field, index) => (
+                                    <div key={field.id} className="border border-gray-300 rounded-md p-4">
+                                        <div className="flex justify-end items-center mb-4">
+                                            {karyaIlmiahFields.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeKaryaIlmiah(index)}
+                                                    className="text-red-600 hover:text-red-800 text-sm font-medium"
+                                                >
+                                                    Hapus
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label className="text-sm text-gray-700">Judul</Label>
+                                                <Input
+                                                    {...register(`karya_ilmiah.${index}.judul`)}
+                                                    className="w-full text-sm"
+                                                    placeholder="Judul karya ilmiah"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label className="text-sm text-gray-700">Tahun</Label>
+                                                <Input
+                                                    {...register(`karya_ilmiah.${index}.tahun`)}
+                                                    className="w-full text-sm"
+                                                    placeholder="Tahun terbit"
+                                                    type="number"
+                                                    min="1900"
+                                                    defaultValue={new Date().getFullYear()}
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label className="text-sm text-gray-700">Jenis Karya Ilmiah</Label>
+                                                <Input
+                                                    {...register(`karya_ilmiah.${index}.jenis`)}
+                                                    className="w-full text-sm"
+                                                    placeholder="Jurnal, Konferensi, dll"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label className="text-sm text-gray-700">Tautan (Opsional)</Label>
+                                                <Input
+                                                    {...register(`karya_ilmiah.${index}.tautan`)}
+                                                    className="w-full text-sm"
+                                                    placeholder="https://..."
+                                                    type="url"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+
+                                <button
+                                    type="button"
+                                    onClick={() => appendKaryaIlmiah({
+                                        judul: '',
+                                        jenis: '',
+                                        tahun: '',
+                                        tautan: ''
+                                    })}
+                                    className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:border-gray-400 hover:bg-gray-50"
+                                >
+                                    + Tambah Karya Ilmiah
+                                </button>
+                            </div>
+                        </div>
+
                         {/* Submit */}
                         <div className="flex justify-end pt-4 border-t border-gray-200">
                             <Button type='submit' className='px-4'>

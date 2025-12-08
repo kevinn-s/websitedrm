@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum AuthError: string
+enum AppError: string
 {
     // =============== LOGIN ===============
     case INVALID_CREDENTIALS = 'INVALID_CREDENTIALS';
@@ -23,6 +23,11 @@ enum AuthError: string
     case RESET_ATTEMPTS_EXCEEDED = 'RESET_ATTEMPTS_EXCEEDED'; // alternatif human-readable
     case PASSWORD_VALIDATION_FAILED = 'PASSWORD_VALIDATION_FAILED';
     case RESET_PASSWORD_FAILED = 'RESET_PASSWORD_FAILED';
+
+     // =============== JWT / TOKEN ERRORS ===============
+    case AUTH_TOKEN_EXPIRED = 'TOKEN_EXPIRED';
+    case AUTH_TOKEN_INVALID = 'TOKEN_INVALID';
+    case AUTH_TOKEN_BLACKLISTED = 'TOKEN_BLACKLISTED';
 
     // =============== ERROR UMUM ===============
     case VALIDATION_EXCEPTION = 'VALIDATION_EXCEPTION';

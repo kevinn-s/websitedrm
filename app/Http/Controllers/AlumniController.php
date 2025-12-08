@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Routing\Controller;
 use Illuminate\Database\Eloquent\Builder;
+
 use App\Models\Alumni;
+
+use App\Enums\AppError;
 
 class AlumniController extends Controller
 {
@@ -21,39 +24,40 @@ class AlumniController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function show(Request $request, Builder $builder = Alumni::query())
+    public function index(Request $request, Builder $builder = Alumni::query())
     {
         try {
-        $request->validate([
-            'search' => 'nullable|string',
-            'filters' => 'nullable|array',
-            'filters.*' => 'string'
-        ]);
+            $request->validate([
+                'search' => 'nullable|string',
+                'filters' => 'nullable|array',
+                'filters.*' => 'string'
+            ]);
 
-        return response()->json([
-            "success" => true,
-            "data" => (function() use ($request, $builder) {
-                /** @var \Illuminate\Database\Eloquent\Builder $builder */
-                $builder->whereLike('name', trim($request->input('nama')))
-                        ->orWhereLike('');
+            return response()->json([
+                "success" => true,
+                "data" => (function () use ($request, $builder) {
+                    /** @var \Illuminate\Database\Eloquent\Builder $builder */
+                    $builder->whereLike('name', trim($request->input('name')))
+                        ->orWhereLike('bib', $request->input('bib'));
+                })()
+            ], 200);
 
-            })()
-        ], 200);
-
-        } catch (\Throwable $th) {
-            if ($th instanceof \Illuminate\Database\QueryException) {
+        } catch (\Exception $e) {
+            if ($e instanceof \Illuminate\Database\QueryException) {
                 return response()->json([
                     'success' => false,
                     'error' => [
-                        'type' => 'DATABASE_ERROR',
-                        'message' => $th
+                        'type' => 'INTERNAL_SERVER_ERROR'
                     ]
                 ], 500);
-            } else if ($th) {
-
-            } else {
-
             }
         }
+
+        return response()->json([
+            'success' => false,
+            'error' => [
+                'type' => 'INTERNAL_SERVER_ERROR'
+            ]
+        ], 500);
     }
 }

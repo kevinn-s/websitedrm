@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\AuthError;
+use App\Enums\AppError;
 use App\Events\AlumniRegistered;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -28,7 +28,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'forgotPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'forgotPassword', 'resetPassword']]);
     }
 
     public function register(Request $request)
@@ -52,32 +52,36 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true
             ], 200);
-        } catch (\Throwable $th) {
-            \Log::error('User registration failed', ['exception' => $th]);
-            if ($th instanceof \Illuminate\Database\QueryException) {
-                if ($th->getCode() == 23000 || $th->errorInfo[1] == 1062) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => [
-                            'type' => 'DUPLICATE_ENTRY',
-                            'message' => $th
-                        ]
-                    ], 409);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'error' => [
-                            'type' => 'DATABASE_ERROR',
-                            'message' => 'A database error occurred'
-                        ]
-                    ], 500);
-                }
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000' || (isset($e->errorInfo[1]) && $e->errorInfo[1] === 1062)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'type' => AppError::EMAIL_ALREADY_REGISTERED->value,
+                    ]
+                ], 409);
             }
+            \Log::error('Database error during registration', ['exception' => $e]);
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => 'SERVER_ERROR',
-                    'message' => 'Gagal membuat akun. Silakan coba lagi.' . $th
+                    'type' => AppError::INTERNAL_SERVER_ERROR->value,
+                ]
+            ], 500);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'type' => AppError::VALIDATION_EXCEPTION->value,
+                    'details' => $e->errors()
+                ]
+            ], 422);
+        } catch (\Exception $th) {
+             \Log::error('Unexpected error during registration', ['exception' => $e]);
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'type' => AppError::UNKNOWN_ERROR->value,
                 ]
             ], 500);
         }
@@ -91,8 +95,8 @@ class AuthController extends Controller
     {
         try {
             $request->validate([
-                'email' => 'required',
-                'password' => 'required'
+                'email' => 'required|email',
+                'password' => 'required|string|min:8'
             ]);
 
             /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
@@ -101,7 +105,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => [
-                        'type' => AuthError::INVALID_CREDENTIALS->value,
+                        'type' => AppError::INVALID_CREDENTIALS->value,
                     ]
                 ], 401);
             }
@@ -111,7 +115,7 @@ class AuthController extends Controller
                 return response()->json([
                     'success' => false,
                     'error' => [
-                        'type' => AuthError::USER_NOT_VERIFIED->value,
+                        'type' => AppError::USER_NOT_VERIFIED->value,
                     ]
                 ], 403);
             }
@@ -124,7 +128,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::PASSWORD_VALIDATION_FAILED->value,
+                    'type' => AppError::PASSWORD_VALIDATION_FAILED->value,
                 ]
             ], 422);
         } catch (\Exception $e) {
@@ -135,7 +139,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
+                    'type' => AppError::INTERNAL_SERVER_ERROR->value,
                 ]
             ], 500);
         }
@@ -163,7 +167,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-    public function forgotPassword(Request $request, AuthError $error = AuthError::SERVER_ERROR)
+    public function forgotPassword(Request $request, AppError $error = AppError::SERVER_ERROR)
     {
         try {
             $request->validate(['email' => 'required|email']);
@@ -175,10 +179,10 @@ class AuthController extends Controller
                         ->where('created_at', '>', now()->subHour())
                         ->count() === 3
                 ) {
-                    $error = AuthError::RESET_ATTEMPTS_EXCEEDED->value;
+                    $error = AppError::RESET_ATTEMPTS_EXCEEDED->value;
                     return false;
                 } else if (!$user->status->isVerified()) {
-                    $error = AuthError::USER_NOT_VERIFIED->value;
+                    $error = AppError::USER_NOT_VERIFIED->value;
                     return false;
                 }
                 $user->sendPasswordResetNotification($token);
@@ -215,18 +219,18 @@ class AuthController extends Controller
                     ], 404);
 
                 default:
-                    if ($error === AuthError::USER_NOT_VERIFIED) {
-                    return response()->json([
-                        'success' => false,
-                        'error' => [
-                            'type' => AuthError::USER_NOT_VERIFIED->value,
-                        ]
-                    ], 403);
-                    } else if ($error === AuthError::RESET_ATTEMPTS_EXCEEDED) {
+                    if ($error === AppError::USER_NOT_VERIFIED) {
                         return response()->json([
                             'success' => false,
                             'error' => [
-                                'type' => AuthError::RESET_ATTEMPTS_EXCEEDED->value,
+                                'type' => AppError::USER_NOT_VERIFIED->value,
+                            ]
+                        ], 403);
+                    } else if ($error === AppError::RESET_ATTEMPTS_EXCEEDED) {
+                        return response()->json([
+                            'success' => false,
+                            'error' => [
+                                'type' => AppError::RESET_ATTEMPTS_EXCEEDED->value,
                             ]
                         ], 429);
                     }
@@ -236,7 +240,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::VALIDATION_EXCEPTION->value,
+                    'type' => AppError::VALIDATION_EXCEPTION->value,
                     'message' => $e->getMessage()
                 ]
             ], 422);
@@ -250,7 +254,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
+                    'type' => AppError::INTERNAL_SERVER_ERROR->value,
                 ]
             ], 500);
         }
@@ -315,11 +319,11 @@ class AuthController extends Controller
                         ],
                     ], 404);
 
-                default :
-                     return response()->json([
+                default:
+                    return response()->json([
                         'success' => false,
                         'error' => [
-                            'type' => AuthError::INTERNAL_SERVER_ERROR->value,
+                            'type' => AppError::INTERNAL_SERVER_ERROR->value,
                         ]
                     ], 403);
             }
@@ -328,7 +332,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
+                    'type' => AppError::INTERNAL_SERVER_ERROR->value,
                     'details' => $e->errors()
                 ]
             ], 422);
@@ -339,8 +343,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AuthError::INTERNAL_SERVER_ERROR->value,
-                    'message' => 'Terjadi kesalahan pada sistem.'
+                    'type' => AppError::INTERNAL_SERVER_ERROR->value,
                 ]
             ], 500);
         }

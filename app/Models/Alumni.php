@@ -2,17 +2,23 @@
 
 namespace App\Models;
 
-use Error;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 
 use App\Enums\Status;
 use App\Notifications\ResetPasswordNotification;
+
+use Error;
+use Str;
 class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordContract
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -30,6 +36,7 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
         'email',
         'password',
         'status',
+        'bib',
         'phone',
         'instagram',
         'linkedin',
@@ -50,7 +57,13 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
             'status' => Status::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'slug' => 'string'
         ];
+    }
+
+    public function activity()
+    {
+        return $this->hasOne(Activity::class);
     }
     public function scholarProfile()
     {
@@ -62,6 +75,12 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
         return $this->hasMany(Publication::class);
     }
 
+    public function setNameAttribute($value)
+    {
+        // WARNING!!! DO NOT EXPLICITLY CALLED THE COLUMN AS IT WILL PRODUCE RECURSIONS
+        $this->attributes['name'] = $value;
+        $this->attributes['slug'] = Str::slug($value);
+    }
 
     public function getSocialLinksAttribute()
     {
@@ -92,6 +111,12 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    #[Scope]
+    protected function verified(Builder $query): void
+    {
+        $query->where('status', Status::VERIFIED);
     }
 
     public function sendPasswordResetNotification($token)

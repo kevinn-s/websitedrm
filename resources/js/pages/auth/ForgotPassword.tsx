@@ -12,7 +12,7 @@ import { AuthenticationError } from "../../enums";
 const ForgotPasswordErrorMessage = ({ type }: { type: string }) => {
   return (
     <div className="p-4 text-sm font-medium border-[0.3px] bg-opacity-50 text-red-600 border-red-400 bg-red-200">
-      {type === AuthenticationError.USER_NOT_FOUND
+      {type === AuthenticationError.INVALID_USER
         ? 'Email tidak ditemukan dalam sistem kami.'
         : type === AuthenticationError.EMAIL_SEND_FAILED
         ? 'Gagal mengirim email. Pastikan koneksi internet Anda stabil.'
