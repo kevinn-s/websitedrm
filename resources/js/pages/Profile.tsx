@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react'
-import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form'
+import React, { ReactHTMLElement, useEffect, useRef, useState } from 'react'
+import { useForm, SubmitHandler, useFieldArray, UseFormRegisterReturn, UseFormRegister, UseFormReturn } from 'react-hook-form'
 import Header from '../components/Header'
 import Label from '../components/forms/Label'
 import { Input } from '../components/forms/Input'
 import Button from '../components/Button';
+import { Image  } from '../components/forms/Image'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader'
@@ -12,7 +13,7 @@ import "../../css/cropper.css";
 
 interface ProfileForm {
     name: string;
-    image: File | null;
+    image: string;
     email: string;
     phone: string;
     bib: number;
@@ -26,34 +27,12 @@ interface ProfileForm {
     facebook: string;
 }
 
-function ProfilePicture() {
-    const cropperRef = useRef<ReactCropperElement>(null);
-    const onCrop = () => {
-        const cropper = cropperRef.current?.cropper;
-    };
-
-    return (
-        <Cropper
-            src="https://raw.githubusercontent.com/roadmanfong/react-cropper/master/example/img/child.jpg"
-            style={{ height: 400, width: "100%" }}
-            // Cropper.js options
-            initialAspectRatio={16 / 9}
-            guides={false}
-            crop={onCrop}
-            ref={cropperRef}
-        />
-    );
-};
-}
-
 export default function Profile() {
-    const authHeader = useAuthHeader();
-    const queryClient = useQueryClient();
-
+    const authHeader = useAuthHeader(), queryClient = useQueryClient();
     const form = useForm<ProfileForm>({
         defaultValues: {
             name: '',
-            image: null,
+            image: '',
             email: '',
             phone: '',
             company: '',
@@ -67,12 +46,12 @@ export default function Profile() {
         }
     });
 
-    const { control, register, handleSubmit, formState: { errors }, reset } = form;
+    const { control, register, handleSubmit, formState: { errors }, setValue, reset } = form;
 
     const { data: profile, isLoading, isError, error } = useQuery({
         queryKey: ['profile'],
         queryFn: async () => {
-            const response = await axios.get('/api/auth/profile', {
+            const response = await axios.get('/api/profile', {
                 headers: {
                     Authorization: authHeader
                 }
@@ -87,7 +66,7 @@ export default function Profile() {
         message?: string
     }, Error, ProfileForm>({
         mutationFn: async (data: ProfileForm) => {
-            return axios.post('/api/auth/profile', data, {
+            return axios.post('/api/profile', data, {
                 headers: {
                     Authorization: authHeader,
                     'Content-Type': 'application/json'
@@ -117,18 +96,19 @@ export default function Profile() {
     useEffect(() => {
         if (profile) {
             reset({
-                // Mapping: field form ← field dari API
-                name: profile.nama || '',
-                email: profile.email || '',
-                phone: profile.telepon || '',
-                company: profile.nama_perusahaan || '',
-                profession: profile.posisi || '',
-                city: profile.kota || '',
-                province: profile.provinsi || '',
-                instagram: profile.instagram || '',
-                linkedin: profile.linkedin || '',
-                twitter: profile.twitter || '',
-                facebook: profile.facebook || '',
+                name: profile.nama,
+                email: profile.email,
+                phone: profile.telepon,
+                bib: profile.bib,
+                company: profile.nama_perusahaan,
+                profession: profile.posisi,
+                city: profile.kota,
+                province: profile.provinsi,
+                instagram: profile.instagram,
+                linkedin: profile.linkedin,
+                twitter: profile.twitter,
+                facebook: profile.facebook,
+                image: profile.image || ''
             });
         }
     }, [profile, reset]);
@@ -136,179 +116,30 @@ export default function Profile() {
     return (
         <div className='w-full min-h-screen bg-gray-50'>
             <Header />
-            <div className="w-full max-w-4xl mx-auto md:my-4">
-                <div className="bg-white shadow-sm rounded-lg">
-                    <div className="p-4 pt-6 md:p-0 md:px-6 md:py-5 border-b border-gray-200">
-                        <h2 className="text-xl font-semibold text-gray-900">Profil</h2>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Perbarui foto dan detail pribadi Anda di sini.
-                        </p>
+            <div className='relative flex w-full h-full'>
+                <div className="w-full max-w-4xl mx-auto md:my-4">
+                    <div className="bg-white shadow-sm rounded-lg">
+                        <div className="p-4 pt-6 md:p-0 md:px-6 md:py-5 border-b border-gray-200">
+                            <h2 className="text-xl font-semibold text-gray-900">Profil</h2>
+                            <p className="mt-1 text-sm text-gray-500">
+                                Perbarui foto dan detail pribadi Anda di sini.
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubmit(onSubmit)} className='p-4 md:p-6 space-y-10'>
+
+                            <Image defaultImage={form.getValues('image')} register={register('image')} setImageValue={(image: string) => {
+                                setValue('image', image);
+                            }}></Image>
+                            {/* <ProfilePicture form={form('image')} register={register('image')} /> */}
+                            {/* Submit */}
+                            <div className="flex justify-end pt-4 border-t border-gray-200">
+                                <Button type='submit' className='px-4'>
+                                    Simpan
+                                </Button>
+                            </div>
+                        </form>
                     </div>
-
-                    <form onSubmit={handleSubmit(onSubmit)} className='p-4 md:p-6 space-y-10'>
-
-                        {/* Nama Lengkap */}
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
-                            <Label className="text-sm text-gray-700 md:pt-2">Nama lengkap</Label>
-                            <div className="md:col-span-2">
-                                <Input {...register('nama')} className="w-full text-sm" placeholder="Masukkan nama lengkap" />
-                            </div>
-                        </div>
-
-                        {/* Email */}
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
-                            <Label className="text-sm text-gray-700 md:pt-2">Email</Label>
-                            <div className="md:col-span-2">
-                                <Input {...register('email')} type="email" className="w-full text-sm" placeholder="nama@email.com" />
-                            </div>
-                        </div>
-
-                        {/* Telepon */}
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
-                            <Label className="text-sm text-gray-700 md:pt-2">Nomor telepon</Label>
-                            <div className="md:col-span-2">
-                                <Input {...register('telepon')} type="tel" className="w-full text-sm" placeholder="+62 812 3456 7890" />
-                            </div>
-                        </div>
-
-                        {/* Foto Profil */}
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
-                            <div className='mb-4 md:mb-0'>
-                                <Label className="block text-sm font-medium text-gray-700">
-                                    Foto profil anda
-                                </Label>
-                                <p className="mt-1 text-[13px] text-gray-500">
-                                    Foto ini akan ditampilkan di profil Anda.
-                                </p>
-                            </div>
-
-                            <div className="md:col-span-2">
-                                <div className="flex items-center space-x-4">
-                                    <div className="shrink-0">
-                                        <div className="h-16 w-16 rounded-full bg-gray-300 flex items-center justify-center">
-                                            <span className="text-gray-600 text-xl">👤</span>
-                                        </div>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                    >
-                                        Ubah foto
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Informasi Pekerjaan */}
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
-                            <div className='mb-4 md:mb-0'>
-                                <Label className="text-sm text-gray-700">Pekerjaan</Label>
-                                <p className="mt-1 text-[13px] text-gray-500">
-                                    Informasi tentang pekerjaan dan lokasi Anda saat ini.
-                                </p>
-                            </div>
-
-                            <div className="md:col-span-2 grid gap-4 md:grid-cols-2 w-full">
-
-                                {/* Kolom 1 */}
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="nama_perusahaan" className="text-sm text-gray-700">Nama Perusahaan</Label>
-                                        <Input {...register('nama_perusahaan')} id="nama_perusahaan" className="w-full text-sm" placeholder="PT. Contoh" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="kota" className="text-sm text-gray-700">Kota</Label>
-                                        <Input {...register('kota')} id="kota" className="w-full text-sm" placeholder="Jakarta" />
-                                    </div>
-                                </div>
-
-                                {/* Kolom 2 */}
-                                <div className="space-y-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="posisi" className="text-sm text-gray-700">Posisi</Label>
-                                        <Input {...register('posisi')} id="posisi" className="w-full text-sm" placeholder="Software Engineer" />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="provinsi" className="text-sm text-gray-700">Provinsi</Label>
-                                        <Input {...register('provinsi')} id="provinsi" className="w-full text-sm" placeholder="DKI Jakarta" />
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        {/* Akun Media Sosial */}
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-8 items-start">
-                            <div className='mb-4 md:mb-0'>
-                                <Label className="block text-sm font-medium text-gray-700">Akun Media Sosial Anda</Label>
-                                <p className="mt-1 text-[13px] text-gray-500">
-                                    Tambahkan akun media sosial Anda agar orang lain dapat terhubung dengan Anda.
-                                </p>
-                            </div>
-
-                            <div className="md:col-span-2 grid gap-4 md:grid-cols-2 w-full">
-
-                                {/* Kolom 1 */}
-                                <div className="space-y-4">
-
-                                    {/* Instagram */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="instagram" className="text-sm text-gray-700">Instagram</Label>
-                                        <div className="flex border border-gray-300 rounded-md w-full overflow-hidden">
-                                            <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">
-                                                instagram.com/
-                                            </span>
-                                            <Input {...register('instagram')} id="instagram" className="flex-1 w-full border-0 rounded-none text-sm" placeholder="username" />
-                                        </div>
-                                    </div>
-
-                                    {/* LinkedIn */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="linkedin" className="text-sm text-gray-700">LinkedIn</Label>
-                                        <div className="flex border border-gray-300 rounded-md w-full overflow-hidden">
-                                            <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">
-                                                linkedin.com/
-                                            </span>
-                                            <Input {...register('linkedin')} id="linkedin" className="flex-1 w-full border-0 rounded-none text-sm" placeholder="in/username" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Kolom 2 */}
-                                <div className="space-y-4">
-
-                                    {/* Twitter */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="twitter" className="text-sm text-gray-700">X (Twitter)</Label>
-                                        <div className="flex border border-gray-300 rounded-md w-full overflow-hidden">
-                                            <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">
-                                                x.com/
-                                            </span>
-                                            <Input {...register('twitter')} id="twitter" className="flex-1 w-full border-0 rounded-none text-sm" placeholder="username" />
-                                        </div>
-                                    </div>
-
-                                    {/* Facebook */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="facebook" className="text-sm text-gray-700">Facebook</Label>
-                                        <div className="flex border border-gray-300 rounded-md w-full overflow-hidden">
-                                            <span className="inline-flex items-center px-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">
-                                                facebook.com/
-                                            </span>
-                                            <Input {...register('facebook')} id="facebook" className="flex-1 w-full border-0 rounded-none text-sm" placeholder="username" />
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                        {/* Submit */}
-                        <div className="flex justify-end pt-4 border-t border-gray-200">
-                            <Button type='submit' className='px-4'>
-                                Simpan
-                            </Button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>

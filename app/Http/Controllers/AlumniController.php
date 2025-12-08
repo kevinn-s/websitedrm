@@ -24,8 +24,9 @@ class AlumniController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function index(Request $request, Builder $builder = Alumni::query())
+    public function index(Request $request)
     {
+        $builder = Alumni::query();
         try {
             $request->validate([
                 'search' => 'nullable|string',

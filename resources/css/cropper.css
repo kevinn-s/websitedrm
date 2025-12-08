@@ -31,7 +31,12 @@
   min-width: 0 !important;
   width: 100%;
 }
-
+.cropper-view-box {
+	border-radius: 50%;
+}
+.cropper-face {
+	background-color:inherit !important;
+}
 .cropper-wrap-box,
 .cropper-canvas,
 .cropper-drag-box,

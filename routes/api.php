@@ -22,8 +22,6 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
     Route::post('me', [AuthController::class, 'me'])->name('me');
 
-    Route::get('/profile', [ProfileController::class, 'show']);
-    Route::post('/profile', [ProfileController::class, 'update']);
 });
 
 Route::middleware(['auth:api', EnsureAlumniIsVerified::class])->group(function () {
@@ -31,3 +29,7 @@ Route::middleware(['auth:api', EnsureAlumniIsVerified::class])->group(function (
         Route::post('direktori', [AlumniController::class, 'directory']);
     });
 });
+
+
+    Route::get('profile', [ProfileController::class, 'show']);
+    Route::post('profile', [ProfileController::class, 'update']);
