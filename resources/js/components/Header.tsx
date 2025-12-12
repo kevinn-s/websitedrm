@@ -71,7 +71,7 @@ export default function Header() {
                         <div className='flex justify-between'>
                             {/* Logo */}
                             <Link to="/" className="flex items-center gap-4 py-2">
-                                <img src="images/drm.webp" alt="Logo DRM" className="h-10 md:h-14 w-auto" />
+                                <img src="/images/drm.webp" alt="Logo DRM" className="h-10 md:h-14 w-auto" />
                                 <div className="flex flex-col leading-tight font-medium text-primary-green-900">
                                     <span className="text-[11px] md:text-xs uppercase leading-tight md:leading-normal tracking-[0.13em] text-primary-green-700">ASOSIASI ALUMNI DRM</span>
                                     <span className="text-xs uppercase leading-tight md:leading-normal tracking-[0.13em] text-primary-green-700">BINUS UNIVERSITY</span>

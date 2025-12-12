@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Input } from "../../components/forms/Input";
-import Label from "../../components/forms/Label";
+import { Label } from "../../components/forms/Label";
 import Button from "../../components/Button";
 import { AuthenticationError } from "../../enums";
 

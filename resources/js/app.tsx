@@ -7,13 +7,15 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { Login } from './pages/auth/Login';
-import { Register } from './pages/auth/Register'
-import { ResetPassword } from './pages/auth/ResetPassword';
+import { Login } from '@/pages/auth/Login';
+import { Register } from '@/pages/auth/Register'
+import { ResetPassword } from '@/pages/auth/ResetPassword';
 
-import Beranda from './pages/Beranda';
-import { ForgotPassword } from './pages/auth/ForgotPassword';
-import Profile from './pages/Profile';
+import Beranda from '@/pages/Beranda';
+import { ForgotPassword } from '@/pages/auth/ForgotPassword';
+import Information from '@/pages/profile/Information';
+import Publications from './pages/profile/Publications';
+import Index from './pages/profile/Index';
 
 const queryClient = new QueryClient();
 
@@ -34,7 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         <Route path="/masuk" element={<Login />} />
                         <Route path="/lupa-password" element={<ForgotPassword />} />
                         <Route path="/ubah-password" element={<ResetPassword />} />
-                        <Route path="/profil" element={<Profile />} />
+                        <Route path="/profil/*" element={<Index />} />
                     </Routes>
                 </div>
             </AuthProvider>

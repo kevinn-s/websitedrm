@@ -10,7 +10,7 @@ interface LabelProps {
   [key: string]: any; // allows any other HTML attributes
 }
 
-export default function Label({
+export function Label({
   value,
   children,
   className = '',

@@ -1,15 +1,15 @@
 import React, { ReactHTMLElement, useEffect, useRef, useState } from 'react'
 import { useForm, SubmitHandler, useFieldArray, UseFormRegisterReturn, UseFormRegister, UseFormReturn } from 'react-hook-form'
-import Header from '../components/Header'
-import Label from '../components/forms/Label'
-import { Input } from '../components/forms/Input'
-import Button from '../components/Button';
-import { Image  } from '../components/forms/Image'
+import Header from '@/components/Header'
+import { Label } from '@/components/forms/Label'
+import { Input } from '@/components/forms/Input'
+import Button from '@/components/Button';
+import { Image  } from '@/components/forms/Image'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import useAuthHeader from 'react-auth-kit/hooks/useAuthHeader'
 import Cropper, { ReactCropperElement } from "react-cropper";
-import "../../css/cropper.css";
+import "../../../css/cropper.css";
 
 interface ProfileForm {
     name: string;
@@ -27,7 +27,7 @@ interface ProfileForm {
     facebook: string;
 }
 
-export default function Profile() {
+export default function Information() {
     const authHeader = useAuthHeader(), queryClient = useQueryClient();
     const form = useForm<ProfileForm>({
         defaultValues: {
@@ -114,9 +114,7 @@ export default function Profile() {
     }, [profile, reset]);
 
     return (
-        <div className='w-full min-h-screen bg-gray-50'>
-            <Header />
-            <div className='relative flex w-full h-full'>
+        <div className='relative flex w-full h-full'>
                 <div className="w-full max-w-4xl mx-auto md:my-4">
                     <div className="bg-white shadow-sm rounded-lg">
                         <div className="p-4 pt-6 md:p-0 md:px-6 md:py-5 border-b border-gray-200">
@@ -141,7 +139,6 @@ export default function Profile() {
                         </form>
                     </div>
                 </div>
-            </div>
         </div>
     )
 }

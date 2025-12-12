@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ScholarProfileController;
 
 use App\Http\Middleware\EnsureAlumniIsVerified;
 
@@ -33,3 +34,4 @@ Route::middleware(['auth:api', EnsureAlumniIsVerified::class])->group(function (
 
     Route::get('profile', [ProfileController::class, 'show']);
     Route::post('profile', [ProfileController::class, 'update']);
+Route::get('/scholar/scrape/{name}', [ScholarProfileController::class, 'scrape']);
