@@ -2,11 +2,9 @@
 
 namespace App\Providers;
 
-use App\Events\AlumniRegistered;
-use App\Listeners\NotifyAlumniOfVerification;
-use App\Listeners\SendAlumniRegisteredEmail;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Inertia::setRootView('admin');
+                Vite::prefetch(concurrency: 3);
 
     }
 }

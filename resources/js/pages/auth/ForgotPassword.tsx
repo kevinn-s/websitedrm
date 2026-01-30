@@ -26,7 +26,7 @@ interface ForgotPasswordForm {
     email: string,
 };
 
-export const ForgotPassword = () => {
+const ForgotPassword = () => {
     const { register, handleSubmit, formState: { isSubmitSuccessful, errors }, setError, clearErrors } = useForm<ForgotPasswordForm>()
     const mutation = useMutation<
             {
@@ -116,3 +116,5 @@ export const ForgotPassword = () => {
         </div>
     )
 }
+
+export default ForgotPassword;

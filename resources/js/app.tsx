@@ -7,18 +7,19 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { Login } from '@/pages/auth/Login';
-import { Register } from '@/pages/auth/Register'
-import { ResetPassword } from '@/pages/auth/ResetPassword';
+import Login from '@/pages/auth/Login';
+import Register from '@/pages/auth/Register'
+import ResetPassword from '@/pages/auth/ResetPassword';
 
 import Beranda from '@/pages/Beranda';
-import { ForgotPassword } from '@/pages/auth/ForgotPassword';
+import ForgotPassword from '@/pages/auth/ForgotPassword';
 import Information from '@/pages/profile/Information';
 import Publications from './pages/profile/Publications';
 import Index from './pages/profile/Index';
+import EventDetail from './pages/EventDetail';
 
 const queryClient = new QueryClient();
-
+console.log("okay")
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
@@ -37,6 +38,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         <Route path="/lupa-password" element={<ForgotPassword />} />
                         <Route path="/ubah-password" element={<ResetPassword />} />
                         <Route path="/profil/*" element={<Index />} />
+                        <Route path="/kegiatan/fun-run-drm" element={<EventDetail />} />
                     </Routes>
                 </div>
             </AuthProvider>

@@ -77,7 +77,7 @@ class AuthController extends Controller
                 ]
             ], 422);
         } catch (\Exception $th) {
-             \Log::error('Unexpected error during registration', ['exception' => $e]);
+             \Log::error('Unexpected error during registration', ['exception' => $th]);
             return response()->json([
                 'success' => false,
                 'error' => [
