@@ -1,5 +1,6 @@
 import React from "react"
 import { useCallback } from "react"
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios'
 import useSignIn from 'react-auth-kit/hooks/useSignIn';
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -41,6 +42,7 @@ export const LoginErrorMessage = ({ type }: { type: string }) => {
 };
 
 export const Login = () => {
+    const navigate = useNavigate();
     const login = useSignIn();
     const { register, handleSubmit, setError, formState: { errors } } = useForm<LoginForm>()
 
@@ -50,13 +52,14 @@ export const Login = () => {
                 if (res.status === 200) {
                     if (login({
                         auth: {
-                            token: res.data.token,
-                            type: 'Bearer'
+                            token: res.data.access_token,
+                            type: 'Bearer',
                         },
-                        refresh: res.data.refreshToken,
-                        userState: res.data.authUserState
-                    })) { // Only if you are using refreshToken feature
-                        // Redirect or do-something
+                        userState: res.data.authUserState,
+                                                    refresh: res.data.access_token
+
+                    })) {
+                        navigate('/')
                     } else {
                         //Throw error
 
@@ -66,6 +69,7 @@ export const Login = () => {
 
                 }
             }).catch((error) => {
+                console.log(error)
                 const { type, message } = error.response.data.error;
 
                 setError('root.serverError', {

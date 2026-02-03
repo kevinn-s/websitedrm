@@ -19,10 +19,10 @@ use App\Notifications\ResetPasswordNotification;
 
 use Error;
 use Str;
-class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordContract
+class Alumni extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, CanResetPassword;
+    use HasFactory, Notifiable;
 
     protected $table = 'alumni';
     /**
@@ -40,7 +40,7 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
         'phone',
         'instagram',
         'linkedin',
-        'twitter',
+        'x',
         'facebook'
     ];
 
@@ -56,7 +56,6 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
         return [
             'status' => Status::class,
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
             'slug' => 'string'
         ];
     }
@@ -74,6 +73,12 @@ class Alumni extends Authenticatable implements JWTSubject, CanResetPasswordCont
     {
         return $this->hasMany(Publication::class);
     }
+
+    public function profession()
+    {
+        return $this->hasOne(Profession::class);
+    }
+
 
     public function setNameAttribute($value)
     {

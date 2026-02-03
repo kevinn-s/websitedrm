@@ -43,10 +43,10 @@ export default function Header() {
                 <div className="mx-auto flex max-w-5xl justify-end px-4">
                     <div className="flex flex-wrap items-center gap-2 py-1 text-sm">
                         <Guest>
-                            <Link to="/masuk" className="border border-white/40 px-3 py-1 font-semibold tracking-tight hover:bg-white hover:text-primary-green-700 transition">
+                            <Link to="/login" className="border border-white/40 px-3 py-1 font-semibold tracking-tight hover:bg-white hover:text-primary-green-700 transition">
                                 Masuk
                             </Link>
-                            <Link to="/daftar" className="bg-primary-gold px-3 py-1 font-semibold tracking-tight text-primary-green-900 hover:bg-amber-300 transition">
+                            <Link to="/register" className="bg-primary-gold px-3 py-1 font-semibold tracking-tight text-primary-green-900 hover:bg-amber-300 transition">
                                 Daftar
                             </Link>
                         </Guest>
@@ -57,7 +57,7 @@ export default function Header() {
                                 </svg>
                                 <span className="hidden sm:inline">Profil</span>
                             </button>
-                            <button onClick={() => { signOut(); navigate('/masuk'); }} type="button" className="inline-flex items-center gap-1 border border-white/40 px-3 py-1 text-sm font-semibold tracking-tight hover:bg-white hover:text-primary-green-700 transition">
+                            <button onClick={() => { signOut(); navigate('/'); }} type="button" className="inline-flex items-center gap-1 border border-white/40 px-3 py-1 text-sm font-semibold tracking-tight hover:bg-white hover:text-primary-green-700 transition">
                                 Keluar
                             </button>
                         </Authenticated>

@@ -82,7 +82,8 @@ export function Image({ defaultImage, register, setImageValue }: { defaultImage:
                 }
             </div>
             {onImageEdit && image && (
-                <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>
+                <div className='fixed inset-0 z-50 flex items-center justify-center'>
+                    <div>
                     <Cropper
                         src={image}
                         style={{ height: 400, width: 400 }}
@@ -101,6 +102,7 @@ export function Image({ defaultImage, register, setImageValue }: { defaultImage:
                         guides={true}
                     />
                     <Button type='button' onClick={onCrop}>Crop</Button>
+                    </div>
                 </div>
             )
             }

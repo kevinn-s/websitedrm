@@ -73,11 +73,6 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Alumni::class
         ]
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
     ],
 
     /*

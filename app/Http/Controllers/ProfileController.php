@@ -2,62 +2,116 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Routing\Controller;
+
+use App\Models\Alumni;
+use App\Models\publication;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): Response
+       public function __construct()
     {
-        return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
-        ]);
+        $this->middleware('auth:api');
     }
-
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    //
+    public function show(Request $request)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'password' => ['required', 'current_password'],
-        ]);
-
         $user = $request->user();
+        return response()->json([
+               'name'       => $user->name,
+    'nim'        => $user->nim,
+    'email'      => $user->email,
+    'status'     => $user->status,
+    'bib'        => $user->bib,
+    'phone'      => $user->phone,
+    'instagram'  => $user->instagram,
+    'linkedin'   => $user->linkedin,
+    'x'    => $user->x,
+    'facebook'   => $user->facebook,
+    'profession' => $user->profession?->profession,
+'company'    => $user->profession?->company,
+'city'       => $user->profession?->city,
+'province'   => $user->profession?->province,
 
-        Auth::logout();
+        ], 200);
+    }
+    public function update(Request $request)
+    {
 
-        $user->delete();
+        $request->validate(array_merge(
+            [
+                'name' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                   'email',
+                    'max:255',
+                    Rule::unique('users')->ignore($request->user()->id),
+                ],
+                'phone' => 'nullable|string|max:20',
+            ],
+            [
+                'company' => 'nullable|string|max:255',
+                'profession' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:100',
+                'province' => 'nullable|string|max:100'
+            ],
+            [
+                'instagram' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9._]+$/',
+                'linkedin' => 'nullable|string|max:100|regex:/^[a-zA-Z0-9\-._]+$/',
+                'x' => 'nullable|string|max:50|regex:/^[a-zA-Z0-9_]+$/',
+                'facebook' => 'nullable|string|max:100',
+            ],
+            [
+                'publications' => 'nullable|array',
+                'publications.*.title' => 'required_with:publications|string|max:255',
+                'publications.*.type' => 'required_with:publications|string|max:100',
+                'publications.*.year' => [
+                    'required_with:publications',
+                    'digits:4',
+                    'integer',
+                    'min:1900',
+                    'max:' . date('Y'),
+                ],
+      'publications.*.url' => 'nullable|url|max:500',
+            ]
+        ));
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        $request->user()->update(
+            [
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
+                'instagram' => $request->input('instagram'),
+                'linkedin' => $request->input('linkedin'),
+                'x' => $request->input('x'),
+                'facebook' => $request->input('facebook'),
+            ]
+      );
+        if (is_array($request->input('publications'))) {
+            if (!empty($request->input('publications'))) {
+                foreach($request->input('publications') as $publication){
+                    Publication::updateOrCreate(array_merge([
+                        'alumni_id' => $request->user()->id
+                    ], (function () use (&$publication) {
+                        if (!empty($publication['id'])) {
+                            return ['id' => $publication['id']]; } return [];
+                    })()), [
+                        'title' => $publication['title'],
+                        'type' => $publication['type'],
+                        'year' => (int) $publication['year'],
+                        'url' => $publication['url'] ?? null,
+                    ]);
+                }
+            }
+        }
+         return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully.',
+            'user' => $request->user(),
+        ]);
     }
 }
+

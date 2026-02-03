@@ -14,6 +14,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use DB;
 
 use App\Models\Alumni;
@@ -93,6 +94,7 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+
         try {
             $request->validate([
                 'email' => 'required|email',
@@ -100,8 +102,10 @@ class AuthController extends Controller
             ]);
 
             /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
-            $auth = auth()->guard('api');
-            if (!$token = $auth->attempt(request(['email', 'password']))) {
+            $auth = auth();
+
+            if (!$token = $auth->guard('api')->attempt(request(['email', 'password']))) {
+
                 return response()->json([
                     'success' => false,
                     'error' => [
@@ -109,8 +113,8 @@ class AuthController extends Controller
                     ]
                 ], 401);
             }
-            /** @var Alumni $auth->user() */
-            if (!$auth->user()->status->isVerified()) {
+
+            if (!$auth->guard('api')->user()->status->isVerified()) {
                 $auth->logout();
                 return response()->json([
                     'success' => false,
@@ -120,26 +124,23 @@ class AuthController extends Controller
                 ], 403);
             }
 
-            if ($request->boolean('remember_me', false)) {
-                $auth->setTTL(43200); // 30 hari dalam menit (opsional: sesuaikan kebijakan Anda)
-            }
             return $this->respondWithToken($token);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AppError::PASSWORD_VALIDATION_FAILED->value,
+                    'type' => 'dinowd',
                 ]
             ], 422);
         } catch (\Exception $e) {
             \Log::error('Login error: ' . $e->getMessage(), [
-                'exception' => $e,
+                'exception' => $e->getMessage(),
                 'email' => $request->email
             ]);
             return response()->json([
                 'success' => false,
                 'error' => [
-                    'type' => AppError::INTERNAL_SERVER_ERROR->value,
+                    'type' => $e->getMessage(),
                 ]
             ], 500);
         }
@@ -162,7 +163,9 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
+        $auth = auth();
+        $auth->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -356,7 +359,9 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
+        $auth = auth();
+        return $this->respondWithToken($auth->refresh());
     }
 
     /**
@@ -368,13 +373,15 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+           /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
+        $auth = auth();
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_in' => $auth->guard('api')->factory()->getTTL() * 60,
             'authUserState' => [
-                'name' => auth()->user()->name,
-                'email' => auth()->user()->email
+                'name' => $auth->guard('api')->user()->name,
+                'email' => $auth->guard('api')->user()->email
             ]
         ]);
     }

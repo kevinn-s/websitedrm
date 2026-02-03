@@ -31,6 +31,7 @@ export default function Index () {
     return (
         <div className='w-full min-h-screen bg-gray-50'>
             <Header />
+
             <div className="grid grid-cols-2 col-span-2">
                 <div>
                     w
@@ -39,9 +40,8 @@ export default function Index () {
                     {onSidebar()}
                 </div>
             </div>
-        </div>
-        // <div className='grid grid-cols-2 col-span-2'>
 
-        // </div>
+        </div>
+
     )
 }
