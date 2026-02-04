@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->enum('status', [Status::PENDING, Status::REJECTED, Status::VERIFIED])->default(Status::PENDING);
             $table->integer('bib');
             $table->string('slug');
+            $table->string('image')->nullable();
             $table->string('phone')->unique()->nullable();
             $table->string('x', 100)->nullable();
             $table->string('instagram', 100)->nullable();

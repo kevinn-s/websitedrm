@@ -56,12 +56,13 @@ export const Login = () => {
                             type: 'Bearer',
                         },
                         userState: res.data.authUserState,
-                                                    refresh: res.data.access_token
-
+                        refresh: res.data.access_token,
+                        expiresIn: Math.floor(res.data.expires_in / 60), // Convert seconds to minutes
+                        refreshExpiresIn: 60 // 60 minutes refresh window
                     })) {
+                        console.log(res.data.access_token)
                         navigate('/')
                     } else {
-                        //Throw error
 
                     }
                 } else {

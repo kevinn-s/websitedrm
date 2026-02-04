@@ -67,7 +67,6 @@ export default function Information() {
         message?: string
     }, Error, ProfileForm>({
         mutationFn: async (data: ProfileForm) => {
-            console.log(data)
             return axios.post('/api/profile', data, {
                 headers: {
                     Authorization: authHeader,
@@ -77,7 +76,6 @@ export default function Information() {
         },
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['profile'] });
-            // alert(data.message || 'Profil berhasil diperbarui!');
         },
         onError: (error) => {
             if (axios.isAxiosError(error)) {
@@ -129,7 +127,6 @@ export default function Information() {
                         <div>Loading...</div>
                     ) : profile ? (
                         <form onSubmit={handleSubmit(onSubmit)} className='p-4 md:p-6 space-y-10'>
-
                             <Image defaultImage={profile.image} register={register('image')} setImageValue={(image: string) => {
                                 setValue('image', image);
                             }}></Image>
@@ -139,7 +136,6 @@ export default function Information() {
                                 <Input defaultValue={profile.name ?? ''}   {...register('name')} placeholder="Data belum terisi" />
                             </div>
 
-                            {/* NIM & BIB */}
                             <div className="flex gap-4">
                                 <div>
                                     <Label>NIM</Label>

@@ -21,11 +21,7 @@ const EventDetail = lazy(() => import('@/pages/EventDetail'));
 
 const Index = lazy(() => import('@/pages/profile/Index'));
 
-
 const queryClient = new QueryClient();
-
-
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
@@ -39,8 +35,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                         <Route path="/login" element={<Login />} />
                         <Route path="/lupa-password" element={<ForgotPassword />} />
                         <Route path="/ubah-password" element={<ResetPassword />} />
-
+                        <Route element={<ProtectedRoute />}>
                             <Route path="/profil/*" element={<Index />} />
+                        </Route>
                     </Routes>
                     </Suspense>
                 </div>

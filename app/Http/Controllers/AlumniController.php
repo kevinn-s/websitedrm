@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -22,6 +23,10 @@ class AlumniController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api');
+    }
+
+    public function a(Request $request){
+        return response()->json(['status' => 'success']);
     }
 
     public function index(Request $request)

@@ -29,7 +29,7 @@ class EnsureAlumniIsVerified
                     'type' => AppError::UNAUTHORIZED_ACCESS->value,
                 ]
             ], 401);
-        } else if(!$auth->guard('api')->user()->status->isVerified){
+        } else if(!$auth->guard('api')->user()->status->isVerified()){
              return response()->json([
                 'success' => false,
                 'error' => [

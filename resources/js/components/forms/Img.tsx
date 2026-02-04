@@ -4,7 +4,7 @@ import Button from '../Button';
 import Cropper, { ReactCropperElement } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 
-export function Image({ defaultImage = "http://drm.test/storage/profile_image/kevin-s.png", register, setImageValue }: {
+export function Image({ defaultImage, register, setImageValue }: {
     defaultImage: string,
     register: UseFormRegisterReturn,
     setImageValue: (file: File | null) => void
@@ -12,8 +12,8 @@ export function Image({ defaultImage = "http://drm.test/storage/profile_image/ke
     const inputRef = useRef<HTMLInputElement>(null);
     const cropperRef = useRef<ReactCropperElement>(null);
 
-    const [image, setImage] = useState<string | null>("http://drm.test/storage/profile_image/kevin-s.png");
-    const [previewUrl, setPreviewUrl] = useState<string>("http://drm.test/storage/profile_image/kevin-s.png");
+    const [image, setImage] = useState<string | null>(defaultImage);
+    const [previewUrl, setPreviewUrl] = useState<string>(defaultImage);
     const [onImageEdit, setOnImageEdit] = useState<boolean>(false);
 
     const previousCropBoxRef = useRef<any>(null);
@@ -25,7 +25,6 @@ export function Image({ defaultImage = "http://drm.test/storage/profile_image/ke
 
         const canvas = cropper.getCroppedCanvas();
 
-        previousCropBoxRef.current = cropper.getCropBoxData();
         canvas.toBlob((blob) => {
             if (blob) {
                 const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
@@ -34,7 +33,6 @@ export function Image({ defaultImage = "http://drm.test/storage/profile_image/ke
 
                 setPreviewUrl(URL.createObjectURL(blob));
                 setOnImageEdit(false);
-
             }
         }, 'image/jpeg', 0.8);
     };
@@ -87,8 +85,8 @@ export function Image({ defaultImage = "http://drm.test/storage/profile_image/ke
                             src={image}
                             style={{ height: 400, width: 400 }}
                             ready={() => {
-                                cropperRef.current?.cropper.setCropBoxData(previousCropBoxRef.current);
-                            }}
+                            cropperRef.current?.cropper.setCropBoxData(previousCropBoxRef.current);
+                        }}
                             initialAspectRatio={1}
                             ref={cropperRef}
                             viewMode={1}

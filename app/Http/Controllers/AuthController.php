@@ -15,6 +15,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+
 use DB;
 
 use App\Models\Alumni;
@@ -29,7 +30,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'forgotPassword', 'resetPassword']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'forgotPassword', 'resetPassword', 'refresh']]);
     }
 
     public function register(Request $request)
@@ -359,9 +360,22 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
-        $auth = auth();
-        return $this->respondWithToken($auth->refresh());
+        try {
+            // Get the token from the request header
+            $token = JWTAuth::parseToken()->refresh();
+
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->guard('api')->factory()->getTTL() * 60
+            ]);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['error' => 'Token has expired and cannot be refreshed'], 401);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException $e) {
+            return response()->json(['error' => 'Token has been blacklisted'], 401);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
+            return response()->json(['error' => 'Token is invalid or missing'], 401);
+        }
     }
 
     /**
@@ -375,6 +389,7 @@ class AuthController extends Controller
     {
            /** @var \PHPOpenSourceSaver\JWTAuth\JWTAuth $auth */
         $auth = auth();
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',

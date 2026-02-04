@@ -29,8 +29,11 @@ Route::middleware(['auth:api', EnsureAlumniIsVerified::class])->group(function (
     Route::prefix('alumni')->group(function() {
         Route::post('direktori', [AlumniController::class, 'directory']);
     });
-    Route::get('profile', [ProfileController::class, 'show']);
     Route::post('profile', [ProfileController::class, 'update']);
+    Route::post('profile/publications', [ProfileController::class, 'update_publication']);
+    Route::get('profile/publications', [ProfileController::class, 'show_publication']);
+    Route::get('/a', [AlumniController::class, "a"]);
+
 });
 
 

@@ -41,7 +41,8 @@ class Alumni extends Authenticatable implements JWTSubject
         'instagram',
         'linkedin',
         'x',
-        'facebook'
+        'facebook',
+        'image'
     ];
 
     protected $hidden = ['password', 'status'];
